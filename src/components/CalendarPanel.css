@@ -8,11 +8,6 @@
   transition: all 0.3s ease;
 }
 
-.calendar-panel:hover {
-  transform: scale(1.02);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-}
-
 .panel-title {
   margin: 0 0 20px 0;
   font-size: 1.5rem;
@@ -35,11 +30,6 @@
   border-radius: 10px;
   border-left: 4px solid;
   transition: all 0.2s ease;
-}
-
-.event-item:hover {
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateX(5px);
 }
 
 .event-icon {
