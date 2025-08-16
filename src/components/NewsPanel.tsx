@@ -62,21 +62,6 @@ const NewsPanel: React.FC<NewsPanelProps> = ({ news }) => {
           </div>
         ))}
       </div>
-
-      <div className="news-footer">
-        <div className="news-stats">
-          <span className="stat-item">
-            <span className="stat-label">Headlines:</span>
-            <span className="stat-value">{news.length}</span>
-          </span>
-          <span className="stat-item">
-            <span className="stat-label">Categories:</span>
-            <span className="stat-value">
-              {new Set(news.map(item => item.category)).size}
-            </span>
-          </span>
-        </div>
-      </div>
     </div>
   );
 };
