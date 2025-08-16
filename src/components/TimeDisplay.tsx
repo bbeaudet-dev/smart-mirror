@@ -12,13 +12,17 @@ const TimeDisplay: React.FC = () => {
     return () => clearInterval(timer);
   }, []);
 
-  const formatTime = (date: Date): string => {
-    return date.toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: true
-    });
+  const formatTime = (date: Date): { hours: string; minutes: string; seconds: string; period: string } => {
+    let hours = date.getHours();
+    const period = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // Convert 0 to 12
+    
+    const hoursStr = hours.toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const seconds = date.getSeconds().toString().padStart(2, '0');
+    
+    return { hours: hoursStr, minutes, seconds, period };
   };
 
   const formatDate = (date: Date): string => {
@@ -30,9 +34,15 @@ const TimeDisplay: React.FC = () => {
     });
   };
 
+  const { hours, minutes, seconds, period } = formatTime(currentTime);
+
   return (
     <div className="time-display">
-      <div className="time">{formatTime(currentTime)}</div>
+      <div className="time">
+        <span className="time-main">{hours}:{minutes}</span>
+        <span className="time-seconds">:{seconds}</span>
+        <span className="time-period"> {period}</span>
+      </div>
       <div className="date">{formatDate(currentTime)}</div>
     </div>
   );

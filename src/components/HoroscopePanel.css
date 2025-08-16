@@ -21,11 +21,6 @@
   pointer-events: none;
 }
 
-.horoscope-panel:hover {
-  transform: scale(1.02);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-}
-
 .horoscope-header {
   display: flex;
   align-items: center;
@@ -108,12 +103,6 @@
   padding: 12px;
   background: rgba(255, 255, 255, 0.05);
   border-radius: 8px;
-  transition: all 0.2s ease;
-}
-
-.detail-item:hover {
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateY(-2px);
 }
 
 .detail-icon {

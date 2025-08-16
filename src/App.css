@@ -94,7 +94,7 @@ body {
   flex: 1;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(2, 1fr);
+  grid-template-rows: auto auto;
   gap: 20px;
   animation: fadeInUp 1s ease-out 0.3s both;
 }
@@ -163,7 +163,7 @@ body {
 @media (max-width: 1200px) {
   .content-grid {
     grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(3, 1fr);
+    grid-template-rows: repeat(3, auto);
   }
   
   .weather-section {
@@ -228,11 +228,6 @@ body {
     grid-column: 1;
     grid-row: 5;
   }
-}
-
-/* Smooth transitions for all interactive elements */
-* {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Custom scrollbar for webkit browsers */

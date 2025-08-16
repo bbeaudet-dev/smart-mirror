@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import './App.css';
 import TimeDisplay from './components/TimeDisplay';
 import WeatherPanel from './components/WeatherPanel';
@@ -16,17 +16,6 @@ import {
 } from './data/mockData';
 
 function App() {
-  const [refreshKey, setRefreshKey] = useState(0);
-
-  // Auto-refresh every 30 seconds
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setRefreshKey(prev => prev + 1);
-    }, 30000);
-
-    return () => clearInterval(interval);
-  }, []);
-
   return (
     <div className="smart-mirror">
       <div className="mirror-container">

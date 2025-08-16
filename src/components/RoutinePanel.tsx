@@ -8,14 +8,12 @@ interface RoutinePanelProps {
 }
 
 const RoutinePanel: React.FC<RoutinePanelProps> = ({ morningRoutine, eveningRoutine }) => {
-  const [currentTime, setCurrentTime] = useState(new Date());
   const [routine, setRoutine] = useState<RoutineItem[]>([]);
   const [routineType, setRoutineType] = useState<'morning' | 'evening'>('morning');
 
   useEffect(() => {
     const timer = setInterval(() => {
       const now = new Date();
-      setCurrentTime(now);
       
       const hour = now.getHours();
       if (hour >= 6 && hour < 11) {
@@ -39,14 +37,6 @@ const RoutinePanel: React.FC<RoutinePanelProps> = ({ morningRoutine, eveningRout
 
   const getRoutineTitle = (type: 'morning' | 'evening') => {
     return type === 'morning' ? 'Morning Routine' : 'Evening Routine';
-  };
-
-  const toggleTask = (taskId: string) => {
-    setRoutine(prevRoutine =>
-      prevRoutine.map(task =>
-        task.id === taskId ? { ...task, completed: !task.completed } : task
-      )
-    );
   };
 
   const completedCount = routine.filter(task => task.completed).length;
@@ -74,7 +64,6 @@ const RoutinePanel: React.FC<RoutinePanelProps> = ({ morningRoutine, eveningRout
               <div 
                 key={task.id} 
                 className={`routine-task ${task.completed ? 'completed' : ''}`}
-                onClick={() => toggleTask(task.id)}
               >
                 <div className="task-checkbox">
                   {task.completed ? '✓' : '○'}

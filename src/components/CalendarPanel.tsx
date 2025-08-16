@@ -20,19 +20,6 @@ const CalendarPanel: React.FC<CalendarPanelProps> = ({ events }) => {
     }
   };
 
-  const getEventColor = (type: string) => {
-    switch (type) {
-      case 'meeting':
-        return '#74b9ff';
-      case 'appointment':
-        return '#fd79a8';
-      case 'reminder':
-        return '#fdcb6e';
-      default:
-        return '#a29bfe';
-    }
-  };
-
   return (
     <div className="calendar-panel">
       <h3 className="panel-title">Today's Schedule</h3>
@@ -43,7 +30,6 @@ const CalendarPanel: React.FC<CalendarPanelProps> = ({ events }) => {
             <div 
               key={event.id} 
               className="event-item"
-              style={{ borderLeftColor: getEventColor(event.type) }}
             >
               <div className="event-icon">
                 {getEventIcon(event.type)}
@@ -51,9 +37,6 @@ const CalendarPanel: React.FC<CalendarPanelProps> = ({ events }) => {
               <div className="event-details">
                 <div className="event-title">{event.title}</div>
                 <div className="event-time">{event.time}</div>
-              </div>
-              <div className="event-type">
-                {event.type.charAt(0).toUpperCase() + event.type.slice(1)}
               </div>
             </div>
           ))
@@ -63,19 +46,6 @@ const CalendarPanel: React.FC<CalendarPanelProps> = ({ events }) => {
             <p>No events scheduled for today</p>
           </div>
         )}
-      </div>
-
-      <div className="calendar-summary">
-        <div className="summary-item">
-          <span className="summary-label">Total Events:</span>
-          <span className="summary-value">{events.length}</span>
-        </div>
-        <div className="summary-item">
-          <span className="summary-label">Next Event:</span>
-          <span className="summary-value">
-            {events.length > 0 ? events[0].time : 'None'}
-          </span>
-        </div>
       </div>
     </div>
   );
