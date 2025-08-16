@@ -1,0 +1,138 @@
+const express = require('express');
+const mockDataService = require('../services/mockData');
+
+const router = express.Router();
+
+// GET /api/daily-summary - Returns comprehensive daily data
+router.get('/daily-summary', async (req, res) => {
+  try {
+    const summary = await mockDataService.getDailySummary();
+    res.json({
+      ...summary,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Daily Summary Error:', error);
+    res.status(500).json({ 
+      error: 'Failed to fetch daily summary',
+      message: error.message 
+    });
+  }
+});
+
+// GET /api/weather - Weather data only
+router.get('/weather', async (req, res) => {
+  try {
+    const weather = await mockDataService.getWeather();
+    res.json({
+      weather,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Weather Error:', error);
+    res.status(500).json({ 
+      error: 'Failed to fetch weather data',
+      message: error.message 
+    });
+  }
+});
+
+// GET /api/calendar - Calendar events only
+router.get('/calendar', async (req, res) => {
+  try {
+    const events = await mockDataService.getCalendarEvents();
+    res.json({
+      events,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Calendar Error:', error);
+    res.status(500).json({ 
+      error: 'Failed to fetch calendar events',
+      message: error.message 
+    });
+  }
+});
+
+// GET /api/routine/:type - Get routine by type (morning/evening)
+router.get('/routine/:type', async (req, res) => {
+  try {
+    const { type } = req.params;
+    const routine = await mockDataService.getRoutine(type);
+    
+    if (!routine) {
+      return res.status(404).json({ error: 'Routine type not found' });
+    }
+    
+    res.json({
+      routine,
+      type,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Routine Error:', error);
+    res.status(500).json({ 
+      error: 'Failed to fetch routine',
+      message: error.message 
+    });
+  }
+});
+
+// GET /api/news - News headlines only
+router.get('/news', async (req, res) => {
+  try {
+    const news = await mockDataService.getNews();
+    res.json({
+      news,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('News Error:', error);
+    res.status(500).json({ 
+      error: 'Failed to fetch news',
+      message: error.message 
+    });
+  }
+});
+
+// GET /api/horoscope - Horoscope data only
+router.get('/horoscope', async (req, res) => {
+  try {
+    const horoscope = await mockDataService.getHoroscope();
+    res.json({
+      horoscope,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Horoscope Error:', error);
+    res.status(500).json({ 
+      error: 'Failed to fetch horoscope',
+      message: error.message 
+    });
+  }
+});
+
+// GET /api/outfit-suggestion - Get outfit suggestion based on weather
+router.get('/outfit-suggestion', async (req, res) => {
+  try {
+    const { temperature, condition } = req.query;
+    const suggestion = await mockDataService.getOutfitSuggestion(
+      temperature ? parseInt(temperature) : 72,
+      condition || 'sunny'
+    );
+    
+    res.json({
+      suggestion,
+      weather: { temperature: temperature || 72, condition: condition || 'sunny' },
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Outfit Suggestion Error:', error);
+    res.status(500).json({ 
+      error: 'Failed to generate outfit suggestion',
+      message: error.message 
+    });
+  }
+});
+
+module.exports = router;
