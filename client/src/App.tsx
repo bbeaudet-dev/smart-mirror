@@ -6,6 +6,8 @@ import CalendarPanel from './components/CalendarPanel';
 import RoutinePanel from './components/RoutinePanel';
 import NewsPanel from './components/NewsPanel';
 import HoroscopePanel from './components/HoroscopePanel';
+import MotivationPanel from './components/MotivationPanel';
+import OutfitPanel from './components/OutfitPanel';
 import ApiClient from './services/apiClient';
 
 function App() {
@@ -16,7 +18,12 @@ function App() {
     news: [] as any[],
     horoscope: null as any
   });
+  const [aiData, setAiData] = useState({
+    motivation: null as string | null,
+    outfitRecommendation: null as string | null
+  });
   const [loading, setLoading] = useState(true);
+  const [aiLoading, setAiLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -44,6 +51,41 @@ function App() {
 
     // Refresh data every 30 seconds
     const interval = setInterval(fetchData, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Fetch AI data
+  useEffect(() => {
+    const fetchAiData = async () => {
+      try {
+        setAiLoading(true);
+        
+        // Get current time of day
+        const hour = new Date().getHours();
+        const timeOfDay = hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : 'evening';
+        
+        // Fetch motivation
+        const motivationResponse = await ApiClient.getMotivation(timeOfDay, 'neutral');
+        
+        // Fetch outfit recommendation (using mock weather for now)
+        const outfitResponse = await ApiClient.getOutfitRecommendation(72, 'sunny');
+        
+        setAiData({
+          motivation: (motivationResponse as any).motivation,
+          outfitRecommendation: (outfitResponse as any).suggestion
+        });
+      } catch (err) {
+        console.error('Failed to fetch AI data:', err);
+        // Don't set error state for AI data, just log it
+      } finally {
+        setAiLoading(false);
+      }
+    };
+
+    fetchAiData();
+
+    // Refresh AI data every 60 seconds (less frequent than regular data)
+    const interval = setInterval(fetchAiData, 60000);
     return () => clearInterval(interval);
   }, []);
 
@@ -99,6 +141,24 @@ function App() {
           {/* Horoscope Panel */}
           <div className="panel horoscope-section">
             {data.horoscope && <HoroscopePanel horoscope={data.horoscope} />}
+          </div>
+
+          {/* AI Motivation Panel */}
+          <div className="panel motivation-section">
+            <MotivationPanel 
+              motivation={aiData.motivation}
+              timeOfDay={new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 17 ? 'afternoon' : 'evening'}
+              loading={aiLoading}
+            />
+          </div>
+
+          {/* AI Outfit Panel */}
+          <div className="panel outfit-section">
+            <OutfitPanel 
+              outfitRecommendation={aiData.outfitRecommendation}
+              weather={data.weather ? { temperature: data.weather.current.temperature, condition: data.weather.current.condition } : null}
+              loading={aiLoading}
+            />
           </div>
         </div>
       </div>

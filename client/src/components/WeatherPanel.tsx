@@ -1,5 +1,5 @@
 import React from 'react';
-import { WeatherData, getOutfitRecommendation } from '../data/mockData';
+import { WeatherData } from '../data/types';
 import './WeatherPanel.css';
 
 interface WeatherPanelProps {
@@ -7,8 +7,6 @@ interface WeatherPanelProps {
 }
 
 const WeatherPanel: React.FC<WeatherPanelProps> = ({ weather }) => {
-  const outfitRecommendation = getOutfitRecommendation(weather.current.temperature, weather.current.condition);
-
   return (
     <div className="weather-panel">
       <h3 className="panel-title">Weather</h3>
@@ -38,11 +36,6 @@ const WeatherPanel: React.FC<WeatherPanelProps> = ({ weather }) => {
             </div>
           ))}
         </div>
-      </div>
-
-      <div className="outfit-recommendation">
-        <h4>Outfit Suggestion</h4>
-        <p className="outfit-text">{outfitRecommendation}</p>
       </div>
     </div>
   );

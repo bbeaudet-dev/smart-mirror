@@ -1,5 +1,5 @@
 import React from 'react';
-import { NewsItem } from '../data/mockData';
+import { NewsItem } from '../data/types';
 import './NewsPanel.css';
 
 interface NewsPanelProps {

@@ -94,6 +94,16 @@ class ApiClient {
   }
 
   /**
+   * Get outfit recommendation based on weather
+   * @param {number} temperature - Temperature in Fahrenheit
+   * @param {string} condition - Weather condition
+   * @returns {Promise<Object>} - Outfit recommendation
+   */
+  static async getOutfitRecommendation(temperature = 72, condition = 'sunny') {
+    return this.get(`/api/outfit-suggestion?temperature=${temperature}&condition=${condition}`);
+  }
+
+  /**
    * Send AI chat message
    * @param {string} message - User message
    * @param {string} context - AI context
