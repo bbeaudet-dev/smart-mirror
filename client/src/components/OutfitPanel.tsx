@@ -4,8 +4,9 @@ import './OutfitPanel.css';
 interface OutfitPanelProps {
   outfitRecommendation: string | null;
   weather: {
-    temperature: number;
+    temperature: number | null;
     condition: string;
+    error?: boolean;
   } | null;
   loading?: boolean;
 }
@@ -60,11 +61,29 @@ const OutfitPanel: React.FC<OutfitPanelProps> = ({
           <h3>Outfit Recommendation</h3>
           <div className="weather-info">
             <span className="weather-icon">🌤️</span>
-            <span className="temperature">72°F</span>
+            <span className="temperature">--°F</span>
           </div>
         </div>
         <div className="outfit-content">
           <p>Loading outfit suggestions...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Check if weather data has an error
+  if (weather.error) {
+    return (
+      <div className="outfit-panel">
+        <div className="outfit-header">
+          <h3>Outfit Recommendation</h3>
+          <div className="weather-info">
+            <span className="weather-icon">❓</span>
+            <span className="temperature">--°F</span>
+          </div>
+        </div>
+        <div className="outfit-content">
+          <p>Weather data unavailable for outfit recommendations</p>
         </div>
       </div>
     );

@@ -1,34 +1,4 @@
-// Mock Weather Data
-const weatherData = {
-  current: {
-    temperature: 72,
-    condition: 'Sunny',
-    icon: '☀️'
-  },
-  forecast: [
-    {
-      day: 'Today',
-      high: 78,
-      low: 65,
-      condition: 'Sunny',
-      icon: '☀️'
-    },
-    {
-      day: 'Tomorrow',
-      high: 65,
-      low: 52,
-      condition: 'Rain',
-      icon: '🌧️'
-    },
-    {
-      day: 'Wednesday',
-      high: 70,
-      low: 58,
-      condition: 'Partly Cloudy',
-      icon: '⛅'
-    }
-  ]
-};
+
 
 // Mock Calendar Data
 const calendarData = [
@@ -141,25 +111,12 @@ const horoscopeData = {
   mood: 'Balanced and harmonious'
 };
 
-// Outfit recommendation based on weather
-const getOutfitRecommendation = (temperature, condition) => {
-  if (temperature < 50) {
-    return 'Heavy coat, scarf, and gloves';
-  } else if (temperature < 65) {
-    return 'Light jacket or sweater';
-  } else if (temperature < 75) {
-    return 'T-shirt and light pants';
-  } else {
-    return 'Shorts and tank top';
-  }
-};
+
 
 module.exports = {
-  weatherData,
   calendarData,
   morningRoutine,
   eveningRoutine,
   newsData,
-  horoscopeData,
-  getOutfitRecommendation
+  horoscopeData
 };

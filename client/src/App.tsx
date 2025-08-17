@@ -67,8 +67,16 @@ function App() {
         // Fetch motivation
         const motivationResponse = await ApiClient.getMotivation(timeOfDay, 'neutral');
         
-        // Fetch outfit recommendation (using mock weather for now)
-        const outfitResponse = await ApiClient.getOutfitRecommendation(72, 'sunny');
+        // Fetch outfit recommendation using real weather data
+        let outfitResponse;
+        if (data.weather && !data.weather.error && data.weather.current.temperature && data.weather.current.condition) {
+          outfitResponse = await ApiClient.getOutfitRecommendation(
+            data.weather.current.temperature,
+            data.weather.current.condition
+          );
+        } else {
+          outfitResponse = { suggestion: 'Weather data unavailable for outfit recommendations' };
+        }
         
         setAiData({
           motivation: (motivationResponse as any).motivation,
@@ -87,7 +95,7 @@ function App() {
     // Refresh AI data every 60 seconds (less frequent than regular data)
     const interval = setInterval(fetchAiData, 60000);
     return () => clearInterval(interval);
-  }, []);
+  }, [data.weather]);
 
   if (loading) {
     return (

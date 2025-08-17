@@ -7,6 +7,22 @@ interface WeatherPanelProps {
 }
 
 const WeatherPanel: React.FC<WeatherPanelProps> = ({ weather }) => {
+  // Check if weather data has an error
+  if (weather.error) {
+    return (
+      <div className="weather-panel">
+        <h3 className="panel-title">Weather</h3>
+        <div className="weather-error">
+          <div className="error-icon">❓</div>
+          <div className="error-message">
+            <p>Weather data unavailable</p>
+            <p className="error-details">Check API configuration</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="weather-panel">
       <h3 className="panel-title">Weather</h3>
