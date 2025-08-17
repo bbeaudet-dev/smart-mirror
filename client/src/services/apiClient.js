@@ -46,10 +46,12 @@ class ApiClient {
 
   /**
    * Get daily summary data
+   * @param {string} location - Optional location override
    * @returns {Promise<Object>} - Complete daily data
    */
-  static async getDailySummary() {
-    return this.get('/api/daily-summary');
+  static async getDailySummary(location = null) {
+    const params = location ? `?location=${encodeURIComponent(location)}` : '';
+    return this.get(`/api/daily-summary${params}`);
   }
 
   /**
@@ -97,13 +99,22 @@ class ApiClient {
    * Get outfit recommendation based on weather
    * @param {number} temperature - Temperature in Fahrenheit
    * @param {string} condition - Weather condition
+   * @param {string} timeOfDay - Time of day (morning/afternoon/evening/night)
+   * @param {string} recommendationType - Type of recommendation (current/tomorrow)
+   * @param {Array} forecast - Weather forecast data
    * @returns {Promise<Object>} - Outfit recommendation
    */
-  static async getOutfitRecommendation(temperature, condition) {
+  static async getOutfitRecommendation(temperature, condition, timeOfDay, recommendationType, forecast) {
     if (!temperature || !condition) {
       throw new Error('Temperature and condition are required for outfit recommendations');
     }
-    return this.get(`/api/outfit-suggestion?temperature=${temperature}&condition=${condition}`);
+    return this.post('/api/ai/outfit-recommendation', {
+      temperature,
+      condition,
+      timeOfDay,
+      recommendationType,
+      forecast
+    });
   }
 
   /**
@@ -153,6 +164,7 @@ class ApiClient {
       throw error;
     }
   }
+
 }
 
 export default ApiClient;

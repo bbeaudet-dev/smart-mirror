@@ -3,6 +3,16 @@ export interface WeatherData {
     temperature: number | null;
     condition: string;
     icon: string;
+    humidity: number;
+    windSpeed: number;
+    feelsLike: number;
+    uvIndex: number;
+    visibility: number;
+    windDirection: string;
+    pressure: number;
+    gustSpeed: number;
+    cloudCover: number;
+    dewPoint: number;
   };
   forecast: Array<{
     day: string;

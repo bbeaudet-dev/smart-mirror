@@ -113,36 +113,7 @@ router.get('/horoscope', async (req, res) => {
   }
 });
 
-// GET /api/outfit-suggestion - Get outfit suggestion based on weather
-router.get('/outfit-suggestion', async (req, res) => {
-  try {
-    const { temperature, condition } = req.query;
-    
-    if (!temperature || !condition) {
-      return res.status(400).json({ 
-        error: 'Temperature and condition parameters are required',
-        message: 'Both temperature and condition must be provided for outfit suggestions'
-      });
-    }
-    
-    const suggestion = await dataService.getOutfitSuggestion(
-      parseInt(temperature),
-      condition
-    );
-    
-    res.json({
-      suggestion,
-      weather: { temperature: parseInt(temperature), condition },
-      timestamp: new Date().toISOString()
-    });
-  } catch (error) {
-    console.error('Outfit Suggestion Error:', error);
-    res.status(500).json({ 
-      error: 'Failed to generate outfit suggestion',
-      message: error.message 
-    });
-  }
-});
+
 
 // GET /api/weather/location - Update weather location
 router.get('/weather/location', async (req, res) => {
