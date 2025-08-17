@@ -1,12 +1,12 @@
 const express = require('express');
-const mockDataService = require('../services/mockData');
+const dataService = require('../services/dataService');
 
 const router = express.Router();
 
 // GET /api/daily-summary - Returns comprehensive daily data
 router.get('/daily-summary', async (req, res) => {
   try {
-    const summary = await mockDataService.getDailySummary();
+    const summary = await dataService.getDailySummary();
     res.json({
       ...summary,
       timestamp: new Date().toISOString()
@@ -23,7 +23,7 @@ router.get('/daily-summary', async (req, res) => {
 // GET /api/weather - Weather data only
 router.get('/weather', async (req, res) => {
   try {
-    const weather = await mockDataService.getWeather();
+    const weather = await dataService.getWeather();
     res.json({
       weather,
       timestamp: new Date().toISOString()
@@ -40,7 +40,7 @@ router.get('/weather', async (req, res) => {
 // GET /api/calendar - Calendar events only
 router.get('/calendar', async (req, res) => {
   try {
-    const events = await mockDataService.getCalendarEvents();
+    const events = await dataService.getCalendarEvents();
     res.json({
       events,
       timestamp: new Date().toISOString()
@@ -58,7 +58,7 @@ router.get('/calendar', async (req, res) => {
 router.get('/routine/:type', async (req, res) => {
   try {
     const { type } = req.params;
-    const routine = await mockDataService.getRoutine(type);
+    const routine = await dataService.getRoutine(type);
     
     if (!routine) {
       return res.status(404).json({ error: 'Routine type not found' });
@@ -81,7 +81,7 @@ router.get('/routine/:type', async (req, res) => {
 // GET /api/news - News headlines only
 router.get('/news', async (req, res) => {
   try {
-    const news = await mockDataService.getNews();
+    const news = await dataService.getNews();
     res.json({
       news,
       timestamp: new Date().toISOString()
@@ -98,7 +98,7 @@ router.get('/news', async (req, res) => {
 // GET /api/horoscope - Horoscope data only
 router.get('/horoscope', async (req, res) => {
   try {
-    const horoscope = await mockDataService.getHoroscope();
+    const horoscope = await dataService.getHoroscope();
     res.json({
       horoscope,
       timestamp: new Date().toISOString()
@@ -116,7 +116,7 @@ router.get('/horoscope', async (req, res) => {
 router.get('/outfit-suggestion', async (req, res) => {
   try {
     const { temperature, condition } = req.query;
-    const suggestion = await mockDataService.getOutfitSuggestion(
+    const suggestion = await dataService.getOutfitSuggestion(
       temperature ? parseInt(temperature) : 72,
       condition || 'sunny'
     );

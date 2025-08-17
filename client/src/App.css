@@ -265,3 +265,17 @@ body {
   background: rgba(255, 255, 255, 0.2);
   color: #ffffff;
 }
+
+/* Loading and Error States */
+.loading, .error {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 2rem;
+  color: #ffffff;
+}
+
+.error {
+  color: #ff6b6b;
+}

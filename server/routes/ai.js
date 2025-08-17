@@ -1,6 +1,6 @@
 const express = require('express');
 const multer = require('multer');
-const OpenAI = require('../services/openai');
+const OpenAIService = require('../services/openai');
 
 const router = express.Router();
 
@@ -28,7 +28,7 @@ router.post('/chat', async (req, res) => {
       return res.status(400).json({ error: 'Message is required' });
     }
 
-    const response = await OpenAI.chat(message, context);
+    const response = await OpenAIService.chat(message, context);
     res.json({ 
       response,
       timestamp: new Date().toISOString()
@@ -53,7 +53,7 @@ router.post('/analyze-image', upload.single('image'), async (req, res) => {
     const imageBuffer = req.file.buffer;
     const imageType = req.file.mimetype;
 
-    const analysis = await OpenAI.analyzeImage(imageBuffer, imageType, prompt, context);
+    const analysis = await OpenAIService.analyzeImage(imageBuffer, imageType, prompt, context);
     res.json({ 
       analysis,
       timestamp: new Date().toISOString()
@@ -74,7 +74,7 @@ router.post('/motivation', async (req, res) => {
     
     const prompt = `Give me a brief, encouraging ${timeOfDay} motivation message. Keep it under 100 words and make it feel personal and uplifting. Consider that this is for someone using a smart mirror.`;
     
-    const response = await OpenAI.chat(prompt, 'motivation');
+    const response = await OpenAIService.chat(prompt, 'motivation');
     res.json({ 
       motivation: response,
       timeOfDay,
@@ -112,7 +112,7 @@ router.post('/outfit-feedback', upload.single('image'), async (req, res) => {
     
     Keep it encouraging and under 150 words.`;
 
-    const feedback = await OpenAI.analyzeImage(imageBuffer, imageType, prompt, 'outfit-feedback');
+    const feedback = await OpenAIService.analyzeImage(imageBuffer, imageType, prompt, 'outfit-feedback');
     res.json({ 
       feedback,
       weather,

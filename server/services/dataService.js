@@ -7,7 +7,7 @@ const {
   newsData,
   horoscopeData,
   getOutfitRecommendation
-} = require('../../shared/mockData');
+} = require('../../shared/data');
 
 class MockDataService {
   /**
