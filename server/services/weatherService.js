@@ -53,7 +53,14 @@ class WeatherService {
         icon: this.getWeatherIcon(current.condition.code, current.is_day),
         humidity: current.humidity,
         windSpeed: Math.round(current.wind_mph),
-        feelsLike: Math.round(current.feelslike_f)
+        feelsLike: Math.round(current.feelslike_f),
+        uvIndex: current.uv,
+        visibility: Math.round(current.vis_miles),
+        pressure: Math.round(current.pressure_mb),
+        windDirection: current.wind_dir,
+        gustSpeed: Math.round(current.gust_mph || 0),
+        cloudCover: current.cloud,
+        dewPoint: Math.round(current.dewpoint_f)
       },
       forecast: forecast.map((day, index) => ({
         day: index === 0 ? 'Today' : index === 1 ? 'Tomorrow' : new Date(day.date).toLocaleDateString('en-US', { weekday: 'long' }),
@@ -115,40 +122,7 @@ class WeatherService {
 
 
 
-  /**
-   * Get outfit recommendation based on weather
-   * @param {number} temperature - Temperature in Fahrenheit
-   * @param {string} condition - Weather condition
-   * @param {number} chanceOfRain - Chance of rain percentage
-   * @returns {string} - Outfit recommendation
-   */
-  getOutfitRecommendation(temperature, condition, chanceOfRain = 0) {
-    let recommendation = '';
 
-    // Temperature-based recommendations
-    if (temperature >= 80) {
-      recommendation = 'Light, breathable clothing. Shorts and t-shirt recommended.';
-    } else if (temperature >= 70) {
-      recommendation = 'Comfortable clothing. T-shirt and light pants or shorts.';
-    } else if (temperature >= 60) {
-      recommendation = 'Light jacket or sweater. Long pants recommended.';
-    } else if (temperature >= 50) {
-      recommendation = 'Warm jacket or coat. Consider layers.';
-    } else {
-      recommendation = 'Heavy coat, hat, and gloves. Bundle up!';
-    }
-
-    // Weather condition adjustments
-    if (condition.toLowerCase().includes('rain') || chanceOfRain > 50) {
-      recommendation += ' Don\'t forget an umbrella!';
-    } else if (condition.toLowerCase().includes('snow')) {
-      recommendation += ' Wear waterproof boots and warm layers.';
-    } else if (condition.toLowerCase().includes('wind')) {
-      recommendation += ' Consider a windbreaker.';
-    }
-
-    return recommendation;
-  }
 }
 
 module.exports = WeatherService;

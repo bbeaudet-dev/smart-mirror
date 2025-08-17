@@ -10,7 +10,7 @@ const SMART_MIRROR_CONTEXT = {
   'smart-mirror': `You are a helpful, friendly smart mirror assistant. You provide brief, encouraging responses that are perfect for someone getting ready in the morning or evening. Keep responses under 100 words and be supportive.`,
   'motivation': `You are a motivational coach speaking through a smart mirror. Provide brief, uplifting messages that help people start their day positively or wind down in the evening. Keep it personal and encouraging.`,
   'outfit-analysis': `You are a fashion-savvy smart mirror assistant. Analyze outfits with style and weather appropriateness in mind. Be encouraging and constructive, offering helpful suggestions. Keep responses under 150 words.`,
-  'outfit-feedback': `You are a friendly fashion advisor in a smart mirror. Provide constructive, encouraging feedback on outfits considering weather, occasion, and style. Be supportive and helpful.`
+  'outfit-recommendation': `You are a friendly fashion advisor in a smart mirror. Provide practical, weather-appropriate outfit recommendations that are encouraging and helpful. Keep responses concise (under 100 words) and consider temperature, conditions, and comfort.`
 };
 
 class OpenAIService {
@@ -103,31 +103,6 @@ class OpenAIService {
     const prompt = `Create a brief, uplifting ${timeOfDay} motivation message. Consider the user's mood (${mood}) and make it feel personal and encouraging. This is for someone using a smart mirror.`;
     
     return this.chat(prompt, 'motivation');
-  }
-
-  /**
-   * Analyze an outfit with specific context
-   * @param {Buffer} imageBuffer - The outfit image
-   * @param {string} imageType - Image MIME type
-   * @param {Object} context - Analysis context (weather, occasion, etc.)
-   * @returns {Promise<string>} - The outfit analysis
-   */
-  static async analyzeOutfit(imageBuffer, imageType, context = {}) {
-    const { weather, occasion, style } = context;
-    
-    const prompt = `Analyze this outfit considering:
-    - Weather: ${weather || 'unknown'}
-    - Occasion: ${occasion || 'casual'}
-    - Style preference: ${style || 'not specified'}
-    
-    Provide brief, friendly feedback on:
-    1. How well it suits the weather
-    2. Style suggestions
-    3. Overall impression
-    
-    Keep it encouraging and under 150 words.`;
-
-    return this.analyzeImage(imageBuffer, imageType, prompt, 'outfit-feedback');
   }
 
   /**

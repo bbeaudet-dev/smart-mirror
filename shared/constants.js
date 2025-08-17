@@ -11,9 +11,9 @@ const API_ENDPOINTS = {
   
   // AI endpoints
   AI_CHAT: '/api/ai/chat',
-  AI_ANALYZE_IMAGE: '/api/ai/analyze-image',
+
   AI_MOTIVATION: '/api/ai/motivation',
-  AI_OUTFIT_FEEDBACK: '/api/ai/outfit-feedback',
+  AI_ANALYZE_IMAGE: '/api/ai/analyze-image',
   
   // System endpoints
   HEALTH: '/api/health'
@@ -51,7 +51,7 @@ const AI_CONTEXTS = {
   SMART_MIRROR: 'smart-mirror',
   MOTIVATION: 'motivation',
   OUTFIT_ANALYSIS: 'outfit-analysis',
-  OUTFIT_FEEDBACK: 'outfit-feedback'
+  OUTFIT_RECOMMENDATION: 'outfit-recommendation'
 };
 
 // File upload limits
@@ -73,6 +73,5 @@ module.exports = {
   ROUTINE_PERIODS,
   NEWS_CATEGORIES,
   AI_CONTEXTS,
-  UPLOAD_LIMITS,
   DEV_CONFIG
 };

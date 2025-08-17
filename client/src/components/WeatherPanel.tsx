@@ -4,9 +4,10 @@ import './WeatherPanel.css';
 
 interface WeatherPanelProps {
   weather: WeatherData;
+  isRefreshing?: boolean;
 }
 
-const WeatherPanel: React.FC<WeatherPanelProps> = ({ weather }) => {
+const WeatherPanel: React.FC<WeatherPanelProps> = ({ weather, isRefreshing = false }) => {
   // Check if weather data has an error
   if (weather.error) {
     return (
@@ -24,8 +25,11 @@ const WeatherPanel: React.FC<WeatherPanelProps> = ({ weather }) => {
   }
 
   return (
-    <div className="weather-panel">
-      <h3 className="panel-title">Weather</h3>
+    <div className={`weather-panel ${isRefreshing ? 'refreshing' : ''}`}>
+      <h3 className="panel-title">
+        Weather
+        {isRefreshing && <span className="refresh-indicator"> ⟳</span>}
+      </h3>
       
       <div className="current-weather">
         <div className="current-temp">
@@ -35,6 +39,28 @@ const WeatherPanel: React.FC<WeatherPanelProps> = ({ weather }) => {
         <div className="current-condition">
           <span className="weather-icon">{weather.current.icon}</span>
           <span className="condition-text">{weather.current.condition}</span>
+        </div>
+        <div className="weather-details">
+          <div className="detail-item">
+            <span className="detail-label">Feels like:</span>
+            <span className="detail-value">{weather.current.feelsLike}°F</span>
+          </div>
+          <div className="detail-item">
+            <span className="detail-label">Humidity:</span>
+            <span className="detail-value">{weather.current.humidity}%</span>
+          </div>
+          <div className="detail-item">
+            <span className="detail-label">Wind:</span>
+            <span className="detail-value">{weather.current.windSpeed} mph {weather.current.windDirection}</span>
+          </div>
+          <div className="detail-item">
+            <span className="detail-label">UV Index:</span>
+            <span className="detail-value">{weather.current.uvIndex}</span>
+          </div>
+          <div className="detail-item">
+            <span className="detail-label">Visibility:</span>
+            <span className="detail-value">{weather.current.visibility} mi</span>
+          </div>
         </div>
       </div>
 

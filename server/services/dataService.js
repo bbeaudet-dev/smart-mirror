@@ -24,11 +24,26 @@ class MockDataService {
     try {
       // Get real weather data
       weather = await weatherService.getWeatherData(location);
-      outfitSuggestion = weatherService.getOutfitRecommendation(
-        weather.current.temperature,
-        weather.current.condition,
-        weather.forecast[0]?.chanceOfRain || 0
-      );
+      
+      // Get AI-generated outfit recommendation
+      try {
+        const OpenAIService = require('./openai');
+        const PromptService = require('./promptService');
+        const OutfitRecommendationService = require('./outfitRecommendationService');
+        
+        const currentHour = new Date().getHours();
+        const recommendationType = OutfitRecommendationService.getRecommendationType(currentHour);
+        const timeOfDay = OutfitRecommendationService.getCurrentTimeOfDay();
+        
+        const weatherForRecommendation = OutfitRecommendationService.getWeatherForRecommendation(weather, recommendationType);
+        
+        const prompt = PromptService.generateOutfitRecommendationPrompt(weatherForRecommendation);
+
+        outfitSuggestion = await OpenAIService.chat(prompt, 'outfit-recommendation');
+      } catch (aiError) {
+        console.error('AI outfit recommendation failed:', aiError.message);
+        outfitSuggestion = 'Unable to generate outfit recommendation';
+      }
     } catch (error) {
       console.error('Weather data unavailable:', error.message);
       weather = {
@@ -124,15 +139,7 @@ class MockDataService {
     return horoscopeData;
   }
 
-  /**
-   * Get outfit suggestion based on weather
-   * @param {number} temperature - Current temperature
-   * @param {string} condition - Weather condition
-   * @returns {Promise<string>} - Outfit recommendation
-   */
-  static async getOutfitSuggestion(temperature, condition) {
-    return weatherService.getOutfitRecommendation(temperature, condition);
-  }
+
 
   /**
    * Get current time-based routine
