@@ -1,6 +1,6 @@
 export interface WeatherData {
   current: {
-    temperature: number;
+    temperature: number | null;
     condition: string;
     icon: string;
   };
@@ -11,6 +11,10 @@ export interface WeatherData {
     condition: string;
     icon: string;
   }>;
+  error?: boolean;
+  message?: string;
+  location?: string;
+  lastUpdated?: string;
 }
 
 export interface CalendarEvent {
@@ -40,37 +44,7 @@ export interface HoroscopeData {
   mood: string;
 }
 
-// Mock Weather Data
-export const weatherData: WeatherData = {
-  current: {
-    temperature: 72,
-    condition: 'Sunny',
-    icon: '☀️'
-  },
-  forecast: [
-    {
-      day: 'Today',
-      high: 78,
-      low: 65,
-      condition: 'Sunny',
-      icon: '☀️'
-    },
-    {
-      day: 'Tomorrow',
-      high: 65,
-      low: 52,
-      condition: 'Rain',
-      icon: '🌧️'
-    },
-    {
-      day: 'Wednesday',
-      high: 70,
-      low: 58,
-      condition: 'Partly Cloudy',
-      icon: '⛅'
-    }
-  ]
-};
+
 
 // Mock Calendar Data
 export const calendarData: CalendarEvent[] = [
@@ -183,15 +157,4 @@ export const horoscopeData: HoroscopeData = {
   mood: 'Balanced and harmonious'
 };
 
-// Outfit recommendation based on weather
-export const getOutfitRecommendation = (temperature: number, condition: string): string => {
-  if (temperature < 50) {
-    return 'Heavy coat, scarf, and gloves';
-  } else if (temperature < 65) {
-    return 'Light jacket or sweater';
-  } else if (temperature < 75) {
-    return 'T-shirt and light pants';
-  } else {
-    return 'Shorts and tank top';
-  }
-};
+

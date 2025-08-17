@@ -99,7 +99,10 @@ class ApiClient {
    * @param {string} condition - Weather condition
    * @returns {Promise<Object>} - Outfit recommendation
    */
-  static async getOutfitRecommendation(temperature = 72, condition = 'sunny') {
+  static async getOutfitRecommendation(temperature, condition) {
+    if (!temperature || !condition) {
+      throw new Error('Temperature and condition are required for outfit recommendations');
+    }
     return this.get(`/api/outfit-suggestion?temperature=${temperature}&condition=${condition}`);
   }
 

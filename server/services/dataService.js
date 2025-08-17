@@ -1,22 +1,53 @@
 // Import mock data from shared directory
 const {
-  weatherData,
   calendarData,
   morningRoutine,
   eveningRoutine,
   newsData,
-  horoscopeData,
-  getOutfitRecommendation
+  horoscopeData
 } = require('../../shared/data');
+
+// Import real weather service
+const WeatherService = require('./weatherService');
+const weatherService = new WeatherService();
 
 class MockDataService {
   /**
    * Get comprehensive daily summary
+   * @param {string} location - Optional location override
    * @returns {Promise<Object>} - Complete daily data
    */
-  static async getDailySummary() {
+  static async getDailySummary(location) {
+    let weather = null;
+    let outfitSuggestion = null;
+    
+    try {
+      // Get real weather data
+      weather = await weatherService.getWeatherData(location);
+      outfitSuggestion = weatherService.getOutfitRecommendation(
+        weather.current.temperature,
+        weather.current.condition,
+        weather.forecast[0]?.chanceOfRain || 0
+      );
+    } catch (error) {
+      console.error('Weather data unavailable:', error.message);
+      weather = {
+        error: true,
+        message: 'Weather data unavailable',
+        current: {
+          temperature: null,
+          condition: 'Unknown',
+          icon: '❓'
+        },
+        forecast: [],
+        location: location || 'Unknown',
+        lastUpdated: new Date().toISOString()
+      };
+      outfitSuggestion = 'Weather data unavailable for outfit recommendations';
+    }
+    
     return {
-      weather: weatherData,
+      weather: weather,
       calendar: calendarData,
       routines: {
         morning: morningRoutine,
@@ -24,19 +55,33 @@ class MockDataService {
       },
       news: newsData,
       horoscope: horoscopeData,
-      outfitSuggestion: getOutfitRecommendation(
-        weatherData.current.temperature,
-        weatherData.current.condition
-      )
+      outfitSuggestion: outfitSuggestion
     };
   }
 
   /**
    * Get weather data
+   * @param {string} location - Optional location override
    * @returns {Promise<Object>} - Weather information
    */
-  static async getWeather() {
-    return weatherData;
+  static async getWeather(location) {
+    try {
+      return await weatherService.getWeatherData(location);
+    } catch (error) {
+      console.error('Weather data unavailable:', error.message);
+      return {
+        error: true,
+        message: 'Weather data unavailable',
+        current: {
+          temperature: null,
+          condition: 'Unknown',
+          icon: '❓'
+        },
+        forecast: [],
+        location: location || 'Unknown',
+        lastUpdated: new Date().toISOString()
+      };
+    }
   }
 
   /**
@@ -86,7 +131,7 @@ class MockDataService {
    * @returns {Promise<string>} - Outfit recommendation
    */
   static async getOutfitSuggestion(temperature, condition) {
-    return getOutfitRecommendation(temperature, condition);
+    return weatherService.getOutfitRecommendation(temperature, condition);
   }
 
   /**

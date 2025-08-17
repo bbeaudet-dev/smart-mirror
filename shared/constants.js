@@ -33,16 +33,7 @@ const ROUTINE_PERIODS = {
   }
 };
 
-// Weather conditions and their icons
-const WEATHER_ICONS = {
-  sunny: '☀️',
-  cloudy: '☁️',
-  rainy: '🌧️',
-  snowy: '❄️',
-  stormy: '⛈️',
-  foggy: '🌫️',
-  partly_cloudy: '⛅'
-};
+
 
 // News categories and their colors
 const NEWS_CATEGORIES = {
@@ -80,7 +71,6 @@ const DEV_CONFIG = {
 module.exports = {
   API_ENDPOINTS,
   ROUTINE_PERIODS,
-  WEATHER_ICONS,
   NEWS_CATEGORIES,
   AI_CONTEXTS,
   UPLOAD_LIMITS,
