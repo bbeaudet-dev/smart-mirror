@@ -1,5 +1,5 @@
 import React from 'react';
-import { CalendarEvent } from '../data/mockData';
+import { CalendarEvent } from '../data/types';
 import './CalendarPanel.css';
 
 interface CalendarPanelProps {

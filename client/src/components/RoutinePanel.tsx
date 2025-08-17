@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { RoutineItem } from '../data/mockData';
+import { RoutineItem } from '../data/types';
 import './RoutinePanel.css';
 
 interface RoutinePanelProps {

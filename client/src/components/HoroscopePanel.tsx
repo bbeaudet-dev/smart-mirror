@@ -1,5 +1,5 @@
 import React from 'react';
-import { HoroscopeData } from '../data/mockData';
+import { HoroscopeData } from '../data/types';
 import './HoroscopePanel.css';
 
 interface HoroscopePanelProps {
