@@ -1,166 +1,202 @@
-# Smart Mirror Interface
+# AI Smart Mirror
 
-A React-based smart mirror interface optimized for 16" 2.5K displays, designed for fullscreen viewing with a dark theme and high contrast for mirror visibility.
+An enhanced smart mirror platform built on MagicMirror² with advanced AI integration for outfit recommendations, motivational messages, and intelligent insights.
 
 ## Features
 
-### 🕐 Time & Date Display
+### 🤖 AI-Powered Features
 
-- Real-time clock updating every second
-- Large, readable fonts with high contrast
-- Prominent positioning at the top of the interface
+- **AI Outfit Recommendations**: Contextual outfit suggestions based on weather, calendar events, and personal style
+- **AI Motivation**: Personalized motivational messages based on time of day and mood
+- **AI Vision**: Real-time outfit analysis using webcam and OpenAI Vision
+- **Smart Weather Insights**: AI-enhanced weather analysis with personalized recommendations
 
-### 🌤️ Weather Panel
+### 🕐 Core Smart Mirror Features
 
-- Current weather conditions with temperature and icons
-- 3-day forecast with high/low temperatures
-- Smart outfit recommendations based on weather data
-- Mock data included for demonstration
+- **Time & Date Display**: Real-time clock with customizable formats
+- **Weather Integration**: Current conditions and forecasts with multiple providers
+- **Calendar Integration**: Google Calendar, iCal, and other calendar services
+- **News Feed**: RSS feeds and news API integration
+- **Music Controls**: Spotify integration with playback controls
 
-### 📅 Calendar Integration
+### 🎨 Enhanced UI/UX
 
-- Today's schedule display
-- Event categorization (meetings, appointments, reminders)
-- Color-coded event types with icons
-- Summary statistics
+- **Modern Design**: Clean, high-contrast interface optimized for mirror viewing
+- **Responsive Layout**: Adapts to different screen sizes and orientations
+- **Customizable Themes**: Multiple visual themes and styling options
+- **Smooth Animations**: Subtle transitions and visual effects
 
-### ✅ Daily Routines
+## Architecture
 
-- Time-based routine switching (morning 6-11 AM, evening 7-11 PM)
-- Interactive checklist with progress tracking
-- Morning routine: Shower, Make bed, Pack lunch, Take vitamins
-- Evening routine: Plan tomorrow, Pack work bag, Read 30 min, Set alarm
-
-### 📰 News Headlines
-
-- Latest news with category filtering
-- Technology, Business, Science, and Environment categories
-- Color-coded category indicators
-- News statistics and summaries
-
-### 🔮 Daily Horoscope
-
-- Zodiac sign display with mystical styling
-- Daily reading with lucky numbers and mood indicators
-- Interactive zodiac icons and cosmic theme
-
-## Technical Features
-
-- **Responsive Design**: Optimized for 16" 2.5K displays with mobile fallback
-- **Dark Theme**: High contrast design for mirror visibility
-- **Auto-refresh**: Content updates every 30 seconds
-- **Smooth Animations**: Subtle transitions and hover effects
-- **No User Interaction**: Pure display interface
-- **TypeScript**: Full type safety and better development experience
-
-## Layout Structure
+This project combines the robust MagicMirror² framework with custom AI modules and a Node.js backend:
 
 ```
-┌─────────────────────────────────────┐
-│           TIME & DATE               │
-├─────────────┬─────────────┬─────────┤
-│   WEATHER   │  CALENDAR   │ ROUTINE │
-├─────────────┴─────────────┴─────────┤
-│              NEWS                   │
-├─────────────────────────────────────┤
-│            HOROSCOPE                │
-└─────────────────────────────────────┘
+ai-smart-mirror/
+├── [MagicMirror² Core]        # Base framework and built-in modules
+├── modules/                    # Custom AI modules
+│   ├── ai-outfit-recommendation/
+│   ├── ai-motivation/
+│   ├── ai-vision/
+│   └── enhanced-weather/
+├── server/                     # Node.js backend with AI services
+│   ├── services/
+│   │   ├── openai.js
+│   │   ├── weatherService.js
+│   │   └── calendarService.js
+│   └── routes/
+│       ├── ai.js
+│       └── api.js
+└── shared/                     # Shared utilities and types
+    ├── types/
+    └── utils/
 ```
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js (v14 or higher)
+- Node.js (v16 or higher)
 - npm or yarn
+- OpenAI API key
+- Weather API key (optional)
+- Google Calendar credentials (optional)
 
 ### Installation
 
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/bbeaudet-dev/smart-mirror.git
-cd smart-mirror
+git clone https://github.com/yourusername/ai-smart-mirror.git
+cd ai-smart-mirror
 ```
 
 2. Install dependencies:
 
 ```bash
 npm install
+cd server && npm install
 ```
 
-3. Start the development server:
+3. Set up environment variables:
+
+```bash
+cp .env.example .env
+# Edit .env with your API keys
+```
+
+4. Start the backend server:
+
+```bash
+cd server
+npm start
+```
+
+5. Start MagicMirror²:
 
 ```bash
 npm start
 ```
 
-4. Open [http://localhost:3000](http://localhost:3000) to view the smart mirror interface.
+6. Open [http://localhost:8080](http://localhost:8080) to view the smart mirror.
 
-### Building for Production
+## Configuration
+
+### AI Module Configuration
+
+```javascript
+// config/config-ai.js
+{
+  modules: [
+    {
+      module: "ai-outfit-recommendation",
+      position: "middle_center",
+      config: {
+        updateInterval: 300000,
+        apiEndpoint: "http://localhost:5000/api/ai/outfit-recommendation",
+      },
+    },
+    {
+      module: "ai-motivation",
+      position: "bottom_center",
+      config: {
+        updateInterval: 600000,
+        apiEndpoint: "http://localhost:5000/api/ai/motivation",
+      },
+    },
+  ];
+}
+```
+
+### Environment Variables
 
 ```bash
-npm run build
+# .env
+OPENAI_API_KEY=your_openai_api_key
+WEATHER_API_KEY=your_weather_api_key
+GOOGLE_CALENDAR_CLIENT_ID=your_google_client_id
+GOOGLE_CALENDAR_CLIENT_SECRET=your_google_client_secret
 ```
 
-This creates an optimized production build in the `build` folder.
+## Development
 
-## Project Structure
+### Adding New AI Modules
 
-```
-src/
-├── components/           # React components
-│   ├── TimeDisplay.tsx   # Clock and date component
-│   ├── WeatherPanel.tsx  # Weather information
-│   ├── CalendarPanel.tsx # Schedule display
-│   ├── RoutinePanel.tsx  # Daily routines
-│   ├── NewsPanel.tsx     # News headlines
-│   └── HoroscopePanel.tsx # Daily horoscope
-├── data/
-│   └── mockData.ts       # Mock data for all panels
-├── App.tsx              # Main application component
-├── App.css              # Main layout styles
-└── index.css            # Global styles
+1. Create a new module directory:
+
+```bash
+mkdir modules/ai-new-feature
 ```
 
-## Customization
+2. Create the module file:
 
-### Mock Data
+```typescript
+// modules/ai-new-feature/index.ts
+Module.register("ai-new-feature", {
+  defaults: {
+    apiEndpoint: "http://localhost:5000/api/ai/new-feature",
+    updateInterval: 300000,
+  },
 
-All data is currently mock data located in `src/data/mockData.ts`. You can:
+  start() {
+    this.fetchData();
+    this.scheduleUpdate();
+  },
 
-- Update weather information
-- Modify calendar events
-- Change news headlines
-- Adjust routine tasks
-- Update horoscope content
+  async fetchData() {
+    // Your AI integration logic
+  },
+});
+```
 
-### Styling
+3. Add to configuration:
 
-The interface uses a dark theme with:
+```javascript
+// config/config-ai.js
+{
+  module: "ai-new-feature",
+  position: "top_right",
+  config: {
+    updateInterval: 300000
+  }
+}
+```
 
-- Background: Dark gradient with subtle animations
-- Text: White/light gray for high contrast
-- Panels: Semi-transparent with backdrop blur
-- Accent colors: Blue, green, pink, and purple themes
+### Backend API Development
 
-### Responsive Breakpoints
+The backend provides RESTful APIs for AI features:
 
-- **Desktop**: 3-column grid layout (optimized for 2.5K displays)
-- **Tablet**: 2-column grid layout
-- **Mobile**: Single column layout
-
-## Future Enhancements
-
-- [ ] Real API integration for weather data
-- [ ] Calendar API integration (Google Calendar, Outlook)
-- [ ] News API integration
-- [ ] Voice commands
-- [ ] Gesture controls
-- [ ] Camera integration for mirror functionality
-- [ ] Smart home integration
-- [ ] Customizable layouts
-- [ ] User preferences and settings
+```javascript
+// server/routes/ai.js
+router.post("/outfit-recommendation", async (req, res) => {
+  const { temperature, condition, timeOfDay } = req.body;
+  const recommendation = await OpenAIService.generateOutfitRecommendation({
+    temperature,
+    condition,
+    timeOfDay,
+  });
+  res.json({ recommendation });
+});
+```
 
 ## Contributing
 
@@ -176,6 +212,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
-- Inspired by smart mirror projects and IoT home automation
-- Built with React and TypeScript for modern web development
-- Designed for optimal mirror visibility and user experience
+- Built on [MagicMirror²](https://github.com/MagicMirrorOrg/MagicMirror) by Michael Teeuw
+- AI integration powered by OpenAI
+- Weather data from various providers
+- Calendar integration with Google Calendar
