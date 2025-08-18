@@ -9,11 +9,7 @@ import LocationService from '../services/locationService';
 export const useSmartMirrorData = () => {
   // Main data state
   const [data, setData] = useState({
-    weather: null,
-    calendar: [],
-    routines: { morning: [], evening: [] },
-    news: [],
-    horoscope: null
+    weather: null
   });
 
   // AI data state
@@ -28,10 +24,7 @@ export const useSmartMirrorData = () => {
   const [location, setLocation] = useState(null);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [refreshingStates, setRefreshingStates] = useState({
-    weather: false,
-    calendar: false,
-    news: false,
-    horoscope: false
+    weather: false
   });
 
   // Initialize location detection
@@ -86,14 +79,9 @@ export const useSmartMirrorData = () => {
 
     // Auto-refresh data at appropriate intervals (stale while revalidate)
     const weatherInterval = setInterval(() => fetchData('weather'), 3 * 60 * 1000); // Weather every 3 minutes
-    const calendarInterval = setInterval(() => fetchData('calendar'), 8 * 60 * 1000); // Calendar every 8 minutes 
-    // TODO: Replace calendar polling with Google Calendar webhooks when integrating real calendar API
-    const dailyDataInterval = setInterval(() => fetchData('news'), 60 * 60 * 1000); // Horoscope, news, routines every hour
     
     return () => {
       clearInterval(weatherInterval);
-      clearInterval(calendarInterval);
-      clearInterval(dailyDataInterval);
     };
   }, [location]);
 

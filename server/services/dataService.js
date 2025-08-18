@@ -1,11 +1,4 @@
-// Import mock data from shared directory
-const {
-  calendarData,
-  morningRoutine,
-  eveningRoutine,
-  newsData,
-  horoscopeData
-} = require('../../shared/data');
+
 
 // Import real weather service
 const WeatherService = require('./weatherService');
@@ -63,13 +56,6 @@ class MockDataService {
     
     return {
       weather: weather,
-      calendar: calendarData,
-      routines: {
-        morning: morningRoutine,
-        evening: eveningRoutine
-      },
-      news: newsData,
-      horoscope: horoscopeData,
       outfitSuggestion: outfitSuggestion
     };
   }
@@ -99,76 +85,13 @@ class MockDataService {
     }
   }
 
-  /**
-   * Get calendar events
-   * @returns {Promise<Array>} - Calendar events
-   */
-  static async getCalendarEvents() {
-    return calendarData;
-  }
-
-  /**
-   * Get routine by type
-   * @param {string} type - 'morning' or 'evening'
-   * @returns {Promise<Array|null>} - Routine tasks
-   */
-  static async getRoutine(type) {
-    switch (type.toLowerCase()) {
-      case 'morning':
-        return morningRoutine;
-      case 'evening':
-        return eveningRoutine;
-      default:
-        return null;
-    }
-  }
-
-  /**
-   * Get news headlines
-   * @returns {Promise<Array>} - News articles
-   */
-  static async getNews() {
-    return newsData;
-  }
-
-  /**
-   * Get horoscope data
-   * @returns {Promise<Object>} - Horoscope information
-   */
-  static async getHoroscope() {
-    return horoscopeData;
-  }
 
 
 
-  /**
-   * Get current time-based routine
-   * @returns {Promise<Object>} - Current routine based on time
-   */
-  static async getCurrentRoutine() {
-    const now = new Date();
-    const hour = now.getHours();
-    
-    if (hour >= 6 && hour < 11) {
-      return {
-        type: 'morning',
-        routine: morningRoutine,
-        timeOfDay: 'morning'
-      };
-    } else if (hour >= 19 && hour < 23) {
-      return {
-        type: 'evening',
-        routine: eveningRoutine,
-        timeOfDay: 'evening'
-      };
-    } else {
-      return {
-        type: 'none',
-        routine: [],
-        timeOfDay: hour < 6 ? 'night' : hour < 19 ? 'day' : 'night'
-      };
-    }
-  }
+
+
+
+
 
   /**
    * Get system status

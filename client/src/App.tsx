@@ -5,9 +5,6 @@ import './App.css';
 import TimeDisplay from './components/TimeDisplay';
 import WeatherPanel from './components/WeatherPanel';
 import CalendarPanel from './components/CalendarPanel';
-import RoutinePanel from './components/RoutinePanel';
-import NewsPanel from './components/NewsPanel';
-import HoroscopePanel from './components/HoroscopePanel';
 import MotivationPanel from './components/MotivationPanel';
 import OutfitPanel from './components/OutfitPanel';
 
@@ -50,26 +47,10 @@ function App() {
 
           {/* Calendar Panel */}
           <div className="panel calendar-section">
-            <CalendarPanel events={data.calendar} />
+            <CalendarPanel />
           </div>
 
-          {/* Routine Panel */}
-          <div className="panel routine-section">
-            <RoutinePanel 
-              morningRoutine={data.routines.morning}
-              eveningRoutine={data.routines.evening}
-            />
-          </div>
 
-          {/* News Panel */}
-          <div className="panel news-section">
-            <NewsPanel news={data.news} />
-          </div>
-
-          {/* Horoscope Panel */}
-          <div className="panel horoscope-section">
-            {data.horoscope && <HoroscopePanel horoscope={data.horoscope} />}
-          </div>
 
           {/* AI Motivation Panel */}
           <div className="panel motivation-section">
