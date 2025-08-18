@@ -113,3 +113,6 @@ Desktop.ini
 # Temporary files
 *.tmp
 *.temp
+
+# OAuth tokens
+server/data/tokens.json

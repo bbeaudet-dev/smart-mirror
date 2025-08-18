@@ -82,6 +82,85 @@
   font-size: 1rem;
 }
 
+/* Calendar Authentication */
+.calendar-auth {
+  text-align: center;
+  padding: 30px 20px;
+  color: #b2bec3;
+}
+
+.auth-icon {
+  font-size: 3rem;
+  margin-bottom: 15px;
+  opacity: 0.5;
+}
+
+.auth-button {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  margin-top: 15px;
+}
+
+.auth-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Next Event */
+.next-event {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  margin-bottom: 15px;
+  background: rgba(255, 193, 7, 0.1);
+  border-radius: 10px;
+  border-left: 4px solid #ffc107;
+}
+
+.next-event-icon {
+  font-size: 1.5rem;
+  margin-right: 15px;
+  width: 30px;
+  text-align: center;
+}
+
+.next-event-details {
+  flex: 1;
+}
+
+.next-event-title {
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 5px;
+  color: #ffffff;
+}
+
+.next-event-time {
+  font-size: 0.9rem;
+  color: #ffc107;
+  font-weight: 500;
+}
+
+/* Event Location */
+.event-location {
+  font-size: 0.8rem;
+  color: #74b9ff;
+  margin-top: 3px;
+}
+
+/* Loading and Error States */
+.loading, .error {
+  text-align: center;
+  padding: 20px;
+  color: #b2bec3;
+}
+
 .calendar-summary {
   padding: 15px;
   background: rgba(255, 255, 255, 0.05);
