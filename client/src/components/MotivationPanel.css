@@ -1,9 +1,9 @@
 .motivation-panel {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-radius: 12px;
-  padding: 20px;
-  color: white;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  background: transparent;
+  border-radius: 0;
+  padding: 0;
+  color: var(--color-text);
+  box-shadow: none;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -13,25 +13,29 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  padding-bottom: 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid var(--color-text-dimmed);
+  padding-bottom: 5px;
 }
 
 .motivation-header h3 {
   margin: 0;
-  font-size: 1.4rem;
-  font-weight: 600;
-  color: white;
+  font-size: var(--font-size-xsmall);
+  font-weight: 400;
+  color: var(--color-text);
+  text-transform: uppercase;
+  font-family: var(--font-primary), Arial, Helvetica, sans-serif;
 }
 
 .time-of-day {
-  background: rgba(255, 255, 255, 0.2);
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 0.9rem;
-  font-weight: 500;
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  font-size: var(--font-size-xsmall);
+  font-weight: 400;
   text-transform: capitalize;
+  color: var(--color-text-dimmed);
+  font-family: var(--font-primary);
 }
 
 .motivation-content {
@@ -40,14 +44,16 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  font-size: 1.1rem;
-  line-height: 1.6;
+  font-size: var(--font-size-small);
+  line-height: 1.25;
   font-weight: 400;
+  font-family: var(--font-primary);
 }
 
 .motivation-content p {
   margin: 0;
   max-width: 100%;
+  color: var(--color-text);
 }
 
 .motivation-content.loading {
@@ -55,9 +61,10 @@
 }
 
 .loading-dots {
-  font-size: 1.5rem;
-  font-weight: bold;
+  font-size: var(--font-size-medium);
+  font-weight: 400;
   animation: pulse 1.5s ease-in-out infinite;
+  color: var(--color-text-dimmed);
 }
 
 @keyframes pulse {

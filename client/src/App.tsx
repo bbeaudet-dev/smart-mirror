@@ -4,7 +4,7 @@ import './App.css';
 // Components
 import TimeDisplay from './components/TimeDisplay';
 import WeatherPanel from './components/WeatherPanel';
-import CalendarPanel from './components/CalendarPanel';
+import CalendarPanel from './mirror-modules/calendar/CalendarPanel';
 import MotivationPanel from './components/MotivationPanel';
 import OutfitPanel from './components/OutfitPanel';
 
@@ -41,19 +41,17 @@ function App() {
         {/* Main Content Grid */}
         <div className="content-grid">
           {/* Weather Panel */}
-          <div className="panel weather-section">
+          <div className="panel weather-section module">
             {data.weather && <WeatherPanel weather={data.weather} isRefreshing={refreshingStates.weather} />}
           </div>
 
           {/* Calendar Panel */}
-          <div className="panel calendar-section">
+          <div className="panel calendar-section module">
             <CalendarPanel />
           </div>
 
-
-
           {/* AI Motivation Panel */}
-          <div className="panel motivation-section">
+          <div className="panel motivation-section module">
             <MotivationPanel 
               motivation={aiData.motivation}
               timeOfDay={new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 17 ? 'afternoon' : 'evening'}
@@ -62,7 +60,7 @@ function App() {
           </div>
 
           {/* AI Outfit Panel */}
-          <div className="panel outfit-section">
+          <div className="panel outfit-section module">
             <OutfitPanel 
               outfitRecommendation={aiData.outfitRecommendation}
               weather={(data.weather as any)?.current ? { temperature: (data.weather as any).current.temperature, condition: (data.weather as any).current.condition } : null}
