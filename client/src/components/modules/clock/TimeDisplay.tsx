@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import './TimeDisplay.css';
 
 const TimeDisplay: React.FC = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -37,13 +36,21 @@ const TimeDisplay: React.FC = () => {
   const { hours, minutes, seconds, period } = formatTime(currentTime);
 
   return (
-    <div className="time-display">
-      <div className="time">
-        <span className="time-main">{hours}:{minutes}</span>
-        <span className="time-seconds">:{seconds}</span>
-        <span className="time-period"> {period}</span>
+    <div className="text-center text-mirror-text-bright">
+      <div className="mb-2">
+        <span className="text-mirror-2xl font-light font-mirror-primary tracking-tighter leading-none">
+          {hours}:{minutes}
+        </span>
+        <span className="text-mirror-xl font-light text-mirror-text-dimmed ml-1">
+          :{seconds}
+        </span>
+        <span className="text-mirror-xl font-light text-mirror-text ml-1">
+          {period}
+        </span>
       </div>
-      <div className="date">{formatDate(currentTime)}</div>
+      <div className="text-mirror-lg font-normal text-mirror-text font-mirror-primary uppercase">
+        {formatDate(currentTime)}
+      </div>
     </div>
   );
 };
