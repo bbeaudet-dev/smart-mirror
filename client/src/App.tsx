@@ -4,7 +4,7 @@ import './App.css';
 // Components
 import TimeDisplay from './components/TimeDisplay';
 import WeatherPanel from './components/WeatherPanel';
-import CalendarPanel from './mirror-modules/calendar/CalendarPanel';
+import CalendarPanel from './components/CalendarPanel';
 import MotivationPanel from './components/MotivationPanel';
 import OutfitPanel from './components/OutfitPanel';
 
