@@ -1,12 +1,10 @@
 import React from 'react';
-import './App.css';
 
 // Components
-import TimeDisplay from './components/TimeDisplay';
-import WeatherPanel from './components/WeatherPanel';
-import CalendarPanel from './components/CalendarPanel';
-import MotivationPanel from './components/MotivationPanel';
-import OutfitPanel from './components/OutfitPanel';
+import TimeDisplay from './components/modules/clock/TimeDisplay';
+import WeatherPanel from './components/modules/weather/WeatherPanel';
+import CalendarPanel from './components/modules/calendar/CalendarPanel';
+import WisdomPanel from './components/modules/wisdom/WisdomPanel';
 
 // Custom Hook
 import { useSmartMirrorData } from './hooks/useSmartMirrorData';
@@ -16,54 +14,55 @@ function App() {
 
   if (isInitialLoad) {
     return (
-      <div className="smart-mirror">
-        <div className="loading">Loading...</div>
+      <div className="w-full h-full bg-mirror-bg text-mirror-text font-mirror-primary">
+        <div className="flex justify-center items-center h-full text-mirror-lg text-mirror-text">
+          Loading...
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="smart-mirror">
-        <div className="error">Error: {error}</div>
+      <div className="w-full h-full bg-mirror-bg text-mirror-text font-mirror-primary">
+        <div className="flex justify-center items-center h-full text-mirror-lg text-red-400">
+          Error: {error}
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="smart-mirror">
-      <div className="mirror-container">
+    <div className="w-full h-full bg-mirror-bg text-mirror-text font-mirror-primary">
+      <div className="w-full h-full flex flex-col">
         {/* Time Display - Top Center */}
-        <div className="time-section">
+        <div className="flex justify-center items-center py-5 mb-mirror-gap">
           <TimeDisplay />
         </div>
 
         {/* Main Content Grid */}
-        <div className="content-grid">
-          {/* Weather Panel */}
-          <div className="panel weather-section module">
-            {data.weather && <WeatherPanel weather={data.weather} isRefreshing={refreshingStates.weather} />}
+        <div className="flex-1 grid grid-cols-3 gap-mirror-gap min-h-0 overflow-hidden">
+          {/* Weather Panel (includes outfit recommendations) */}
+          <div className="weather-section">
+            {data.weather && (
+              <WeatherPanel 
+                weather={data.weather} 
+                isRefreshing={refreshingStates.weather}
+                outfitRecommendation={aiData.outfitRecommendation}
+                outfitLoading={aiLoading}
+              />
+            )}
           </div>
 
           {/* Calendar Panel */}
-          <div className="panel calendar-section module">
+          <div className="calendar-section">
             <CalendarPanel />
           </div>
 
-          {/* AI Motivation Panel */}
-          <div className="panel motivation-section module">
-            <MotivationPanel 
+          {/* Wisdom Panel */}
+          <div className="wisdom-section">
+            <WisdomPanel 
               motivation={aiData.motivation}
-              timeOfDay={new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 17 ? 'afternoon' : 'evening'}
-              loading={aiLoading}
-            />
-          </div>
-
-          {/* AI Outfit Panel */}
-          <div className="panel outfit-section module">
-            <OutfitPanel 
-              outfitRecommendation={aiData.outfitRecommendation}
-              weather={(data.weather as any)?.current ? { temperature: (data.weather as any).current.temperature, condition: (data.weather as any).current.condition } : null}
               loading={aiLoading}
             />
           </div>

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import CalendarClient from '../services/calendarClient';
-import './CalendarPanel.css';
+import CalendarClient from '../../../services/calendarClient';
 
 interface CalendarEvent {
   id: string;
@@ -118,13 +117,15 @@ const CalendarPanel: React.FC<CalendarPanelProps> = ({ events: propEvents }) => 
 
   if (!isAuthenticated) {
     return (
-      <div className="calendar-panel">
-        <h3 className="panel-title">Calendar</h3>
-        <div className="calendar-auth">
-          <div className="auth-icon">🔗</div>
-          <p>Connect your Google Calendar</p>
+      <div className="flex flex-col h-full">
+        <h3 className="mirror-header">Calendar</h3>
+        <div className="flex-1 flex flex-col items-center justify-center text-center">
+          <div className="text-mirror-lg text-mirror-text-dimmed mb-2">🔗</div>
+          <p className="text-mirror-sm text-mirror-text font-mirror-primary mb-4">
+            Connect your Google Calendar
+          </p>
           <button 
-            className="auth-button"
+            className="border border-mirror-text-dimmed text-mirror-text px-3 py-1 text-mirror-xs font-mirror-primary hover:border-mirror-text hover:text-mirror-text-bright transition-colors"
             onClick={async () => {
               try {
                 const { authUrl } = await CalendarClient.getAuthUrl() as AuthUrl;
@@ -143,63 +144,81 @@ const CalendarPanel: React.FC<CalendarPanelProps> = ({ events: propEvents }) => 
 
   if (isLoading) {
     return (
-      <div className="calendar-panel">
-        <h3 className="panel-title">Today's Schedule</h3>
-        <div className="loading">Loading calendar...</div>
+      <div className="flex flex-col h-full">
+        <h3 className="mirror-header">Today's Schedule</h3>
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-mirror-sm text-mirror-text-dimmed font-mirror-primary">
+            Loading calendar...
+          </div>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="calendar-panel">
-        <h3 className="panel-title">Today's Schedule</h3>
-        <div className="error">Error: {error}</div>
+      <div className="flex flex-col h-full">
+        <h3 className="mirror-header">Today's Schedule</h3>
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-mirror-sm text-mirror-text-dimmed font-mirror-primary">
+            Error: {error}
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="calendar-panel">
-      <h3 className="panel-title">Today's Schedule</h3>
+    <div className="flex flex-col h-full">
+      <h3 className="mirror-header">Today's Schedule</h3>
       
       {calendarData?.nextEvent && (
-        <div className="next-event">
-          <div className="next-event-icon">⏰</div>
-          <div className="next-event-details">
-            <div className="next-event-title">{calendarData.nextEvent.summary}</div>
-            <div className="next-event-time">
+        <div className="flex items-center mb-3 pl-2 border-l-2 border-mirror-text-bright">
+          <div className="text-mirror-sm text-mirror-text-bright mr-2">⏰</div>
+          <div className="flex-1">
+            <div className="text-mirror-xs text-mirror-text-bright font-mirror-primary">
+              {calendarData.nextEvent.summary}
+            </div>
+            <div className="text-mirror-xs text-mirror-text-bright font-mirror-primary">
               {calendarData.nextEvent.minutesUntil} minutes
             </div>
           </div>
         </div>
       )}
       
-      <div className="events-list">
+      <div className="flex-1">
         {events.length > 0 ? (
-          events.map((event: CalendarEvent) => (
-            <div 
-              key={event.id} 
-              className="event-item"
-            >
-              <div className="event-icon">
-                {getEventIcon(event)}
-              </div>
-              <div className="event-details">
-                <div className="event-title">{event.summary}</div>
-                <div className="event-time">
-                  {CalendarClient.formatEventTime(event.start, event.end, event.isAllDay)}
+          <div className="space-y-1">
+            {events.map((event: CalendarEvent) => (
+              <div 
+                key={event.id} 
+                className="flex items-center"
+              >
+                <div className="text-mirror-sm text-mirror-text-dimmed mr-2">
+                  {getEventIcon(event)}
                 </div>
-                {event.location && (
-                  <div className="event-location">📍 {event.location}</div>
-                )}
+                <div className="flex-1">
+                  <div className="text-mirror-xs text-mirror-text font-mirror-primary">
+                    {event.summary}
+                  </div>
+                  <div className="text-mirror-xs text-mirror-text-dimmed font-mirror-primary">
+                    {CalendarClient.formatEventTime(event.start, event.end, event.isAllDay)}
+                  </div>
+                  {event.location && (
+                    <div className="text-mirror-xs text-mirror-text-dimmed font-mirror-primary">
+                      📍 {event.location}
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          ))
+            ))}
+          </div>
         ) : (
-          <div className="no-events">
-            <div className="no-events-icon">📅</div>
-            <p>No events scheduled for today</p>
+          <div className="flex-1 flex flex-col items-center justify-center text-center">
+            <div className="text-mirror-lg text-mirror-text-dimmed mb-2">📅</div>
+            <p className="text-mirror-sm text-mirror-text font-mirror-primary">
+              No events scheduled for today
+            </p>
           </div>
         )}
       </div>
