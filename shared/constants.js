@@ -63,9 +63,9 @@ const UPLOAD_LIMITS = {
 // Development configuration
 const DEV_CONFIG = {
   CLIENT_PORT: 3000,
-  SERVER_PORT: 5000,
+  SERVER_PORT: 5005,
   CLIENT_URL: 'http://localhost:3000',
-  SERVER_URL: 'http://localhost:5000'
+  SERVER_URL: 'http://localhost:5005'
 };
 
 module.exports = {
