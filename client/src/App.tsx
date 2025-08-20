@@ -1,16 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 // Components
 import TimeDisplay from './components/modules/clock/TimeDisplay';
 import WeatherPanel from './components/modules/weather/WeatherPanel';
 import CalendarPanel from './components/modules/calendar/CalendarPanel';
 import WisdomPanel from './components/modules/wisdom/WisdomPanel';
+import WebcamOverlay from './components/modules/webcam/WebcamOverlay';
 
 // Custom Hook
 import { useSmartMirrorData } from './hooks/useSmartMirrorData';
 
 function App() {
   const { data, aiData, isInitialLoad, error, aiLoading, refreshingStates } = useSmartMirrorData();
+  const [isWebcamOpen, setIsWebcamOpen] = useState(false);
 
   if (isInitialLoad) {
     return (
@@ -38,6 +40,16 @@ function App() {
         {/* Time Display - Top Center */}
         <div className="flex justify-center items-center py-5 mb-mirror-gap">
           <TimeDisplay />
+        </div>
+
+        {/* Webcam Button - Top Right */}
+        <div className="absolute top-4 right-4 z-10">
+          <button
+            onClick={() => setIsWebcamOpen(true)}
+            className="px-4 py-2 bg-mirror-accent text-mirror-bg rounded-lg hover:bg-mirror-accent-hover transition-colors"
+          >
+            📷 Outfit Analysis
+          </button>
         </div>
 
         {/* Main Content Grid */}
@@ -68,6 +80,12 @@ function App() {
           </div>
         </div>
       </div>
+
+      {/* Webcam Overlay */}
+      <WebcamOverlay 
+        isOpen={isWebcamOpen} 
+        onClose={() => setIsWebcamOpen(false)} 
+      />
     </div>
   );
 }
