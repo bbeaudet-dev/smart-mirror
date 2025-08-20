@@ -2,11 +2,12 @@
 
 ## Project Overview
 
-Building an AI-powered smart mirror with live outfit analysis and interactive features. This will be demoed as a graduation project showcasing advanced AI integration with physical hardware.
+Building an AI-powered smart mirror with live outfit analysis and other features. This will be demoed as a graduation project showcasing advanced AI integration with physical hardware.
 
-**Timeline**: 8 days (Tuesday to next Wednesday)
+**Timeline**: 1 Week (Wednesday to next Wednesday)
 **Budget**: Additional $100-200 maximum (excluding existing Pi, monitor, cables)
-**Focus**: Outfit analysis with AI personalities (Snoop Dogg, Elle Woods) as primary demo feature
+**Focus**: Functional smart mirror, integrated camera, sending data to AI, using response from AI for delightful features like outfit analysis
+**Bonus**: Different AI personalities (Snoop Dogg, Elle Woods) for demo
 
 ## Hardware Components
 
@@ -38,6 +39,7 @@ Building an AI-powered smart mirror with live outfit analysis and interactive fe
     - Deep shadow box frame (preferred - more space for monitor)
     - Standard picture frame with extended backing
     - Simple wooden frame with custom backing
+  - **Alternative Option**: The Raspberry Pi tutorial uses machine bolts/nuts and spacing pillars with drilled holes in the acrylic, eliminating most of the need for a frame.
 
 #### Camera & Audio Options
 
@@ -93,90 +95,84 @@ Building an AI-powered smart mirror with live outfit analysis and interactive fe
 
 ### Development Phases (8-Day Timeline)
 
-#### Phase 1: Foundation (Days 1-3)
+#### Phase 1: Hardware & Basic Webcam (Days 1-3)
 
-**Goal**: Establish stable hardware setup and basic webcam integration
+**Goal**: Get webcam working and capturing images for AI analysis
 
 **Tasks**:
 
-1. **Hardware Assembly** (Day 1-2)
+1. **Hardware Setup** (Day 1-2)
 
-   - Purchase components (Day 1)
-   - Assemble frame and mount monitor/mirror (Day 2)
-   - Install webcam and audio components
-   - Test all connections
+   - Purchase/borrow USB webcam
+   - Assemble frame and mount monitor/mirror
+   - Install webcam and test connections
+   - Verify Pi can detect and use webcam
 
 2. **Basic Webcam Integration** (Day 2-3)
-
-   - Add webcam access to React app
-   - Implement basic video capture
+   - Test webcam access in React app
+   - Verify image capture functionality
    - Test video quality and positioning
-
-3. **Audio Setup** (Day 3)
-   - Configure speakers and microphone
-   - Test audio input/output
-   - Implement basic text-to-speech
+   - Ensure frames are ready for AI processing
 
 **Deliverables**:
 
-- Functional hardware setup
-- Basic webcam feed in React app
-- Audio input/output working
+- Working webcam hardware
+- Image capture working
+- Frames ready for AI processing
 
-#### Phase 2: Core AI Features (Days 4-6)
+#### Phase 2: AI Vision Integration (Days 4-5)
 
-**Goal**: Implement outfit analysis with AI personalities
+**Goal**: Connect webcam to AI vision processing
 
 **Tasks**:
 
-1. **OpenAI Vision API Integration** (Day 4-5)
+1. **Image Processing Pipeline** (Day 4)
 
-   - Set up image capture from webcam
-   - Implement OpenAI Vision API calls
-   - Create outfit analysis prompts
-   - Display AI responses on mirror
+   - Capture images from webcam feed
+   - Send images to OpenAI Vision API
+   - Test basic image analysis
+   - Handle API responses
 
-2. **AI Personality System** (Day 5-6)
-
-   - Implement different AI personalities (Snoop Dogg, Elle Woods)
-   - Add text-to-speech with personality voices
-   - Create engaging, fun responses
-   - Add personality switching
-
-3. **Basic Interaction** (Day 6)
-   - Add button/voice triggers for AI interactions
-   - Create smooth interaction flow
-   - Implement basic error handling
+2. **AI Response Display** (Day 5)
+   - Create component to display AI responses on mirror
+   - Test end-to-end flow: webcam → AI → display
+   - Add basic error handling
+   - Implement response formatting
 
 **Deliverables**:
 
-- Live outfit analysis working
-- AI personality system with voice
-- Basic interaction system
+- Working AI image analysis
+- AI responses displaying on mirror
+- Complete webcam → AI → display pipeline
 
-#### Phase 3: Polish & Demo Prep (Days 7-8)
+#### Phase 3: Automation & Polish (Days 6-8)
 
-**Goal**: Polish everything for demo day
+**Goal**: Add automation and polish for demo
 
 **Tasks**:
 
-1. **UI/UX Polish** (Day 7)
+1. **Automated Trigger System** (Day 6)
 
-   - Final design refinements
-   - Smooth animations and transitions
-   - Professional appearance
+   - Add motion detection for automatic capture
+   - Implement smooth user experience flow
+   - Add loading states and feedback
 
-2. **Demo Preparation** (Day 8)
-   - Create compelling demo flow
-   - Practice timing and transitions
-   - Prepare backup scenarios
-   - Final testing and bug fixes
+2. **Text-to-Speech** (Day 7)
+
+   - Integrate Web Speech API
+   - Add voice output for AI responses
+   - Test audio quality and timing
+
+3. **Demo Polish** (Day 8)
+   - Final UI/UX refinements
+   - Demo flow preparation
+   - Testing and bug fixes
 
 **Deliverables**:
 
-- Polished demo-ready system
-- Rehearsed demo presentation
-- Backup plans for technical issues
+- Complete automated system
+- Text-to-speech working
+- Demo-ready smart mirror
 
 ## Feature Complexity Analysis
 
@@ -199,7 +195,7 @@ Building an AI-powered smart mirror with live outfit analysis and interactive fe
 **Divergence Point**: After basic webcam integration (Day 3). Both features need:
 
 - Webcam access ✅
-- Audio input/output ✅
+- Audio output ✅
 - Basic UI framework ✅
 
 **Recommendation**: Focus on outfit analysis for demo. Simon Says can be added later if time permits.
@@ -209,15 +205,15 @@ Building an AI-powered smart mirror with live outfit analysis and interactive fe
 ### Webcam Integration
 
 ```typescript
-// client/src/hooks/useWebcam.ts
-import { useState, useEffect, useRef } from "react";
+// client/src/hooks/useWebRTC.ts
+import { useState, useRef } from "react";
 
-export const useWebcam = () => {
+export const useWebRTC = () => {
+  const [isConnected, setIsConnected] = useState(false);
   const [stream, setStream] = useState<MediaStream | null>(null);
-  const [isActive, setIsActive] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const peerConnection = useRef<RTCPeerConnection | null>(null);
 
-  const startWebcam = async () => {
+  const startStream = async () => {
     try {
       const mediaStream = await navigator.mediaDevices.getUserMedia({
         video: {
@@ -227,26 +223,20 @@ export const useWebcam = () => {
         },
       });
       setStream(mediaStream);
-      setIsActive(true);
+      // WebRTC connection logic here
     } catch (error) {
-      console.error("Webcam access failed:", error);
+      console.error("Camera access failed:", error);
     }
   };
 
-  const captureFrame = (): string | null => {
-    if (!videoRef.current) return null;
-
-    const canvas = document.createElement("canvas");
-    canvas.width = videoRef.current.videoWidth;
-    canvas.height = videoRef.current.videoHeight;
-
-    const ctx = canvas.getContext("2d");
-    ctx?.drawImage(videoRef.current, 0, 0);
-
-    return canvas.toDataURL("image/jpeg", 0.8);
+  const stopStream = () => {
+    if (stream) {
+      stream.getTracks().forEach((track) => track.stop());
+      setStream(null);
+    }
   };
 
-  return { stream, isActive, startWebcam, captureFrame, videoRef };
+  return { startStream, stopStream, isConnected, stream };
 };
 ```
 
@@ -336,6 +326,130 @@ export class SpeechService {
 }
 ```
 
+## WebRTC Phone Integration Plan
+
+### Overview
+
+Use phone as webcam via WebRTC for AI analysis without displaying video feed on mirror. Phone captures video, streams to Pi, Pi captures frames and sends to AI, AI response plays through phone speaker.
+
+### Technical Flow
+
+```
+Phone Camera → WebRTC Stream → Pi → Frame Capture (every 2-3s) → AI Analysis → Response → Phone Speaker
+```
+
+### Implementation Phases
+
+#### Phase 1: WebRTC Setup (Days 1-2)
+
+**Goal**: Establish WebRTC connection between phone and Pi
+
+**Tasks**:
+
+1. **WebRTC Server Setup** (Day 1)
+
+   - Add WebRTC signaling server to Node.js backend
+   - Create WebRTC connection handling
+   - Test connection establishment
+
+2. **Phone Web Interface** (Day 1-2)
+
+   - Create simple web page for phone camera access
+   - Implement WebRTC client on phone
+   - Test video streaming to Pi
+
+3. **Frame Capture System** (Day 2)
+   - Implement automatic frame capture from WebRTC stream
+   - Set up 2-3 second capture interval
+   - Test frame quality and format
+
+**Deliverables**:
+
+- WebRTC connection working between phone and Pi
+- Automatic frame capture from phone camera
+- Frames ready for AI processing
+
+#### Phase 2: AI Integration (Days 3-4)
+
+**Goal**: Connect captured frames to AI analysis
+
+**Tasks**:
+
+1. **Frame Processing Pipeline** (Day 3)
+
+   - Send captured frames to OpenAI Vision API
+   - Implement basic object detection prompts
+   - Handle AI responses
+
+2. **Response System** (Day 4)
+   - Send AI responses to mirror display
+   - Implement text display on mirror
+   - Add basic audio notification
+
+**Deliverables**:
+
+- Complete phone → AI → response pipeline
+- AI analyzing phone camera frames
+- Responses displaying on mirror
+
+#### Phase 3: Polish & Demo (Days 5-6)
+
+**Goal**: Refine system and prepare for demo
+
+**Tasks**:
+
+1. **Motion Detection** (Day 5)
+
+   - Implement basic motion detection
+   - Trigger capture only when motion detected
+   - Optimize capture frequency
+
+2. **Demo Preparation** (Day 6)
+   - Test complete flow
+   - Add error handling
+   - Prepare demo scenarios
+
+**Deliverables**:
+
+- Motion-triggered capture system
+- Robust error handling
+- Demo-ready system
+
+### Fallback Plan
+
+If WebRTC integration becomes too complex:
+
+- Implement script-based testing with sample images
+- Test AI pipeline with static images from repo
+- Focus on getting AI analysis working first
+- Return to WebRTC later
+
+### Motion Detection Complexity
+
+Basic motion detection can be implemented by:
+
+- Comparing consecutive frames for pixel differences
+- Using simple threshold-based detection
+- JavaScript-based implementation on Pi
+- Estimated complexity: Medium (1-2 days)
+
+### AI Response Options
+
+**Option A: Text Response + TTS Later**
+
+- AI returns text response to Raspberry Pi
+- Display text on Smart Mirror component
+- Add TTS later (Web Speech API)
+- Simpler initial implementation
+
+**Option B: Direct Audio Response**
+
+- AI generates audio directly
+- More complex but cleaner
+- Requires different AI service/approach
+
+**Recommendation**: Start with text responses, add TTS later for simplicity. Investigate AI-generated audio only if ahead of schedule.
+
 ## Risk Assessment & Mitigation
 
 ### Technical Risks
@@ -367,8 +481,8 @@ export class SpeechService {
    - Mitigation: Implement offline fallbacks, cache responses
 
 3. **Timing Issues**
-   - Risk: Demo runs too long or too short
-   - Mitigation: Practice timing, have flexible demo flow
+   - Risk: Demo runs too long or too short, or unclear presentation
+   - Mitigation: Practice timing and flow, have flexible demo flow
 
 ## Success Metrics
 
