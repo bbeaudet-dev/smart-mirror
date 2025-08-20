@@ -61,7 +61,7 @@ class PromptService {
     }
     
     // Add forecast context if available
-    if (forecast.length > 0) {
+    if (forecast && forecast.length > 0) {
       const tomorrow = forecast.find(day => day.day === 'Tomorrow');
       if (tomorrow) {
         forecastContext = ` Tomorrow's forecast: ${tomorrow.high}°F high, ${tomorrow.low}°F low, ${tomorrow.condition}.`;
