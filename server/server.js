@@ -9,9 +9,14 @@ const aiRoutes = require('./routes/ai');
 const apiRoutes = require('./routes/api');
 const { router: authRoutes } = require('./routes/auth');
 const calendarRoutes = require('./routes/calendar');
+const webrtcRoutes = require('./routes/webrtc');
 
 const app = express();
 const PORT = process.env.PORT || 5005;
+
+// Create HTTP server for Socket.io
+const http = require('http');
+const server = http.createServer(app);
 
 // Middleware
 app.use(helmet());
@@ -29,6 +34,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use('/api/ai', aiRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/calendar', calendarRoutes);
+app.use('/api/webrtc', webrtcRoutes);
 app.use('/api', apiRoutes);
 
 // Health check endpoint
@@ -63,10 +69,16 @@ app.use('*', (req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
-app.listen(PORT, () => {
+// Initialize WebRTC service
+const WebRTCService = require('./services/webrtcService');
+const webrtcService = new WebRTCService(server);
+
+// Start server
+server.listen(PORT, () => {
   console.log(`🚀 Smart Mirror Server running on port ${PORT}`);
   console.log(`📊 Health check:  http://localhost:${PORT}/api/health`);
   console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`📱 WebRTC signaling service ready`);
 });
 
 module.exports = app;
