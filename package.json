@@ -4,10 +4,10 @@
   "description": "Smart Mirror with AI Integration - Full Stack Application",
   "main": "server/server.js",
   "scripts": {
-    "dev": "concurrently \"cd server && npm run dev\" \"cd client && npm run dev\"",
-    "build": "cd client && npm run build",
+    "dev": "concurrently \"cd server && npm run dev\" \"cd client-mirror && npm run dev\" \"cd client-mobile && npm run dev\"",
+    "build": "cd client-mirror && npm run build",
     "start": "cd server && npm start",
-    "install:all": "npm install && cd server && npm install && cd ../client && npm install",
+    "install:all": "npm install && cd server && npm install && cd client-mirror && npm install && cd client-mobile && npm install",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
