@@ -31,6 +31,8 @@ app.use(cors({
         'http://127.0.0.1:3001', 
         'http://localhost:8080', 
         'http://127.0.0.1:8080',
+        'http://192.168.1.225:3000',
+        'http://192.168.1.225:3001',
         ...(process.env.LOCAL_IP ? [
           `http://${process.env.LOCAL_IP}:3000`,
           `http://${process.env.LOCAL_IP}:3001`
