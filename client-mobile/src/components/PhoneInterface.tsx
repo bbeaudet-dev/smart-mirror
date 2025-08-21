@@ -233,12 +233,6 @@ const PhoneInterface: React.FC<PhoneInterfaceProps> = () => {
           <p className="text-white/60 text-xs">Streaming: {isStreaming ? 'Yes' : 'No'}</p>
           <p className="text-white/60 text-xs">Camera: {stream ? 'Active' : 'Inactive'}</p>
         </div>
-
-        <div className="text-center max-w-sm">
-          <p className="mb-1 text-white/90 text-xs leading-relaxed">📱 Camera streams to smart mirror</p>
-          <p className="mb-1 text-white/90 text-xs leading-relaxed">🤖 AI analyzes outfit every 3 seconds</p>
-          <p className="mb-1 text-white/90 text-xs leading-relaxed">📺 Responses appear on mirror screen</p>
-        </div>
     </div>
   );
 };
