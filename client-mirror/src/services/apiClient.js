@@ -165,6 +165,30 @@ class ApiClient {
     }
   }
 
+  /**
+   * Test image recognition (simple analysis)
+   * @param {File} imageFile - Image file
+   * @returns {Promise<Object>} - Test analysis result
+   */
+  static async testImage(imageFile) {
+    const formData = new FormData();
+    formData.append('image', imageFile);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/ai/test-image`, {
+        method: 'POST',
+        body: formData,
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Test Image Analysis Error:', error);
+      throw error;
+    }
+  }
+
 }
 
 export default ApiClient;

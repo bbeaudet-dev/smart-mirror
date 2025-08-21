@@ -145,6 +145,32 @@ router.post('/analyze-image', upload.single('image'), async (req, res) => {
   }
 });
 
+// POST /api/ai/test-image - Simple image recognition test
+router.post('/test-image', upload.single('image'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'Image file is required' });
+    }
 
+    const imageBuffer = req.file.buffer;
+    const imageType = req.file.mimetype;
+
+    // Simple test prompt - just identify what's in the image
+    const testPrompt = "What do you see in this image? Please describe what the person is wearing in a brief, friendly way.";
+
+    const analysis = await OpenAIService.analyzeImage(imageBuffer, imageType, testPrompt, 'smart-mirror');
+    res.json({ 
+      analysis,
+      timestamp: new Date().toISOString(),
+      test: true
+    });
+  } catch (error) {
+    console.error('Test Image Analysis Error:', error);
+    res.status(500).json({ 
+      error: 'Failed to analyze test image',
+      message: error.message 
+    });
+  }
+});
 
 module.exports = router;
