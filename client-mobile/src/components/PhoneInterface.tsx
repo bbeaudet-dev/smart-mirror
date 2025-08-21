@@ -13,8 +13,7 @@ const PhoneInterface: React.FC<PhoneInterfaceProps> = () => {
     stream,
     error,
     startStream,
-    stopStream,
-    clearError
+    stopStream
   } = useCameraStatus();
 
   // Display phone's own video feed
@@ -85,12 +84,6 @@ const PhoneInterface: React.FC<PhoneInterfaceProps> = () => {
       {error && (
         <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 mb-6 text-center max-w-sm">
           <p className="text-red-300 text-sm">{error}</p>
-          <button 
-            onClick={clearError}
-            className="mt-2 text-red-400 text-xs hover:text-red-300"
-          >
-            Dismiss
-          </button>
         </div>
       )}
 
