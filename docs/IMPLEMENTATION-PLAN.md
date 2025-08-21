@@ -44,17 +44,18 @@ Building an AI-powered smart mirror with live outfit analysis and other features
 
 #### Camera & Audio Options
 
-**Option A: USB Webcam + ARZOPA Speakers** (Recommended)
+**Option A: USB Webcam + ARZOPA Speakers** (PRIMARY APPROACH)
 
-- **USB Webcam** (1080p minimum)
+- **USB Webcam** (Inland iC800 or similar 1080p minimum)
   - Budget: $30-60
-  - Recommendations: Logitech C920, C922 (good low-light performance)
+  - **RECOMMENDATION**: Inland iC800 (good low-light performance, built-in mic)
+  - **ADVANTAGES**: Direct USB connection, no network issues, reliable, simple implementation
 - **Audio**: Use ARZOPA monitor's built-in speakers
   - Budget: $0 (already available)
   - Pros: No additional hardware needed
   - Cons: May need external speakers for demo volume
 
-**Option B: Phone as Camera + Bluetooth Speaker** (Alternative)
+**Option B: Phone as Camera + Bluetooth Speaker** (BACKUP APPROACH)
 
 - **Phone Mount**
   - Budget: $10-20
@@ -62,6 +63,7 @@ Building an AI-powered smart mirror with live outfit analysis and other features
   - Budget: $20-40 (if you don't have one)
   - Pros: Better camera quality, good audio, no additional webcam needed
   - Cons: More complex setup, potential connectivity issues
+  - **STATUS**: WebRTC implementation complete but complex - keeping as backup
 
 **Option C: USB Webcam + External Speakers** (Fallback)
 
@@ -89,52 +91,55 @@ Building an AI-powered smart mirror with live outfit analysis and other features
 - ✅ Node.js backend with API routes
 - ✅ OpenAI integration for text responses
 - ✅ Weather and calendar data integration
-- ❌ Webcam integration
+- ✅ WebRTC phone interface (backup option)
+- ❌ USB webcam integration
 - ❌ Real-time video processing
 - ❌ Audio input/output
 - ❌ Computer vision features
 
 ### Development Phases (8-Day Timeline)
 
-#### Phase 1: Hardware & Basic Webcam (Days 1-3)
+#### Phase 1: USB Webcam Integration (Days 1-2) - PRIMARY APPROACH
 
-**Goal**: Get webcam working and capturing images for AI analysis
+**Goal**: Get USB webcam working and capturing images for AI analysis
 
 **Tasks**:
 
-1. **Hardware Setup** (Day 1-2)
+1. **Hardware Setup** (Day 1)
 
-   - Purchase/borrow USB webcam
-   - Assemble frame and mount monitor/mirror
-   - Install webcam and test connections
+   - Connect Inland iC800 USB webcam to Pi
+   - Test webcam detection and video feed
    - Verify Pi can detect and use webcam
+   - Test built-in microphone
 
-2. **Basic Webcam Integration** (Day 2-3)
-   - Test webcam access in React app
-   - Verify image capture functionality
+2. **Webcam Integration** (Day 1-2)
+   - Implement webcam access in React app
+   - Add video feed display to mirror interface
+   - Implement frame capture functionality
    - Test video quality and positioning
    - Ensure frames are ready for AI processing
 
 **Deliverables**:
 
-- Working webcam hardware
+- Working USB webcam hardware
+- Video feed displayed on mirror
 - Image capture working
 - Frames ready for AI processing
 
-#### Phase 2: AI Vision Integration (Days 4-5)
+#### Phase 2: AI Vision Integration (Days 3-4)
 
 **Goal**: Connect webcam to AI vision processing
 
 **Tasks**:
 
-1. **Image Processing Pipeline** (Day 4)
+1. **Image Processing Pipeline** (Day 3)
 
    - Capture images from webcam feed
    - Send images to OpenAI Vision API
    - Test basic image analysis
    - Handle API responses
 
-2. **AI Response Display** (Day 5)
+2. **AI Response Display** (Day 4)
    - Create component to display AI responses on mirror
    - Test end-to-end flow: webcam → AI → display
    - Add basic error handling
@@ -146,34 +151,64 @@ Building an AI-powered smart mirror with live outfit analysis and other features
 - AI responses displaying on mirror
 - Complete webcam → AI → display pipeline
 
-#### Phase 3: Automation & Polish (Days 6-8)
+#### Phase 3: Automation & Polish (Days 5-6)
 
 **Goal**: Add automation and polish for demo
 
 **Tasks**:
 
-1. **Automated Trigger System** (Day 6)
+1. **Automated Trigger System** (Day 5)
 
    - Add motion detection for automatic capture
    - Implement smooth user experience flow
    - Add loading states and feedback
 
-2. **Text-to-Speech** (Day 7)
+2. **Text-to-Speech** (Day 6)
 
    - Integrate Web Speech API
    - Add voice output for AI responses
    - Test audio quality and timing
-
-3. **Demo Polish** (Day 8)
-   - Final UI/UX refinements
-   - Demo flow preparation
-   - Testing and bug fixes
 
 **Deliverables**:
 
 - Complete automated system
 - Text-to-speech working
 - Demo-ready smart mirror
+
+#### Phase 4: Phone Backup Testing (Day 7) - OPTIONAL
+
+**Goal**: Ensure phone interface works as backup
+
+**Tasks**:
+
+1. **Phone Interface Testing** (Day 7)
+   - Test WebRTC connection from phone
+   - Verify camera access on mobile browsers
+   - Ensure phone can stream to Pi as backup
+   - Document phone setup process
+
+**Deliverables**:
+
+- Working phone backup option
+- Documentation for phone setup
+
+#### Phase 5: Demo Preparation (Day 8)
+
+**Goal**: Final testing and demo preparation
+
+**Tasks**:
+
+1. **Final Testing** (Day 8)
+   - Test complete USB webcam flow
+   - Test phone backup flow
+   - Final UI/UX refinements
+   - Demo flow preparation
+
+**Deliverables**:
+
+- Fully functional smart mirror
+- Backup phone interface
+- Demo-ready system
 
 ## Feature Complexity Analysis
 
@@ -182,9 +217,9 @@ Building an AI-powered smart mirror with live outfit analysis and other features
 **Outfit Analysis** (Recommended for Demo)
 
 - **Complexity**: Medium
-- **Core Requirements**: Webcam capture + OpenAI Vision API + Text-to-speech
+- **Core Requirements**: USB webcam capture + OpenAI Vision API + Text-to-speech
 - **Demo Value**: High - anyone can participate
-- **Technical Stack**: React + WebRTC + OpenAI + Web Speech API
+- **Technical Stack**: React + USB Webcam + OpenAI + Web Speech API
 
 **Simon Says** (Stretch Goal)
 
@@ -193,7 +228,7 @@ Building an AI-powered smart mirror with live outfit analysis and other features
 - **Demo Value**: Medium - single person experience
 - **Technical Stack**: React + Computer Vision + Gesture Recognition + Real-time audio
 
-**Divergence Point**: After basic webcam integration (Day 3). Both features need:
+**Divergence Point**: After basic webcam integration (Day 2). Both features need:
 
 - Webcam access ✅
 - Audio output ✅
@@ -203,41 +238,45 @@ Building an AI-powered smart mirror with live outfit analysis and other features
 
 ## Technical Implementation Details
 
-### Webcam Integration
+### USB Webcam Integration
 
 ```typescript
-// client/src/hooks/useWebRTC.ts
-import { useState, useRef } from "react";
+// client-mirror/src/hooks/useWebcam.ts
+import { useState, useRef, useEffect } from "react";
 
-export const useWebRTC = () => {
-  const [isConnected, setIsConnected] = useState(false);
+export const useWebcam = () => {
   const [stream, setStream] = useState<MediaStream | null>(null);
-  const peerConnection = useRef<RTCPeerConnection | null>(null);
+  const [isCapturing, setIsCapturing] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
-  const startStream = async () => {
+  const startWebcam = async () => {
     try {
       const mediaStream = await navigator.mediaDevices.getUserMedia({
         video: {
           width: { ideal: 1920 },
           height: { ideal: 1080 },
-          facingMode: "user",
         },
+        audio: false, // We'll use Pi speakers for output
       });
       setStream(mediaStream);
-      // WebRTC connection logic here
     } catch (error) {
-      console.error("Camera access failed:", error);
+      console.error("Webcam access failed:", error);
     }
   };
 
-  const stopStream = () => {
-    if (stream) {
-      stream.getTracks().forEach((track) => track.stop());
-      setStream(null);
+  const captureFrame = () => {
+    if (videoRef.current && stream) {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      canvas.width = videoRef.current.videoWidth;
+      canvas.height = videoRef.current.videoHeight;
+      ctx?.drawImage(videoRef.current, 0, 0);
+      return canvas.toDataURL("image/jpeg");
     }
+    return null;
   };
 
-  return { startStream, stopStream, isConnected, stream };
+  return { stream, isCapturing, videoRef, startWebcam, captureFrame };
 };
 ```
 
@@ -287,7 +326,7 @@ const generateOutfitPrompt = (weather, personality) => {
 ### Text-to-Speech with Personality
 
 ```typescript
-// client/src/services/speechService.ts
+// client-mirror/src/services/speechService.ts
 export class SpeechService {
   private voices: SpeechSynthesisVoice[] = [];
   private currentPersonality: string = "default";
@@ -327,129 +366,47 @@ export class SpeechService {
 }
 ```
 
-## WebRTC Phone Integration Plan
+## USB Webcam vs Phone Integration Comparison
 
-### Overview
+### USB Webcam Approach (PRIMARY)
 
-Use phone as webcam via WebRTC for AI analysis without displaying video feed on mirror. Phone captures video, streams to Pi, Pi captures frames and sends to AI, AI response plays through phone speaker.
+**Pros**:
 
-### Technical Flow
+- Direct USB connection - no network issues
+- Reliable and consistent performance
+- No browser compatibility problems
+- Simpler implementation
+- Built-in microphone support
+- Works offline (except for AI calls)
 
-```
-Phone Camera → WebRTC Stream → Pi → Frame Capture (every 2-3s) → AI Analysis → Response → Phone Speaker
-```
+**Cons**:
 
-### Implementation Phases
+- Requires additional hardware purchase
+- Fixed positioning (can't move around)
 
-#### Phase 1: WebRTC Setup (Days 1-2)
+**Implementation Complexity**: Low-Medium
+**Timeline**: 1-2 days for full integration
 
-**Goal**: Establish WebRTC connection between phone and Pi
+### Phone Integration Approach (BACKUP)
 
-**Tasks**:
+**Pros**:
 
-1. **WebRTC Server Setup** (Day 1)
+- Better camera quality (iPhone cameras)
+- No additional hardware needed
+- Portable and flexible
 
-   - Add WebRTC signaling server to Node.js backend
-   - Create WebRTC connection handling
-   - Test connection establishment
+**Cons**:
 
-2. **Phone Web Interface** (Day 1-2)
+- Complex WebRTC implementation
+- Network dependency
+- Browser compatibility issues
+- Camera permission problems
+- Multiple devices to manage
 
-   - Create simple web page for phone camera access
-   - Implement WebRTC client on phone
-   - Test video streaming to Pi
+**Implementation Complexity**: High
+**Timeline**: 3-5 days for reliable implementation
 
-3. **Frame Capture System** (Day 2)
-   - Implement automatic frame capture from WebRTC stream
-   - Set up 2-3 second capture interval
-   - Test frame quality and format
-
-**Deliverables**:
-
-- WebRTC connection working between phone and Pi
-- Automatic frame capture from phone camera
-- Frames ready for AI processing
-
-#### Phase 2: AI Integration (Days 3-4)
-
-**Goal**: Connect captured frames to AI analysis
-
-**Tasks**:
-
-1. **Frame Processing Pipeline** (Day 3)
-
-   - Send captured frames to OpenAI Vision API
-   - Implement basic object detection prompts
-   - Handle AI responses
-
-2. **Response System** (Day 4)
-   - Send AI responses to mirror display
-   - Implement text display on mirror
-   - Add basic audio notification
-
-**Deliverables**:
-
-- Complete phone → AI → response pipeline
-- AI analyzing phone camera frames
-- Responses displaying on mirror
-
-#### Phase 3: Polish & Demo (Days 5-6)
-
-**Goal**: Refine system and prepare for demo
-
-**Tasks**:
-
-1. **Motion Detection** (Day 5)
-
-   - Implement basic motion detection
-   - Trigger capture only when motion detected
-   - Optimize capture frequency
-
-2. **Demo Preparation** (Day 6)
-   - Test complete flow
-   - Add error handling
-   - Prepare demo scenarios
-
-**Deliverables**:
-
-- Motion-triggered capture system
-- Robust error handling
-- Demo-ready system
-
-### Fallback Plan
-
-If WebRTC integration becomes too complex:
-
-- Implement script-based testing with sample images
-- Test AI pipeline with static images from repo
-- Focus on getting AI analysis working first
-- Return to WebRTC later
-
-### Motion Detection Complexity
-
-Basic motion detection can be implemented by:
-
-- Comparing consecutive frames for pixel differences
-- Using simple threshold-based detection
-- JavaScript-based implementation on Pi
-- Estimated complexity: Medium (1-2 days)
-
-### AI Response Options
-
-**Option A: Text Response + TTS Later**
-
-- AI returns text response to Raspberry Pi
-- Display text on Smart Mirror component
-- Add TTS later (Web Speech API)
-- Simpler initial implementation
-
-**Option B: Direct Audio Response**
-
-- AI generates audio directly
-- More complex but cleaner
-- Requires different AI service/approach
-
-**Recommendation**: Start with text responses, add TTS later for simplicity. Investigate AI-generated audio only if ahead of schedule.
+**Recommendation**: USB webcam for primary demo, phone as backup option
 
 ## Risk Assessment & Mitigation
 
@@ -518,9 +475,9 @@ Basic motion detection can be implemented by:
 
 1. **Immediate Actions** (Today)
 
-   - Purchase essential hardware components
+   - Purchase Inland iC800 USB webcam
    - Set up development environment
-   - Begin Phase 1 implementation
+   - Begin Phase 1 implementation (USB webcam integration)
 
 2. **Daily Check-ins**
 
@@ -588,4 +545,4 @@ Basic motion detection can be implemented by:
 
 ---
 
-_This plan prioritizes outfit analysis with AI personalities as the main demo feature, focusing on reliability and audience engagement over technical complexity._
+_This plan prioritizes USB webcam integration as the primary approach for outfit analysis with AI personalities, focusing on reliability and audience engagement over technical complexity. Phone integration is maintained as a backup option._
