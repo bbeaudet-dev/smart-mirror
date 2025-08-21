@@ -84,7 +84,41 @@ const PhoneInterface: React.FC<PhoneInterfaceProps> = () => {
     try {
       setError(null);
       
-      // iOS Safari requires more specific constraints
+      // Check for browser compatibility
+      if (!navigator.mediaDevices) {
+        throw new Error("MediaDevices API not supported. Please use a modern browser.");
+      }
+      
+      if (!navigator.mediaDevices.getUserMedia) {
+        // Fallback for older browsers
+        const getUserMedia = (navigator as any).getUserMedia || 
+                           (navigator as any).webkitGetUserMedia || 
+                           (navigator as any).mozGetUserMedia || 
+                           (navigator as any).msGetUserMedia;
+        
+        if (!getUserMedia) {
+          throw new Error("Camera access not supported. Please use a modern browser.");
+        }
+        
+        // Convert to Promise-based API
+        const getUserMediaPromise = (constraints: any) => {
+          return new Promise<MediaStream>((resolve, reject) => {
+            getUserMedia.call(navigator, constraints, resolve, reject);
+          });
+        };
+        
+        // Use fallback API
+        const mediaStream = await getUserMediaPromise({
+          video: true,
+          audio: false
+        });
+        
+        setStream(mediaStream);
+        setIsStreaming(true);
+        return;
+      }
+      
+      // Modern browser - iOS Safari requires more specific constraints
       const constraints = {
         video: {
           width: { ideal: 1280, max: 1920 },
@@ -138,6 +172,11 @@ const PhoneInterface: React.FC<PhoneInterfaceProps> = () => {
 
     } catch (error: any) {
       console.error("Failed to start stream:", error);
+      console.error("Error details:", {
+        name: error.name,
+        message: error.message,
+        stack: error.stack
+      });
       setIsStreaming(false);
       
       // iOS Safari specific error handling
@@ -147,6 +186,10 @@ const PhoneInterface: React.FC<PhoneInterfaceProps> = () => {
         setError("No camera found. Please check your device has a camera.");
       } else if (error.name === 'NotSupportedError') {
         setError("Camera not supported. Please try a different browser.");
+      } else if (error.message?.includes('MediaDevices API not supported')) {
+        setError("Your browser doesn't support camera access. Please use Safari, Chrome, or Firefox.");
+      } else if (error.message?.includes('Camera access not supported')) {
+        setError("Camera access not available. Please check browser permissions.");
       } else {
         setError(`Camera error: ${error.message || 'Unknown error'}`);
       }
