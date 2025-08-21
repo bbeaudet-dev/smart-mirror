@@ -216,3 +216,99 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - AI integration powered by OpenAI
 - Weather data from various providers
 - Calendar integration with Google Calendar
+- 
+
+
+
+RPi Logs:
+benbeau@raspberrypi:~/smart-mirror $ npm run install:all
+
+> smart-mirror@1.0.0 install:all
+> npm install && cd server && npm install && cd .. && cd client-mirror && npm install && cd .. && cd client-mobile && npm install
+
+
+up to date, audited 114 packages in 749ms
+
+21 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: 'node-webrtc@0.0.0',
+npm warn EBADENGINE   required: { node: '>= 0.5.0 < 0.7.0' },
+npm warn EBADENGINE   current: { node: 'v22.18.0', npm: '10.9.3' }
+npm warn EBADENGINE }
+
+up to date, audited 197 packages in 796ms
+
+26 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+npm warn deprecated boolean@3.2.0: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+
+added 459 packages, and audited 460 packages in 38s
+
+75 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+added 182 packages, and audited 183 packages in 9s
+
+36 packages are looking for funding
+  run `npm fund` for details
+
+2 moderate severity vulnerabilities
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+benbeau@raspberrypi:~/smart-mirror $ npm run dev
+
+> smart-mirror@1.0.0 dev
+> concurrently "cd server && npm run dev" "cd client-mirror && npm run dev" "cd client-mobile && npm run dev"
+
+[0] 
+[0] > smart-mirror-server@1.0.0 dev
+[0] > nodemon server.js
+[0] 
+[1] 
+[1] > smart-mirror@0.1.0 dev
+[1] > vite
+[1] 
+[2] 
+[2] > smart-mirror-mobile@0.1.0 dev
+[2] > vite
+[2] 
+[0] [nodemon] 3.1.10
+[0] [nodemon] to restart at any time, enter `rs`
+[0] [nodemon] watching path(s): *.*
+[0] [nodemon] watching extensions: js,mjs,cjs,json
+[0] [nodemon] starting `node server.js`
+[2] Re-optimizing dependencies because lockfile has changed
+[1] 11:14:50 AM [vite] (client) Re-optimizing dependencies because lockfile has changed
+[2] 
+[2]   VITE v5.4.19  ready in 366 ms
+[2] 
+[1] 
+[1]   VITE v7.1.3  ready in 377 ms
+[1] 
+[1]   ➜  Local:   http://localhost:3000/
+[1]   ➜  Network: http://192.168.1.225:3000/
+[2]   ➜  Local:   http://localhost:3001/
+[2]   ➜  Network: http://192.168.1.225:3001/
+[1] (node:3174) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/benbeau/smart-mirror/client-mirror/postcss.config.js?t=1755789290792 is not specified and it doesn't parse as CommonJS.
+[1] Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+[1] To eliminate this warning, add "type": "module" to /home/benbeau/smart-mirror/client-mirror/package.json.
+[1] (Use `node --trace-warnings ...` to show where the warning was created)
+[0] 🚀 Smart Mirror Server running on port 5005
+[0] 📊 Health check:  http://localhost:5005/api/health
+[0] 🌍 Environment: production
+[0] 📱 WebRTC signaling service ready
+[0] No stored tokens found
+
+
