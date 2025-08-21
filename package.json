@@ -4,7 +4,7 @@
   "description": "Smart Mirror with AI Integration - Full Stack Application",
   "main": "server/server.js",
   "scripts": {
-    "dev": "concurrently \"cd server && npm run dev\" \"cd client-mirror && npm run dev\" \"cd client-mobile && npm run dev\"",
+    "dev": "concurrently \"cd server && npm run dev\" \"cd client-mirror && npm run electron-dev\" \"cd client-mobile && npm run dev\"",
     "build": "cd client-mirror && npm run build",
     "start": "cd server && npm start",
     "install:all": "npm install && cd server && npm install && cd .. && cd client-mirror && npm install && cd .. && cd client-mobile && npm install",

@@ -1,32 +1,57 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { WeatherData } from '../../../data/types';
 import CurrentWeather from './CurrentWeather';
 import WeeklyForecast from './WeeklyForecast';
 import OutfitRecs from './OutfitRecs';
 
-interface WeatherPanelProps {
-  weather: WeatherData;
-  isRefreshing?: boolean;
-  outfitRecommendation?: string | null;
-  outfitLoading?: boolean;
-}
+const WeatherPanel: React.FC = () => {
+  const [weather, setWeather] = useState<WeatherData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-const WeatherPanel: React.FC<WeatherPanelProps> = ({ 
-  weather, 
-  isRefreshing = false,
-  outfitRecommendation = null,
-  outfitLoading = false
-}) => {
-  // Check if weather data has an error
-  if (weather.error) {
+  useEffect(() => {
+    // Try to fetch weather data, but don't block the UI if it fails
+    const fetchWeather = async () => {
+      try {
+        const response = await fetch('http://localhost:5005/api/weather');
+        if (response.ok) {
+          const data = await response.json();
+          setWeather(data.weather);
+        } else {
+          setError('Weather API unavailable');
+        }
+      } catch (err) {
+        setError('Weather service unavailable');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchWeather();
+  }, []);
+
+  // Show loading state briefly
+  if (isLoading) {
     return (
       <div className="flex flex-col h-full">
-        <h3 className="mirror-header">
-          Weather
-          {isRefreshing && <span className="text-mirror-xs text-mirror-text-dimmed animate-spin ml-1">⟳</span>}
-        </h3>
+        <h3 className="mirror-header">Weather</h3>
         <div className="flex-1 flex flex-col items-center justify-center text-center">
-          <div className="text-mirror-lg text-mirror-text-dimmed mb-2">❓</div>
+          <div className="text-mirror-lg text-mirror-text-dimmed mb-2">🌤️</div>
+          <div className="text-mirror-xs text-mirror-text font-mirror-primary">
+            <p>Loading weather...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error || !weather) {
+    return (
+      <div className="flex flex-col h-full">
+        <h3 className="mirror-header">Weather</h3>
+        <div className="flex-1 flex flex-col items-center justify-center text-center">
+          <div className="text-mirror-lg text-mirror-text-dimmed mb-2">🌤️</div>
           <div className="text-mirror-xs text-mirror-text font-mirror-primary">
             <p>Weather data unavailable</p>
             <p className="text-mirror-text-dimmed">Check API configuration</p>
@@ -37,14 +62,11 @@ const WeatherPanel: React.FC<WeatherPanelProps> = ({
   }
 
   return (
-    <div className={`flex flex-col h-full ${isRefreshing ? 'opacity-80' : ''}`}>
-      <h3 className="mirror-header">
-        Weather
-        {isRefreshing && <span className="text-mirror-xs text-mirror-text-dimmed animate-spin ml-1">⟳</span>}
-      </h3>
+    <div className="flex flex-col h-full">
+      <h3 className="mirror-header">Weather</h3>
       
       {/* Current Weather */}
-      <CurrentWeather weather={weather} isRefreshing={isRefreshing} />
+      <CurrentWeather weather={weather} isRefreshing={false} />
       
       {/* Weekly Forecast */}
       <WeeklyForecast weather={weather} />
@@ -52,12 +74,12 @@ const WeatherPanel: React.FC<WeatherPanelProps> = ({
       {/* Outfit Recommendations */}
       <div className="mt-4 flex-1">
         <OutfitRecs 
-          outfitRecommendation={outfitRecommendation}
+          outfitRecommendation={null}
           weather={{
             temperature: weather.current.temperature,
             condition: weather.current.condition
           }}
-          loading={outfitLoading}
+          loading={false}
         />
       </div>
     </div>

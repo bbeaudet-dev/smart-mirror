@@ -89,9 +89,15 @@ server.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Smart Mirror Server running on port ${PORT}`);
   console.log(`📊 Health check:  http://localhost:${PORT}/api/health`);
   console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`📱 WebRTC signaling service ready`);
+  console.log(`🛜 WebRTC signaling service ready`);
+  console.log(`\n👤 Client Applications:`);
+  console.log(`   🪞 Mirror Interface: http://localhost:3000/`);
+  console.log(`   📱 Phone Interface:  http://localhost:3001/`);
   if (process.env.LOCAL_IP) {
-    console.log(`🌐 Network access: http://${process.env.LOCAL_IP}:${PORT}/api/health`);
+    console.log(`\n🌐 Network Access:`);
+    console.log(`   🪞 Mirror Interface: http://${process.env.LOCAL_IP}:3000/`);
+    console.log(`   📱 Phone Interface:  http://${process.env.LOCAL_IP}:3001/`);
+    console.log(`   🔧 Server API:       http://${process.env.LOCAL_IP}:${PORT}/api/health`);
   }
 });
 

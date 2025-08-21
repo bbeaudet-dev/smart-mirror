@@ -6,32 +6,7 @@ import WeatherPanel from './modules/weather/WeatherPanel';
 import CalendarPanel from './modules/calendar/CalendarPanel';
 import WisdomPanel from './modules/wisdom/WisdomPanel';
 
-// Custom Hook
-import { useSmartMirrorData } from '../hooks/useSmartMirrorData';
-
 function MirrorInterface() {
-  const { data, aiData, isInitialLoad, error, aiLoading, refreshingStates } = useSmartMirrorData();
-
-  if (isInitialLoad) {
-    return (
-      <div className="w-full h-full bg-mirror-bg text-mirror-text font-mirror-primary">
-        <div className="flex justify-center items-center h-full text-mirror-lg text-mirror-text">
-          Loading...
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="w-full h-full bg-mirror-bg text-mirror-text font-mirror-primary">
-        <div className="flex justify-center items-center h-full text-mirror-lg text-red-400">
-          Error: {error}
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="w-full h-full bg-mirror-bg text-mirror-text font-mirror-primary">
       <div className="w-full h-full flex flex-col">
@@ -40,20 +15,11 @@ function MirrorInterface() {
           <TimeDisplay />
         </div>
 
-
-
         {/* Main Content Grid */}
         <div className="flex-1 grid grid-cols-3 gap-mirror-gap min-h-0 overflow-hidden">
-          {/* Weather Panel (includes outfit recommendations) */}
+          {/* Weather Panel */}
           <div className="weather-section">
-            {data.weather && (
-              <WeatherPanel 
-                weather={data.weather} 
-                isRefreshing={refreshingStates.weather}
-                outfitRecommendation={aiData.outfitRecommendation}
-                outfitLoading={aiLoading}
-              />
-            )}
+            <WeatherPanel />
           </div>
 
           {/* Calendar Panel */}
@@ -63,14 +29,10 @@ function MirrorInterface() {
 
           {/* Wisdom Panel */}
           <div className="wisdom-section">
-            <WisdomPanel 
-              motivation={aiData.motivation}
-              loading={aiLoading}
-            />
+            <WisdomPanel />
           </div>
         </div>
       </div>
-
     </div>
   );
 }
