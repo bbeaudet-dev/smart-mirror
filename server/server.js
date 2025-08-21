@@ -24,7 +24,18 @@ app.use(morgan('combined'));
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
     ? false 
-    : ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://localhost:8080', 'http://127.0.0.1:8080'],
+    : [
+        'http://localhost:3000', 
+        'http://127.0.0.1:3000', 
+        'http://localhost:3001', 
+        'http://127.0.0.1:3001', 
+        'http://localhost:8080', 
+        'http://127.0.0.1:8080',
+        ...(process.env.LOCAL_IP ? [
+          `http://${process.env.LOCAL_IP}:3000`,
+          `http://${process.env.LOCAL_IP}:3001`
+        ] : [])
+      ],
   credentials: true
 }));
 app.use(express.json({ limit: '10mb' }));
@@ -74,11 +85,14 @@ const WebRTCService = require('./services/webrtcService');
 const webrtcService = new WebRTCService(server);
 
 // Start server
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Smart Mirror Server running on port ${PORT}`);
   console.log(`📊 Health check:  http://localhost:${PORT}/api/health`);
   console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`📱 WebRTC signaling service ready`);
+  if (process.env.LOCAL_IP) {
+    console.log(`🌐 Network access: http://${process.env.LOCAL_IP}:${PORT}/api/health`);
+  }
 });
 
 module.exports = app;

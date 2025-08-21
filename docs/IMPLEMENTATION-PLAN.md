@@ -8,6 +8,7 @@ Building an AI-powered smart mirror with live outfit analysis and other features
 **Budget**: Additional $100-200 maximum (excluding existing Pi, monitor, cables)
 **Focus**: Functional smart mirror, integrated camera, sending data to AI, using response from AI for delightful features like outfit analysis
 **Bonus**: Different AI personalities (Snoop Dogg, Elle Woods) for demo
+**Future Demo Idea**: Multi-user experience where multiple phones connect simultaneously, each user gets personalized AI responses with different personalities/voices
 
 ## Hardware Components
 
@@ -549,6 +550,41 @@ Basic motion detection can be implemented by:
 - Potential connectivity issues during demo
 
 **Recommendation**: Start with USB webcam for simplicity and reliability. Phone integration can be a stretch goal if time permits.
+
+## Future Demo Ideas
+
+### Multi-User Smart Mirror Experience
+
+**Concept**: Interactive demo where multiple audience members connect their phones simultaneously to the smart mirror system.
+
+**Implementation**:
+
+- Each phone connects to the same WebRTC server
+- Input fields for Name and Personality on phone interface
+- Each phone makes separate AI API calls with personalized prompts
+- Simultaneous responses create a "mirror party" effect
+
+**Technical Considerations**:
+
+- **API Rate Limits**: OpenAI has rate limits (3 requests/minute for free tier, higher for paid)
+- **Server Load**: WebRTC server can handle multiple connections
+- **Network Bandwidth**: Multiple video streams may require good WiFi
+- **Audio Coordination**: Multiple responses playing simultaneously could be chaotic
+
+**Demo Flow**:
+
+1. "Everyone take out your phones and go to [URL]"
+2. Each person enters their name and chooses a personality
+3. Compliments start playing from each person's phone
+
+**Risk Mitigation**:
+
+- Implement request queuing to avoid API rate limits
+- Add audio coordination (stagger responses)
+- Have fallback responses if API fails
+- Test with 3-5 users first, then scale
+
+**Potential Impact**: This could be a show-stopping demo that demonstrates real-time AI integration, multi-user systems, and creates memorable audience engagement.
 
 ---
 
