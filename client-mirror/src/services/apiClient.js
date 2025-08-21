@@ -1,4 +1,6 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://192.168.1.225:5005';
+// Use environment variable or try to detect the correct server URL
+const API_BASE_URL = import.meta.env.VITE_API_URL || 
+  (window.location.hostname === 'localhost' ? 'http://localhost:5005' : `http://${window.location.hostname}:5005`);
 
 class ApiClient {
   /**
@@ -174,8 +176,13 @@ class ApiClient {
     const formData = new FormData();
     formData.append('image', imageFile);
 
+    const url = `${API_BASE_URL}/api/ai/test-image`;
+    console.log('Attempting to connect to:', url);
+    console.log('Current hostname:', window.location.hostname);
+    console.log('API_BASE_URL:', API_BASE_URL);
+
     try {
-      const response = await fetch(`${API_BASE_URL}/api/ai/test-image`, {
+      const response = await fetch(url, {
         method: 'POST',
         body: formData,
       });
