@@ -151,9 +151,41 @@ Building an AI-powered smart mirror with live outfit analysis and other features
 - AI responses displaying on mirror
 - Complete webcam → AI → display pipeline
 
-#### Phase 3: Automation & Polish (Days 5-6)
+#### Phase 3: Demo Preparation & Pi Deployment (TODAY - Practice Demo)
 
-**Goal**: Add automation and polish for demo
+**Goal**: Deploy working system to Raspberry Pi for practice demo
+
+**Tasks**:
+
+1. **Pi API Troubleshooting** (Priority 1)
+
+   - Debug "weather data unavailable" errors on Pi
+   - Debug "AI analysis failed" errors on Pi
+   - Test API connectivity and environment variables
+   - Ensure all services work on Pi hardware
+
+2. **UI Cleanup & Polish** (Priority 2)
+
+   - Remove debug/experimental components
+   - Clean up smart mirror interface
+   - Ensure reliable display of: weather, calendar, news headlines
+   - Make UI visually appealing and demo-ready
+
+3. **Text-to-Speech Integration** (Priority 3 - if time permits)
+   - Integrate Web Speech API for AI responses
+   - Test audio output on Pi
+   - Add voice personality matching
+
+**Deliverables**:
+
+- Working smart mirror on Raspberry Pi
+- Clean, demo-ready UI
+- Reliable weather, calendar, news display
+- Optional: Text-to-speech working
+
+#### Phase 4: Automation & Polish (Days 5-6)
+
+**Goal**: Add automation and polish for final demo
 
 **Tasks**:
 
@@ -163,7 +195,7 @@ Building an AI-powered smart mirror with live outfit analysis and other features
    - Implement smooth user experience flow
    - Add loading states and feedback
 
-2. **Text-to-Speech** (Day 6)
+2. **Text-to-Speech Enhancement** (Day 6)
 
    - Integrate Web Speech API
    - Add voice output for AI responses
@@ -175,7 +207,7 @@ Building an AI-powered smart mirror with live outfit analysis and other features
 - Text-to-speech working
 - Demo-ready smart mirror
 
-#### Phase 4: Phone Backup Testing (Day 7) - OPTIONAL
+#### Phase 5: Phone Backup Testing (Day 7) - OPTIONAL
 
 **Goal**: Ensure phone interface works as backup
 
@@ -192,7 +224,7 @@ Building an AI-powered smart mirror with live outfit analysis and other features
 - Working phone backup option
 - Documentation for phone setup
 
-#### Phase 5: Demo Preparation (Day 8)
+#### Phase 6: Final Demo Preparation (Day 8)
 
 **Goal**: Final testing and demo preparation
 
