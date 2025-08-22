@@ -145,6 +145,52 @@ router.post('/analyze-image', upload.single('image'), async (req, res) => {
   }
 });
 
+// POST /api/ai/analyze-outfit-with-weather - Outfit analysis with weather context
+router.post('/analyze-outfit-with-weather', upload.single('image'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'Image file is required' });
+    }
+
+    const imageBuffer = req.file.buffer;
+    const imageType = req.file.mimetype;
+
+    // Get weather data
+    let weatherData = null;
+    try {
+      const WeatherService = require('../services/weatherService');
+      const weatherService = new WeatherService();
+      weatherData = await weatherService.getWeatherData();
+      console.log('Weather data retrieved for outfit analysis:', weatherData);
+    } catch (weatherError) {
+      console.error('Failed to get weather data for outfit analysis:', weatherError);
+      // Continue without weather data
+    }
+
+    // Build weather-aware prompt with Snoop Dogg style
+    let outfitPrompt = "Analyze this outfit and give fashion advice. Be encouraging and constructive.";
+    
+    if (weatherData && !weatherData.error && weatherData.current) {
+      const { temperature, condition } = weatherData.current;
+      // outfitPrompt = `Analyze this outfit considering it's ${temperature}°F and ${condition} today. Provide fashion advice that considers the weather - suggest if the outfit is appropriate for the temperature and conditions, and offer constructive suggestions. Be encouraging and helpful.`;
+      outfitPrompt = `Yo! It's ${temperature}°F and ${condition} out there. Check this outfit and tell me what's good, what's not, and how to keep it fresh for the weather. Keep it real but encouraging, like Snoop Dogg giving fashion advice. Make it short and sweet, nephew!`;
+    }
+
+    const analysis = await OpenAIService.analyzeImage(imageBuffer, imageType, outfitPrompt, 'outfit-analysis');
+    res.json({ 
+      analysis,
+      weather: weatherData,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Weather-Aware Outfit Analysis Error:', error);
+    res.status(500).json({ 
+      error: 'Failed to analyze outfit with weather',
+      message: error.message 
+    });
+  }
+});
+
 // POST /api/ai/test-image - Simple image recognition test
 router.post('/test-image', upload.single('image'), async (req, res) => {
   try {

@@ -196,6 +196,33 @@ class ApiClient {
     }
   }
 
+  /**
+   * Analyze outfit with weather context
+   * @param {File} imageFile - Image file
+   * @returns {Promise<Object>} - Weather-aware outfit analysis result
+   */
+  static async analyzeOutfitWithWeather(imageFile) {
+    const formData = new FormData();
+    formData.append('image', imageFile);
+
+    const url = `${API_BASE_URL}/api/ai/analyze-outfit-with-weather`;
+    console.log('Attempting weather-aware outfit analysis:', url);
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        body: formData,
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Weather-Aware Outfit Analysis Error:', error);
+      throw error;
+    }
+  }
+
 }
 
 export default ApiClient;

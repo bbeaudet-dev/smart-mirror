@@ -9,11 +9,8 @@ const WebcamPanel: React.FC = () => {
     isInitialized,
     error,
     videoRef,
-    availableCameras,
-    selectedCameraId,
     startWebcam,
     stopWebcam,
-    switchCamera,
     captureFrame,
     captureFrameAsBlob
   } = useWebcam();
@@ -131,6 +128,49 @@ const WebcamPanel: React.FC = () => {
     }
   };
 
+  const handleWeatherOutfitAnalysis = async () => {
+    if (!isInitialized) {
+      console.error("Webcam not initialized");
+      return;
+    }
+
+    setIsAnalyzing(true);
+    setAiAnalysis(null);
+
+    try {
+      console.log("Starting weather-aware outfit analysis...");
+      
+      // Capture a frame as blob
+      const blob = await captureFrameAsBlob();
+      if (!blob) {
+        throw new Error("Failed to capture frame");
+      }
+
+      // Convert blob to File object
+      const imageFile = new File([blob], 'weather-outfit-analysis.jpg', { type: 'image/jpeg' });
+      
+      // Use the weather-aware outfit analysis endpoint
+      const result = await ApiClient.analyzeOutfitWithWeather(imageFile);
+      
+      console.log("Weather-Aware Outfit Analysis result:", result);
+      
+      // Display weather info if available
+      let analysisText = (result as any).analysis;
+      if ((result as any).weather && !(result as any).weather.error) {
+        const weather = (result as any).weather.current;
+        analysisText = `🌤️ Weather: ${weather.temperature}°F, ${weather.condition}\n\n${analysisText}`;
+      }
+      
+      setAiAnalysis(analysisText);
+      
+    } catch (error) {
+      console.error("Weather-Aware Outfit Analysis failed:", error);
+      setAiAnalysis("Weather-aware outfit analysis failed. Please try again.");
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
   return (
     <div className="flex flex-col h-full">
       <h3 className="mirror-header">
@@ -164,29 +204,6 @@ const WebcamPanel: React.FC = () => {
       {error && (
         <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-2 mb-4">
           <p className="text-red-300 text-xs">{error}</p>
-        </div>
-      )}
-
-      {/* Camera Selection */}
-      {availableCameras.length > 1 && (
-        <div className="mb-4">
-          <label className="block text-mirror-xs text-mirror-text-dimmed mb-1">Camera:</label>
-          <select
-            value={selectedCameraId || ''}
-            onChange={(e) => {
-              const cameraId = e.target.value;
-              if (cameraId && cameraId !== selectedCameraId) {
-                switchCamera(cameraId);
-              }
-            }}
-            className="w-full px-2 py-1 rounded text-xs bg-black/20 border border-white/20 text-mirror-text"
-          >
-            {availableCameras.map((camera) => (
-              <option key={camera.deviceId} value={camera.deviceId}>
-                {camera.label || `Camera ${camera.deviceId.slice(0, 8)}...`}
-              </option>
-            ))}
-          </select>
         </div>
       )}
 
@@ -242,6 +259,17 @@ const WebcamPanel: React.FC = () => {
               >
                 {isAnalyzing ? 'Analyzing...' : 'Outfit Analysis'}
               </button>
+              <button
+                onClick={handleWeatherOutfitAnalysis}
+                disabled={isAnalyzing}
+                className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
+                  isAnalyzing
+                    ? 'bg-gray-500 cursor-not-allowed'
+                    : 'bg-blue-600 hover:bg-blue-700 text-white'
+                }`}
+              >
+                {isAnalyzing ? 'Analyzing...' : 'Weather Outfit Analysis'}
+              </button>
             </div>
           </>
         )}
@@ -259,7 +287,6 @@ const WebcamPanel: React.FC = () => {
       <div className="bg-black/10 rounded-lg p-2 text-xs">
         <p className="text-mirror-text-dimmed mb-1">Status:</p>
         <p className="text-mirror-text">Webcam: {isInitialized ? 'Active' : 'Inactive'}</p>
-        <p className="text-mirror-text">Cameras: {availableCameras.length}</p>
         <p className="text-mirror-text">Captures: {captureCount}</p>
         {stream && (
           <p className="text-mirror-text">
