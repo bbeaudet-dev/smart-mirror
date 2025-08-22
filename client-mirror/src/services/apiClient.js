@@ -1,4 +1,6 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5005';
+// Use environment variable or try to detect the correct server URL
+const API_BASE_URL = import.meta.env.VITE_API_URL || 
+  (window.location.hostname === 'localhost' ? 'http://localhost:5005' : `http://${window.location.hostname}:5005`);
 
 class ApiClient {
   /**
@@ -161,6 +163,35 @@ class ApiClient {
       return await response.json();
     } catch (error) {
       console.error('Image Analysis Error:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Test image recognition (simple analysis)
+   * @param {File} imageFile - Image file
+   * @returns {Promise<Object>} - Test analysis result
+   */
+  static async testImage(imageFile) {
+    const formData = new FormData();
+    formData.append('image', imageFile);
+
+    const url = `${API_BASE_URL}/api/ai/test-image`;
+    console.log('Attempting to connect to:', url);
+    console.log('Current hostname:', window.location.hostname);
+    console.log('API_BASE_URL:', API_BASE_URL);
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        body: formData,
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Test Image Analysis Error:', error);
       throw error;
     }
   }

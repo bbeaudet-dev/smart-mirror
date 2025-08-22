@@ -24,19 +24,10 @@ app.use(morgan('combined'));
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
     ? false 
-    : [
-        'http://localhost:3000', 
-        'http://127.0.0.1:3000', 
-        'http://localhost:3001', 
-        'http://127.0.0.1:3001', 
-        'http://localhost:8080', 
-        'http://127.0.0.1:8080',
-        ...(process.env.LOCAL_IP ? [
-          `http://${process.env.LOCAL_IP}:3000`,
-          `http://${process.env.LOCAL_IP}:3001`
-        ] : [])
-      ],
-  credentials: true
+    : true, // Allow all origins in development
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Content-Length']
 }));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));

@@ -5,6 +5,7 @@ import TimeDisplay from './modules/clock/TimeDisplay';
 import WeatherPanel from './modules/weather/WeatherPanel';
 import CalendarPanel from './modules/calendar/CalendarPanel';
 import WisdomPanel from './modules/wisdom/WisdomPanel';
+import WebcamPanel from './modules/webcam/WebcamPanel';
 
 function MirrorInterface() {
   return (
@@ -16,7 +17,7 @@ function MirrorInterface() {
         </div>
 
         {/* Main Content Grid */}
-        <div className="flex-1 grid grid-cols-3 gap-mirror-gap min-h-0 overflow-hidden">
+        <div className="flex-1 grid grid-cols-4 gap-mirror-gap min-h-0 overflow-hidden">
           {/* Weather Panel */}
           <div className="weather-section">
             <WeatherPanel />
@@ -25,6 +26,11 @@ function MirrorInterface() {
           {/* Calendar Panel */}
           <div className="calendar-section">
             <CalendarPanel />
+          </div>
+
+          {/* Webcam Panel */}
+          <div className="webcam-section">
+            <WebcamPanel />
           </div>
 
           {/* Wisdom Panel */}

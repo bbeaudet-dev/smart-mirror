@@ -60,7 +60,7 @@ class OpenAIService {
       const systemPrompt = SMART_MIRROR_CONTEXT[context] || SMART_MIRROR_CONTEXT['outfit-analysis'];
       
       const completion = await openai.chat.completions.create({
-        model: "gpt-4-vision-preview",
+        model: "gpt-4o",
         messages: [
           {
             role: "system",

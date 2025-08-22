@@ -1,54 +1,131 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useWebcam } from '../../../hooks/useWebcam';
 import ApiClient from '../../../services/apiClient';
 
-interface WebcamPanelProps {
-  onAnalysisComplete?: (result: string) => void;
-}
-
-const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAnalysisComplete }) => {
-  const { 
-    isActive, 
-    error, 
-    startWebcam, 
-    stopWebcam, 
-    captureFrame, 
-    videoRef 
+const WebcamPanel: React.FC = () => {
+  const {
+    stream,
+    isCapturing,
+    isInitialized,
+    error,
+    videoRef,
+    availableCameras,
+    selectedCameraId,
+    startWebcam,
+    stopWebcam,
+    switchCamera,
+    captureFrame,
+    captureFrameAsBlob
   } = useWebcam();
-  
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [analysisResult, setAnalysisResult] = useState<string | null>(null);
 
-  const handleAnalyzeOutfit = async () => {
-    if (!isActive) {
-      await startWebcam();
+  const [lastCapturedFrame, setLastCapturedFrame] = useState<string | null>(null);
+  const [captureCount, setCaptureCount] = useState(0);
+  const [aiAnalysis, setAiAnalysis] = useState<string | null>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+
+  // Auto-start webcam when component mounts
+  useEffect(() => {
+    startWebcam();
+    
+    // Cleanup on unmount
+    return () => {
+      stopWebcam();
+    };
+  }, []);
+
+  const handleCaptureFrame = () => {
+    const frameData = captureFrame();
+    if (frameData) {
+      setLastCapturedFrame(frameData);
+      setCaptureCount(prev => prev + 1);
+      console.log(`Frame captured! Total captures: ${captureCount + 1}`);
+    } else {
+      console.error("Failed to capture frame");
+    }
+  };
+
+  const handleCaptureBlob = async () => {
+    const blob = await captureFrameAsBlob();
+    if (blob) {
+      console.log("Captured blob:", blob.size, "bytes");
+      // Convert blob to data URL for display
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setLastCapturedFrame(e.target?.result as string);
+        setCaptureCount(prev => prev + 1);
+      };
+      reader.readAsDataURL(blob);
+    } else {
+      console.error("Failed to capture blob");
+    }
+  };
+
+  const handleTestAI = async () => {
+    if (!isInitialized) {
+      console.error("Webcam not initialized");
       return;
     }
 
     setIsAnalyzing(true);
+    setAiAnalysis(null);
+
     try {
-      const imageData = captureFrame();
-      if (!imageData) {
-        throw new Error('Failed to capture image');
+      console.log("Testing AI analysis...");
+      
+      // Capture a frame as blob
+      const blob = await captureFrameAsBlob();
+      if (!blob) {
+        throw new Error("Failed to capture frame");
       }
 
-      // Convert data URL to file
-      const response = await fetch(imageData);
-      const blob = await response.blob();
-      const file = new File([blob], 'outfit.jpg', { type: 'image/jpeg' });
-
-      // Send to AI for analysis
-      const result = await ApiClient.analyzeImage(
-        file,
-        'Analyze this outfit and provide fashion advice. Consider the style, colors, and overall look.',
-        'outfit-analysis'
-      );
-
-      setAnalysisResult(result.analysis);
-      onAnalysisComplete?.(result.analysis);
+      // Convert blob to File object
+      const imageFile = new File([blob], 'webcam-capture.jpg', { type: 'image/jpeg' });
+      
+      // Send to test endpoint
+      const result = await ApiClient.testImage(imageFile);
+      
+      console.log("AI Analysis result:", result);
+      setAiAnalysis((result as any).analysis);
+      
     } catch (error) {
-      console.error('Outfit analysis failed:', error);
-      setAnalysisResult('Failed to analyze outfit. Please try again.');
+      console.error("AI Analysis failed:", error);
+      setAiAnalysis("AI analysis failed. Please try again.");
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
+  const handleOutfitAnalysis = async () => {
+    if (!isInitialized) {
+      console.error("Webcam not initialized");
+      return;
+    }
+
+    setIsAnalyzing(true);
+    setAiAnalysis(null);
+
+    try {
+      console.log("Starting outfit analysis...");
+      
+      // Capture a frame as blob
+      const blob = await captureFrameAsBlob();
+      if (!blob) {
+        throw new Error("Failed to capture frame");
+      }
+
+      // Convert blob to File object
+      const imageFile = new File([blob], 'outfit-analysis.jpg', { type: 'image/jpeg' });
+      
+      // Use the full outfit analysis endpoint with weather context
+      const prompt = "Analyze this outfit and provide fashion advice. Consider the style, colors, and overall look. Be encouraging and constructive.";
+      const result = await ApiClient.analyzeImage(imageFile, prompt, 'outfit-analysis');
+      
+      console.log("Outfit Analysis result:", result);
+      setAiAnalysis((result as any).analysis);
+      
+    } catch (error) {
+      console.error("Outfit Analysis failed:", error);
+      setAiAnalysis("Outfit analysis failed. Please try again.");
     } finally {
       setIsAnalyzing(false);
     }
@@ -57,68 +134,151 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAnalysisComplete }) => {
   return (
     <div className="flex flex-col h-full">
       <h3 className="mirror-header">
-        Outfit Analysis
+        Webcam
+        {isCapturing && <span className="text-mirror-xs text-mirror-text-dimmed animate-spin ml-1">⟳</span>}
       </h3>
       
-      <div className="flex-1 flex flex-col items-center justify-center space-y-4">
-        {/* Webcam Video */}
-        {isActive && (
-          <div className="relative">
-            <video
-              ref={videoRef}
-              autoPlay
-              playsInline
-              muted
-              className="w-64 h-48 object-cover rounded-lg border-2 border-mirror-accent"
-            />
-            <div className="absolute inset-0 bg-black bg-opacity-20 rounded-lg pointer-events-none" />
+      {/* Video Feed */}
+      <div className="flex-1 relative bg-black/20 rounded-lg overflow-hidden mb-4">
+        {stream && isInitialized ? (
+          <video
+            ref={videoRef}
+            autoPlay
+            playsInline
+            muted
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="text-center">
+              <div className="text-mirror-lg text-mirror-text-dimmed mb-2">📷</div>
+              <p className="text-mirror-xs text-mirror-text">
+                {isCapturing ? "Starting webcam..." : "Webcam not available"}
+              </p>
+            </div>
           </div>
         )}
-
-        {/* Error Display */}
-        {error && (
-          <div className="text-red-400 text-center text-sm">
-            {error}
-          </div>
-        )}
-
-        {/* Analysis Result */}
-        {analysisResult && (
-          <div className="text-center p-4 bg-mirror-bg-secondary rounded-lg max-w-xs">
-            <p className="text-mirror-sm text-mirror-text">
-              {analysisResult}
-            </p>
-          </div>
-        )}
-
-        {/* Control Buttons */}
-        <div className="flex space-x-2">
-          {!isActive ? (
-            <button
-              onClick={startWebcam}
-              className="px-4 py-2 bg-mirror-accent text-mirror-bg rounded-lg hover:bg-mirror-accent-hover transition-colors"
-            >
-              Start Camera
-            </button>
-          ) : (
-            <>
-              <button
-                onClick={handleAnalyzeOutfit}
-                disabled={isAnalyzing}
-                className="px-4 py-2 bg-mirror-accent text-mirror-bg rounded-lg hover:bg-mirror-accent-hover transition-colors disabled:opacity-50"
-              >
-                {isAnalyzing ? 'Analyzing...' : 'Analyze Outfit'}
-              </button>
-              <button
-                onClick={stopWebcam}
-                className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
-              >
-                Stop Camera
-              </button>
-            </>
-          )}
-        </div>
       </div>
+
+      {/* Error Display */}
+      {error && (
+        <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-2 mb-4">
+          <p className="text-red-300 text-xs">{error}</p>
+        </div>
+      )}
+
+      {/* Camera Selection */}
+      {availableCameras.length > 1 && (
+        <div className="mb-4">
+          <label className="block text-mirror-xs text-mirror-text-dimmed mb-1">Camera:</label>
+          <select
+            value={selectedCameraId || ''}
+            onChange={(e) => {
+              const cameraId = e.target.value;
+              if (cameraId && cameraId !== selectedCameraId) {
+                switchCamera(cameraId);
+              }
+            }}
+            className="w-full px-2 py-1 rounded text-xs bg-black/20 border border-white/20 text-mirror-text"
+          >
+            {availableCameras.map((camera) => (
+              <option key={camera.deviceId} value={camera.deviceId}>
+                {camera.label || `Camera ${camera.deviceId.slice(0, 8)}...`}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
+      {/* Controls */}
+      <div className="flex flex-col space-y-2 mb-4">
+        <button
+          onClick={isInitialized ? stopWebcam : () => startWebcam()}
+          className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
+            isInitialized
+              ? 'bg-red-500 hover:bg-red-600 text-white'
+              : 'bg-green-500 hover:bg-green-600 text-white'
+          }`}
+        >
+          {isInitialized ? 'Stop Webcam' : 'Start Webcam'}
+        </button>
+        
+        {isInitialized && (
+          <>
+            <div className="flex space-x-2">
+              <button
+                onClick={handleCaptureFrame}
+                className="px-3 py-1 rounded text-xs font-medium bg-blue-500 hover:bg-blue-600 text-white transition-colors"
+              >
+                Capture Frame
+              </button>
+              <button
+                onClick={handleCaptureBlob}
+                className="px-3 py-1 rounded text-xs font-medium bg-purple-500 hover:bg-purple-600 text-white transition-colors"
+              >
+                Capture Blob
+              </button>
+            </div>
+            <div className="flex space-x-2">
+              <button
+                onClick={handleTestAI}
+                disabled={isAnalyzing}
+                className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
+                  isAnalyzing
+                    ? 'bg-gray-500 cursor-not-allowed'
+                    : 'bg-green-600 hover:bg-green-700 text-white'
+                }`}
+              >
+                {isAnalyzing ? 'Analyzing...' : 'Test AI'}
+              </button>
+              <button
+                onClick={handleOutfitAnalysis}
+                disabled={isAnalyzing}
+                className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
+                  isAnalyzing
+                    ? 'bg-gray-500 cursor-not-allowed'
+                    : 'bg-purple-600 hover:bg-purple-700 text-white'
+                }`}
+              >
+                {isAnalyzing ? 'Analyzing...' : 'Outfit Analysis'}
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* AI Analysis Result */}
+      {aiAnalysis && (
+        <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-2 mb-4">
+          <p className="text-green-300 text-xs font-medium mb-1">AI Analysis:</p>
+          <p className="text-green-200 text-xs">{aiAnalysis}</p>
+        </div>
+      )}
+
+      {/* Status Info */}
+      <div className="bg-black/10 rounded-lg p-2 text-xs">
+        <p className="text-mirror-text-dimmed mb-1">Status:</p>
+        <p className="text-mirror-text">Webcam: {isInitialized ? 'Active' : 'Inactive'}</p>
+        <p className="text-mirror-text">Cameras: {availableCameras.length}</p>
+        <p className="text-mirror-text">Captures: {captureCount}</p>
+        {stream && (
+          <p className="text-mirror-text">
+            Resolution: {videoRef.current?.videoWidth || 0} x {videoRef.current?.videoHeight || 0}
+          </p>
+        )}
+      </div>
+
+      {/* Last Captured Frame Preview */}
+      {lastCapturedFrame && (
+        <div className="mt-4">
+          <p className="text-mirror-xs text-mirror-text-dimmed mb-2">Last Capture:</p>
+          <img
+            src={lastCapturedFrame}
+            alt="Captured frame"
+            className="w-full h-20 object-cover rounded border border-white/20"
+          />
+        </div>
+      )}
     </div>
   );
 };
