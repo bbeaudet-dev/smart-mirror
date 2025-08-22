@@ -22,9 +22,7 @@ const server = http.createServer(app);
 app.use(helmet());
 app.use(morgan('combined'));
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? false 
-    : true, // Allow all origins in development
+  origin: true, // Allow all origins for smart mirror
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Content-Length']

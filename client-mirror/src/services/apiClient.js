@@ -31,6 +31,9 @@ class ApiClient {
       console.error(`API GET Error (${endpoint}):`, error);
       console.error(`API Base URL: ${API_BASE_URL}`);
       console.error(`Full URL: ${API_BASE_URL}${endpoint}`);
+      console.error(`Error type:`, typeof error);
+      console.error(`Error message:`, error.message);
+      console.error(`Error stack:`, error.stack);
       throw error;
     }
   }
