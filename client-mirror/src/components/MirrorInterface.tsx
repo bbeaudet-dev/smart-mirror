@@ -28,7 +28,7 @@ function MirrorInterface() {
           </div>
 
           {/* Webcam Panel - Bottom */}
-          <div className="h-1/4">
+          <div className="flex-1">
             <WebcamPanel 
               onAiMessage={setAiMessage}
               onAiLoading={setIsAiLoading}

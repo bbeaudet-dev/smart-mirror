@@ -5,6 +5,7 @@ import { AiAnalysisService } from '../../../services/aiAnalysisService';
 interface WebcamPanelProps {
   onAiMessage?: (message: string, type: 'ai-response' | 'motivation' | 'outfit-analysis' | 'general') => void;
   onAiLoading?: (loading: boolean) => void;
+  onButtonClick?: (buttonType: 'ai-analysis' | 'fashion' | 'weather-fascist' | 'inspire' | 'snoop-style') => void;
 }
 
 const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) => {
@@ -27,6 +28,7 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
   // Auto-start webcam when component mounts
   useEffect(() => {
     console.log("WebcamPanel: Starting webcam...");
+    console.log("WebcamPanel: Initial isInitialized state:", isInitialized);
     startWebcam();
     
     // Cleanup on unmount
@@ -35,6 +37,11 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
       stopWebcam();
     };
   }, []); // Empty dependency array - only run once
+
+  // Debug webcam state changes
+  useEffect(() => {
+    console.log("WebcamPanel: isInitialized changed to:", isInitialized);
+  }, [isInitialized]);
 
 
 
@@ -208,27 +215,21 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
 
   return (
     <div className="flex flex-col h-full">
-      <h3 className="mirror-header">
-        AI Outfit Analysis
-        {isAnalyzing && <span className="text-mirror-xs text-mirror-text-dimmed animate-spin ml-1">⟳</span>}
-      </h3>
-      
       {/* Video Feed */}
-      <div className="h-48 relative bg-black/20 rounded-lg overflow-hidden mb-4">
+      <div className="flex-1 relative bg-black/20 rounded-lg overflow-hidden mb-4">
         {stream && isInitialized ? (
-          <div className="w-full h-full flex items-center justify-center">
+          <div className="w-full h-full flex items-center justify-end pr-4">
             <video
               ref={videoRef}
               autoPlay
               playsInline
               muted
-              className="h-full w-auto object-cover transform -rotate-90"
+              className="h-96 w-auto"
             />
           </div>
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="text-center">
-              <div className="text-mirror-lg text-mirror-text-dimmed mb-2">CAMERA</div>
               <p className="text-mirror-xs text-mirror-text">
                 {isCapturing ? "Starting webcam..." : "Webcam not available"}
               </p>
@@ -244,107 +245,77 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
         </div>
       )}
 
-      {/* Debug Toggle */}
-      <div className="mt-2">
-        <button
-          onClick={() => setShowDebugControls(!showDebugControls)}
-          className="px-2 py-1 rounded text-xs font-medium bg-gray-600 hover:bg-gray-700 text-white transition-colors"
-        >
-          {showDebugControls ? 'Hide Debug' : 'Show Debug'}
-        </button>
-      </div>
 
-      {/* Manual Webcam Controls */}
-      <div className="mt-2">
-        <button
-          onClick={isInitialized ? stopWebcam : startWebcam}
-          className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
-            isInitialized
-              ? 'bg-red-600 hover:bg-red-700 text-white'
-              : 'bg-green-600 hover:bg-green-700 text-white'
-          }`}
-        >
-          {isInitialized ? 'Stop Webcam' : 'Start Webcam'}
-        </button>
-      </div>
 
-      {/* Debug Controls */}
-      {showDebugControls && (
-        <div className="mt-2 space-y-2">
-          <div className="flex space-x-2">
-            <button
-              onClick={handleTestAI}
-              disabled={isAnalyzing}
-              className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
-                isAnalyzing
-                  ? 'bg-gray-500 cursor-not-allowed'
-                  : 'bg-green-600 hover:bg-green-700 text-white'
-              }`}
-            >
-              {isAnalyzing ? 'Processing...' : 'AI Analysis'}
-            </button>
-            <button
-              onClick={handleOutfitAnalysis}
-              disabled={isAnalyzing}
-              className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
-                isAnalyzing
-                  ? 'bg-gray-500 cursor-not-allowed'
-                  : 'bg-purple-600 hover:bg-purple-700 text-white'
-              }`}
-            >
-              {isAnalyzing ? 'Processing...' : 'Fashion'}
-            </button>
-            <button
-              onClick={handleWeatherOutfitAnalysis}
-              disabled={isAnalyzing}
-              className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
-                isAnalyzing
-                  ? 'bg-gray-500 cursor-not-allowed'
-                  : 'bg-orange-600 hover:bg-orange-700 text-white'
-              }`}
-            >
-              {isAnalyzing ? 'Processing...' : 'Weather Fascist'}
-            </button>
-          </div>
-          <div className="flex space-x-2">
-            <button
-              onClick={handleMotivation}
-              disabled={isAnalyzing}
-              className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
-                isAnalyzing
-                  ? 'bg-gray-500 cursor-not-allowed'
-                  : 'bg-blue-600 hover:bg-blue-700 text-white'
-              }`}
-            >
-              {isAnalyzing ? 'Processing...' : 'Inspire'}
-            </button>
-            <button
-              onClick={handleSnoopStyle}
-              disabled={isAnalyzing}
-              className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
-                isAnalyzing
-                  ? 'bg-gray-500 cursor-not-allowed'
-                  : 'bg-yellow-600 hover:bg-yellow-700 text-white'
-              }`}
-            >
-              {isAnalyzing ? 'Processing...' : 'Snoop Style'}
-            </button>
-          </div>
+      {/* AI Control Buttons - Bottom of Screen */}
+      <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-40">
+        <div className="flex space-x-2">
+          <button
+            onClick={isInitialized ? stopWebcam : startWebcam}
+            className={`px-3 py-2 rounded text-xs font-medium transition-colors ${
+              isInitialized
+                ? 'bg-red-600 hover:bg-red-700 text-white'
+                : 'bg-green-600 hover:bg-green-700 text-white'
+            }`}
+          >
+            {isInitialized ? 'Stop Webcam' : 'Start Webcam'}
+          </button>
+          <button
+            onClick={handleTestAI}
+            disabled={isAnalyzing}
+            className={`px-3 py-2 rounded text-xs font-medium transition-colors ${
+              isAnalyzing
+                ? 'bg-gray-500 cursor-not-allowed'
+                : 'bg-green-600 hover:bg-green-700 text-white'
+            }`}
+          >
+            {isAnalyzing ? 'Processing...' : 'AI Analysis'}
+          </button>
+          <button
+            onClick={handleOutfitAnalysis}
+            disabled={isAnalyzing}
+            className={`px-3 py-2 rounded text-xs font-medium transition-colors ${
+              isAnalyzing
+                ? 'bg-gray-500 cursor-not-allowed'
+                : 'bg-purple-600 hover:bg-purple-700 text-white'
+            }`}
+          >
+            {isAnalyzing ? 'Processing...' : 'Fashion'}
+          </button>
+          <button
+            onClick={handleWeatherOutfitAnalysis}
+            disabled={isAnalyzing}
+            className={`px-3 py-2 rounded text-xs font-medium transition-colors ${
+              isAnalyzing
+                ? 'bg-gray-500 cursor-not-allowed'
+                : 'bg-orange-600 hover:bg-orange-700 text-white'
+            }`}
+          >
+            {isAnalyzing ? 'Processing...' : 'Weather Fascist'}
+          </button>
+          <button
+            onClick={handleMotivation}
+            disabled={isAnalyzing}
+            className={`px-3 py-2 rounded text-xs font-medium transition-colors ${
+              isAnalyzing
+                ? 'bg-gray-500 cursor-not-allowed'
+                : 'bg-blue-600 hover:bg-blue-700 text-white'
+            }`}
+          >
+            {isAnalyzing ? 'Processing...' : 'Inspire'}
+          </button>
+          <button
+            onClick={handleSnoopStyle}
+            disabled={isAnalyzing}
+            className={`px-3 py-2 rounded text-xs font-medium transition-colors ${
+              isAnalyzing
+                ? 'bg-gray-500 cursor-not-allowed'
+                : 'bg-yellow-600 hover:bg-yellow-700 text-white'
+            }`}
+          >
+            {isAnalyzing ? 'Processing...' : 'Snoop Style'}
+          </button>
         </div>
-      )}
-
-      {/* Status Info */}
-      <div className="bg-black/10 rounded-lg p-2 text-xs mt-2">
-        <p className="text-mirror-text-dimmed mb-1">Status:</p>
-        <p className="text-mirror-text">Webcam: {isInitialized ? 'Active' : 'Inactive'}</p>
-        <p className="text-mirror-text">Capturing: {isCapturing ? 'Yes' : 'No'}</p>
-        <p className="text-mirror-text">Auto Analysis: {isAnalyzing ? 'Processing...' : 'Ready'}</p>
-        {error && <p className="text-red-300 text-xs">Error: {error}</p>}
-        {stream && (
-          <p className="text-mirror-text">
-            Resolution: {videoRef.current?.videoWidth || 0} x {videoRef.current?.videoHeight || 0}
-          </p>
-        )}
       </div>
     </div>
   );
