@@ -5,23 +5,63 @@ export const useWebcam = () => {
   const [isCapturing, setIsCapturing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [availableCameras, setAvailableCameras] = useState<MediaDeviceInfo[]>([]);
+  const [selectedCameraId, setSelectedCameraId] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  const startWebcam = async () => {
+  // Get list of available cameras
+  const getAvailableCameras = async () => {
+    try {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const cameras = devices.filter(device => device.kind === 'videoinput');
+      setAvailableCameras(cameras);
+      console.log('Available cameras:', cameras.map(cam => ({ id: cam.deviceId, label: cam.label })));
+      
+      // Auto-select the first camera if none selected
+      if (cameras.length > 0 && !selectedCameraId) {
+        setSelectedCameraId(cameras[0].deviceId);
+      }
+    } catch (error) {
+      console.error('Failed to enumerate cameras:', error);
+    }
+  };
+
+  // Get camera permissions and list cameras
+  useEffect(() => {
+    const initializeCameras = async () => {
+      try {
+        // Request camera permission first
+        await navigator.mediaDevices.getUserMedia({ video: true });
+        await getAvailableCameras();
+      } catch (error) {
+        console.error('Failed to get camera permission:', error);
+      }
+    };
+    
+    initializeCameras();
+  }, []);
+
+  const startWebcam = async (cameraId?: string) => {
     try {
       setError(null);
       setIsCapturing(true);
       
-      console.log("Starting USB webcam...");
+      const targetCameraId = cameraId || selectedCameraId;
+      console.log("Starting USB webcam with camera ID:", targetCameraId);
       
-      const mediaStream = await navigator.mediaDevices.getUserMedia({
+      const constraints: MediaStreamConstraints = {
         video: {
           width: { ideal: 1920, min: 1280 },
           height: { ideal: 1080, min: 720 },
-          frameRate: { ideal: 30, min: 15 }
+          frameRate: { ideal: 30, min: 15 },
+          ...(targetCameraId && { deviceId: { exact: targetCameraId } })
         },
         audio: false, // We'll use something else for output
-      });
+      };
+      
+      console.log("Using constraints:", constraints);
+      
+      const mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
       
       console.log("Webcam started successfully:", mediaStream);
       setStream(mediaStream);
@@ -37,6 +77,23 @@ export const useWebcam = () => {
       setError(`Webcam error: ${error.message || 'Unknown error'}`);
       setIsCapturing(false);
     }
+  };
+
+  const switchCamera = async (cameraId: string) => {
+    console.log("Switching to camera:", cameraId);
+    setSelectedCameraId(cameraId);
+    
+    // Stop current stream
+    if (stream) {
+      stream.getTracks().forEach(track => {
+        track.stop();
+        console.log("Stopped track:", track.kind);
+      });
+      setStream(null);
+    }
+    
+    // Start new stream with selected camera
+    await startWebcam(cameraId);
   };
 
   const stopWebcam = () => {
@@ -147,10 +204,13 @@ export const useWebcam = () => {
     isInitialized,
     error,
     videoRef,
+    availableCameras,
+    selectedCameraId,
     
     // Methods
     startWebcam,
     stopWebcam,
+    switchCamera,
     captureFrame,
     captureFrameAsBlob,
     

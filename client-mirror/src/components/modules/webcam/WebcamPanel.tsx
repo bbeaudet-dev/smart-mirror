@@ -9,8 +9,11 @@ const WebcamPanel: React.FC = () => {
     isInitialized,
     error,
     videoRef,
+    availableCameras,
+    selectedCameraId,
     startWebcam,
     stopWebcam,
+    switchCamera,
     captureFrame,
     captureFrameAsBlob
   } = useWebcam();
@@ -164,10 +167,33 @@ const WebcamPanel: React.FC = () => {
         </div>
       )}
 
+      {/* Camera Selection */}
+      {availableCameras.length > 1 && (
+        <div className="mb-4">
+          <label className="block text-mirror-xs text-mirror-text-dimmed mb-1">Camera:</label>
+          <select
+            value={selectedCameraId || ''}
+            onChange={(e) => {
+              const cameraId = e.target.value;
+              if (cameraId && cameraId !== selectedCameraId) {
+                switchCamera(cameraId);
+              }
+            }}
+            className="w-full px-2 py-1 rounded text-xs bg-black/20 border border-white/20 text-mirror-text"
+          >
+            {availableCameras.map((camera) => (
+              <option key={camera.deviceId} value={camera.deviceId}>
+                {camera.label || `Camera ${camera.deviceId.slice(0, 8)}...`}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
       {/* Controls */}
       <div className="flex flex-col space-y-2 mb-4">
         <button
-          onClick={isInitialized ? stopWebcam : startWebcam}
+          onClick={isInitialized ? stopWebcam : () => startWebcam()}
           className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
             isInitialized
               ? 'bg-red-500 hover:bg-red-600 text-white'
@@ -233,6 +259,7 @@ const WebcamPanel: React.FC = () => {
       <div className="bg-black/10 rounded-lg p-2 text-xs">
         <p className="text-mirror-text-dimmed mb-1">Status:</p>
         <p className="text-mirror-text">Webcam: {isInitialized ? 'Active' : 'Inactive'}</p>
+        <p className="text-mirror-text">Cameras: {availableCameras.length}</p>
         <p className="text-mirror-text">Captures: {captureCount}</p>
         {stream && (
           <p className="text-mirror-text">
