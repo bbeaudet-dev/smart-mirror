@@ -1,6 +1,7 @@
 export class SpeechService {
   private voices: SpeechSynthesisVoice[] = [];
   private isEnabled: boolean = true;
+  private selectedVoice: SpeechSynthesisVoice | null = null;
 
   constructor() {
     this.loadVoices();
@@ -28,19 +29,32 @@ export class SpeechService {
 
     const utterance = new SpeechSynthesisUtterance(text);
     
-    // Set default voice properties
-    utterance.rate = 0.9; // Slightly slower for clarity
+    // Set better voice properties
+    utterance.rate = 1.0; // Normal speed
     utterance.pitch = 1.0;
-    utterance.volume = 0.8; // Good volume for mirror display
+    utterance.volume = 0.9; // Good volume for mirror display
 
-    // Try to use a good default voice
-    const preferredVoices = this.voices.filter(voice => 
-      voice.lang.startsWith('en') && 
-      (voice.name.includes('Alex') || voice.name.includes('Samantha') || voice.name.includes('Google'))
-    );
-    
-    if (preferredVoices.length > 0) {
-      utterance.voice = preferredVoices[0];
+    // Use selected voice or try to use the best available voice
+    if (this.selectedVoice) {
+      utterance.voice = this.selectedVoice;
+      console.log('Using selected voice:', this.selectedVoice.name);
+    } else {
+      const preferredVoices = this.voices.filter(voice => 
+        voice.lang.startsWith('en') && 
+        (voice.name.includes('Alex') || 
+         voice.name.includes('Samantha') || 
+         voice.name.includes('Google') ||
+         voice.name.includes('Daniel') ||
+         voice.name.includes('Victoria') ||
+         voice.name.includes('Karen'))
+      );
+      
+      if (preferredVoices.length > 0) {
+        utterance.voice = preferredVoices[0];
+        console.log('Using preferred voice:', preferredVoices[0].name);
+      } else {
+        console.log('Available voices:', this.voices.map(v => `${v.name} (${v.lang})`));
+      }
     }
 
     console.log('Speaking:', text.substring(0, 50) + '...');
@@ -69,6 +83,27 @@ export class SpeechService {
    */
   isAvailable(): boolean {
     return 'speechSynthesis' in window;
+  }
+
+  /**
+   * Get list of available voices
+   */
+  getAvailableVoices(): SpeechSynthesisVoice[] {
+    return this.voices;
+  }
+
+  /**
+   * Set a specific voice by name
+   */
+  setVoice(voiceName: string) {
+    const voice = this.voices.find(v => v.name === voiceName);
+    if (voice) {
+      this.selectedVoice = voice;
+      console.log('Voice set to:', voice.name);
+    } else {
+      console.log('Voice not found:', voiceName);
+      console.log('Available voices:', this.voices.map(v => v.name));
+    }
   }
 }
 
