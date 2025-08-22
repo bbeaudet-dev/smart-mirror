@@ -167,12 +167,13 @@ router.post('/analyze-outfit-with-weather', upload.single('image'), async (req, 
       // Continue without weather data
     }
 
-    // Build weather-aware prompt
-    let outfitPrompt = "Analyze this outfit and provide fashion advice. Consider the style, colors, and overall look. Be encouraging and constructive.";
+    // Build weather-aware prompt with Snoop Dogg style
+    let outfitPrompt = "Analyze this outfit and give fashion advice. Be encouraging and constructive.";
     
     if (weatherData && !weatherData.error && weatherData.current) {
       const { temperature, condition } = weatherData.current;
-      outfitPrompt = `Analyze this outfit considering it's ${temperature}°F and ${condition} today. Provide fashion advice that considers the weather - suggest if the outfit is appropriate for the temperature and conditions, and offer constructive suggestions. Be encouraging and helpful.`;
+      // outfitPrompt = `Analyze this outfit considering it's ${temperature}°F and ${condition} today. Provide fashion advice that considers the weather - suggest if the outfit is appropriate for the temperature and conditions, and offer constructive suggestions. Be encouraging and helpful.`;
+      outfitPrompt = `Yo! It's ${temperature}°F and ${condition} out there. Check this outfit and tell me what's good, what's not, and how to keep it fresh for the weather. Keep it real but encouraging, like Snoop Dogg giving fashion advice. Make it short and sweet, nephew!`;
     }
 
     const analysis = await OpenAIService.analyzeImage(imageBuffer, imageType, outfitPrompt, 'outfit-analysis');
