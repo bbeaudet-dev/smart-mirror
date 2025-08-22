@@ -42,13 +42,13 @@ const MessagePanel: React.FC<MessagePanelProps> = ({
   const getMessageIcon = () => {
     switch (type) {
       case 'ai-response':
-        return '🤖';
+        return 'AI';
       case 'motivation':
-        return '💪';
+        return 'MOTIVATION';
       case 'outfit-analysis':
-        return '👔';
+        return 'OUTFIT';
       default:
-        return '💬';
+        return 'MESSAGE';
     }
   };
 

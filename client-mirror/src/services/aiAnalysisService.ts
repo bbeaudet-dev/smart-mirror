@@ -18,7 +18,11 @@ export class AiAnalysisService {
   static async testImage(imageFile: File): Promise<AiAnalysisResult> {
     try {
       console.log("Testing AI analysis...");
-      const result = await ApiClient.testImage(imageFile);
+      
+      // Use a more specific prompt that won't trigger safety filters
+      const prompt = "Describe what you see in this image in a friendly, helpful way. Focus on the overall scene, colors, and general atmosphere.";
+      const result = await ApiClient.analyzeImage(imageFile, prompt, 'ai-response');
+      
       console.log("AI Analysis result:", result);
       return result as AiAnalysisResult;
     } catch (error) {
@@ -52,7 +56,9 @@ export class AiAnalysisService {
     try {
       console.log("Starting weather-aware outfit analysis...");
       
-      const result = await ApiClient.analyzeOutfitWithWeather(imageFile);
+      // Use a confident, opinionated personality for weather outfit analysis
+      const prompt = `Analyze this outfit considering the current weather. Respond like Donald Trump, or else a narcissist who has the mannerisms and tendencies of the current US president. Be entertaining and engaging, but also give genuinely helpful fashion advice. Consider the weather conditions and suggest improvements if needed.`;
+      const result = await ApiClient.analyzeImage(imageFile, prompt, 'outfit-analysis');
       
       console.log("Weather-Aware Outfit Analysis result:", result);
       return result as AiAnalysisResult;
@@ -77,6 +83,24 @@ export class AiAnalysisService {
     } catch (error) {
       console.error("Motivation generation failed:", error);
       throw new Error("Motivation generation failed. Please try again.");
+    }
+  }
+
+  /**
+   * Generate Snoop Dogg style analysis
+   */
+  static async generateSnoopStyle(imageFile: File): Promise<AiAnalysisResult> {
+    try {
+      console.log("Generating Snoop Dogg style analysis...");
+      
+      const prompt = "Analyze this outfit and provide fashion advice in the style of Snoop Dogg. Use his mannerisms, slang, and style - keep it real, use some 'izzle' language, but be encouraging and positive. Give genuine fashion advice while maintaining his personality.";
+      const result = await ApiClient.analyzeImage(imageFile, prompt, 'ai-response');
+      
+      console.log("Snoop Dogg result:", result);
+      return result as AiAnalysisResult;
+    } catch (error) {
+      console.error("Snoop Dogg analysis failed:", error);
+      throw new Error("Snoop Dogg analysis failed. Please try again.");
     }
   }
 

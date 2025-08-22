@@ -8,7 +8,7 @@ html {
   overflow: hidden;
   background: #000;
   user-select: none;
-  font-size: 2rem; /* Increased from 1.25rem for better readability from 3 feet */
+  font-size: 1.7rem; /* Reduced by ~15% from 2rem for better balance */
 }
 
 body {

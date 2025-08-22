@@ -24,27 +24,14 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
   const [autoAnalysisInterval, setAutoAnalysisInterval] = useState<NodeJS.Timeout | null>(null);
   const [showDebugControls, setShowDebugControls] = useState(false);
 
-  // Auto-start webcam and setup automatic analysis when component mounts
+  // Auto-start webcam when component mounts
   useEffect(() => {
     console.log("WebcamPanel: Starting webcam...");
     startWebcam();
     
-    // Start automatic weather outfit analysis every 15 seconds
-    const interval = setInterval(() => {
-      console.log("Auto analysis interval triggered, isInitialized:", isInitialized, "isAnalyzing:", isAnalyzing);
-      if (isInitialized && !isAnalyzing) {
-        handleWeatherOutfitAnalysis();
-      }
-    }, 15000); // 15 seconds
-    
-    setAutoAnalysisInterval(interval);
-    
     // Cleanup on unmount
     return () => {
       console.log("WebcamPanel: Cleaning up...");
-      if (interval) {
-        clearInterval(interval);
-      }
       stopWebcam();
     };
   }, []); // Empty dependency array - only run once
@@ -188,6 +175,37 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
     }
   };
 
+  const handleSnoopStyle = async () => {
+    if (!isInitialized) {
+      console.error("Webcam not initialized");
+      onAiMessage?.("Webcam not initialized. Please start the webcam first.", 'ai-response');
+      return;
+    }
+
+    setIsAnalyzing(true);
+    onAiLoading?.(true);
+
+    try {
+      const blob = await captureFrameAsBlob();
+      if (!blob) {
+        throw new Error("Failed to capture frame");
+      }
+
+      const imageFile = new File([blob], 'snoop-style.jpg', { type: 'image/jpeg' });
+      const result = await AiAnalysisService.generateSnoopStyle(imageFile);
+      
+      onAiMessage?.(result.analysis, 'ai-response');
+      
+    } catch (error) {
+      console.error("Snoop Dogg analysis failed:", error);
+      const errorMessage = error instanceof Error ? error.message : "Snoop Dogg analysis failed. Please try again.";
+      onAiMessage?.(errorMessage, 'ai-response');
+    } finally {
+      setIsAnalyzing(false);
+      onAiLoading?.(false);
+    }
+  };
+
   return (
     <div className="flex flex-col h-full">
       <h3 className="mirror-header">
@@ -198,17 +216,19 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
       {/* Video Feed */}
       <div className="h-48 relative bg-black/20 rounded-lg overflow-hidden mb-4">
         {stream && isInitialized ? (
-          <video
-            ref={videoRef}
-            autoPlay
-            playsInline
-            muted
-            className="w-full h-full object-cover"
-          />
+          <div className="w-full h-full flex items-center justify-center">
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              muted
+              className="h-full w-auto object-cover transform -rotate-90"
+            />
+          </div>
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="text-center">
-              <div className="text-mirror-lg text-mirror-text-dimmed mb-2">📷</div>
+              <div className="text-mirror-lg text-mirror-text-dimmed mb-2">CAMERA</div>
               <p className="text-mirror-xs text-mirror-text">
                 {isCapturing ? "Starting webcam..." : "Webcam not available"}
               </p>
@@ -253,12 +273,6 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
         <div className="mt-2 space-y-2">
           <div className="flex space-x-2">
             <button
-              onClick={() => onAiMessage?.("This is a test message to verify the message system is working!", 'ai-response')}
-              className="px-2 py-1 rounded text-xs font-medium bg-yellow-600 hover:bg-yellow-700 text-white transition-colors"
-            >
-              Test Message
-            </button>
-            <button
               onClick={handleTestAI}
               disabled={isAnalyzing}
               className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
@@ -267,7 +281,7 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
                   : 'bg-green-600 hover:bg-green-700 text-white'
               }`}
             >
-              {isAnalyzing ? 'Processing...' : 'Test AI'}
+              {isAnalyzing ? 'Processing...' : 'AI Analysis'}
             </button>
             <button
               onClick={handleOutfitAnalysis}
@@ -278,8 +292,21 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
                   : 'bg-purple-600 hover:bg-purple-700 text-white'
               }`}
             >
-              {isAnalyzing ? 'Processing...' : 'Outfit'}
+              {isAnalyzing ? 'Processing...' : 'Fashion'}
             </button>
+            <button
+              onClick={handleWeatherOutfitAnalysis}
+              disabled={isAnalyzing}
+              className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
+                isAnalyzing
+                  ? 'bg-gray-500 cursor-not-allowed'
+                  : 'bg-orange-600 hover:bg-orange-700 text-white'
+              }`}
+            >
+              {isAnalyzing ? 'Processing...' : 'Weather Fascist'}
+            </button>
+          </div>
+          <div className="flex space-x-2">
             <button
               onClick={handleMotivation}
               disabled={isAnalyzing}
@@ -289,7 +316,18 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
                   : 'bg-blue-600 hover:bg-blue-700 text-white'
               }`}
             >
-              {isAnalyzing ? 'Processing...' : 'Motivation'}
+              {isAnalyzing ? 'Processing...' : 'Inspire'}
+            </button>
+            <button
+              onClick={handleSnoopStyle}
+              disabled={isAnalyzing}
+              className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
+                isAnalyzing
+                  ? 'bg-gray-500 cursor-not-allowed'
+                  : 'bg-yellow-600 hover:bg-yellow-700 text-white'
+              }`}
+            >
+              {isAnalyzing ? 'Processing...' : 'Snoop Style'}
             </button>
           </div>
         </div>
