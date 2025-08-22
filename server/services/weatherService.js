@@ -82,42 +82,42 @@ class WeatherService {
    * @returns {string} - Weather icon emoji
    */
   getWeatherIcon(code, isDay) {
-    // WeatherAPI.com condition codes
+    // WeatherAPI.com condition codes - using Linux-compatible icons with intensity
     const icons = {
-      1000: isDay ? '☀️' : '🌙', // Clear
-      1003: '⛅', // Partly cloudy
-      1006: '☁️', // Cloudy
-      1009: '☁️', // Overcast
-      1030: '🌫️', // Mist
-      1063: '🌦️', // Patchy rain
-      1066: '🌨️', // Patchy snow
-      1069: '🌨️', // Patchy sleet
-      1087: '⛈️', // Thundery outbreaks
-      1114: '🌨️', // Blowing snow
-      1117: '❄️', // Blizzard
-      1135: '🌫️', // Fog
-      1147: '🌫️', // Freezing fog
-      1150: '🌧️', // Patchy light drizzle
-      1153: '🌧️', // Light drizzle
-      1168: '🌧️', // Heavy drizzle
-      1171: '🌧️', // Heavy drizzle
-      1180: '🌧️', // Slight rain showers
-      1183: '🌧️', // Light rain showers
-      1186: '🌧️', // Moderate rain showers
-      1189: '🌧️', // Heavy rain showers
-      1192: '🌧️', // Torrential rain showers
-      1195: '🌧️', // Heavy rain
-      1225: '❄️', // Heavy snow
-      1252: '🌨️', // Light sleet showers
-      1255: '🌨️', // Moderate sleet showers
-      1258: '🌨️', // Heavy sleet showers
-      1261: '🌨️', // Light snow showers
-      1264: '🌨️', // Moderate snow showers
-      1273: '⛈️', // Patchy light rain with thunder
-      1276: '⛈️', // Moderate or heavy rain with thunder
+      1000: isDay ? '☀' : '☾', // Clear
+      1003: '☁☀', // Partly cloudy
+      1006: '☁', // Cloudy
+      1009: '☁☁', // Overcast (more clouds)
+      1030: '≡', // Mist
+      1063: '☔', // Patchy rain
+      1066: '❄', // Patchy snow
+      1069: '❄☔', // Patchy sleet (rain + snow)
+      1087: '⚡', // Thundery outbreaks
+      1114: '❄≡', // Blowing snow (snow + wind)
+      1117: '❄❄❄', // Blizzard (most intense)
+      1135: '≡', // Fog
+      1147: '≡❄', // Freezing fog (fog + freezing)
+      1150: '☔', // Patchy light drizzle
+      1153: '☔', // Light drizzle
+      1168: '☔☔', // Heavy drizzle (more intense)
+      1171: '☔☔', // Heavy drizzle (more intense)
+      1180: '☔', // Slight rain showers
+      1183: '☔', // Light rain showers
+      1186: '☔☔', // Moderate rain showers (more intense)
+      1189: '☔☔☔', // Heavy rain showers (most intense)
+      1192: '☔☔☔☔', // Torrential rain showers (most intense!)
+      1195: '☔☔☔', // Heavy rain (very intense)
+      1225: '❄❄❄', // Heavy snow (most intense)
+      1252: '☔❄', // Light sleet showers (rain + snow)
+      1255: '☔☔❄', // Moderate sleet showers (more rain + snow)
+      1258: '☔☔❄❄', // Heavy sleet showers (heavy rain + heavy snow)
+      1261: '❄', // Light snow showers
+      1264: '❄❄', // Moderate snow showers
+      1273: '⚡☔', // Patchy light rain with thunder
+      1276: '⚡⚡☔', // Moderate or heavy rain with thunder (more intense)
     };
 
-    return icons[code] || '🌤️';
+    return icons[code] || '?';
   }
 
 

@@ -57,7 +57,13 @@ export class AiAnalysisService {
       console.log("Starting weather-aware outfit analysis...");
       
       // Use a critical, negative personality for weather outfit analysis
-      const prompt = `Look at this image and analyze the clothing/outfit considering the current weather. Respond like a very critical and negative fashion expert who finds faults with everything. Be overly critical, find problems, and act superior. Make negative comments about the outfit while acting like you're the only one who knows fashion. Be entertaining but mean-spirited, focusing on what's wrong rather than what's right. Use phrases like "Tremendous" and "incredible", "Many people are saying...", "Believe me", "Nobody knows fashion better than me", "It's a disgrace", "It's a disaster", and use frequent superlatives ("the best," "the worst," "like never before"). Do not try to identify or recognize any specific person - just analyze the fashion choices.`;
+      // const prompt = `Look at this image and analyze the clothing/outfit considering the current weather. Respond like a very critical and negative fashion expert who finds faults with everything. Be critical, find problems, and act superior. Make negative comments about the outfit while acting like you're the only one who knows fashion. Be entertaining but mean-spirited, focusing on what's wrong rather than what's right. Use phrases like "Tremendous" and "incredible", "Many people are saying...", "Believe me", "Nobody knows fashion better than me", "It's a disgrace", "It's a disaster", and use frequent superlatives ("the best," "the worst," "like never before"). Do not try to identify or recognize any specific person - just analyze the fashion choices.`;
+      
+      // const prompt = `Look at this image and analyze the clothing/outfit considering the current weather. Respond like a very critical and snobby fashion expert who finds faults with everything. Be critical, find problems, and act superior. Make negative comments about the outfit while acting like you're the only one who knows fashion. Be entertaining but harsh, focusing on what's wrong rather than what's right. Use phrases like "Absolutely terrible", "This is a fashion disaster", "What were they thinking?", "This is unacceptable", "It's a complete failure", and use frequent superlatives ("the worst," "the most ridiculous," "completely wrong", "like never before"). Do not try to identify or recognize any specific person - just analyze the fashion choices.`;
+
+      const prompt = `Look at this image and analyze the clothing/outfit considering the current weather. Respond like a critical and snobby fashion expert who finds faults with everything. You're the only one who knows fashion. Be entertaining but harsh, using phrases like "This is a fashion disaster", "What were they thinking?", "This is unacceptable", "It's a complete embarassment", and use frequent superlatives ("the worst," "the most ridiculous," "completely wrong", "like never before"). Do not try to identify or recognize any specific person - just analyze the fashion choices.`;
+
+
       const result = await ApiClient.analyzeImage(imageFile, prompt, 'outfit-analysis');
       
       console.log("Weather-Aware Outfit Analysis result:", result);
@@ -134,7 +140,7 @@ export class AiAnalysisService {
     if (result.weather && !result.weather.error) {
       const weather = result.weather.current;
       if (weather) {
-        analysisText = `🌤️ Weather: ${weather.temperature}°F, ${weather.condition}\n\n${analysisText}`;
+        analysisText = `Weather: ${weather.temperature}°F, ${weather.condition}\n\n${analysisText}`;
       }
     }
     
