@@ -156,7 +156,7 @@ router.post('/test-image', upload.single('image'), async (req, res) => {
     const imageType = req.file.mimetype;
 
     // Simple test prompt - just identify what's in the image
-    const testPrompt = "What do you see in this image? Please describe what the person is wearing in a brief, friendly way.";
+    const testPrompt = "What do you see in this image? Please describe what the person is wearing in a brief. Respond in the voice and style of Donald Trump - be confident, use his typical phrases and mannerisms.";
 
     const analysis = await OpenAIService.analyzeImage(imageBuffer, imageType, testPrompt, 'smart-mirror');
     res.json({ 

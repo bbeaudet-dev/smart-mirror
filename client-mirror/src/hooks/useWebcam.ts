@@ -30,11 +30,31 @@ export const useWebcam = () => {
   useEffect(() => {
     const initializeCameras = async () => {
       try {
+        console.log('=== PI WEBCAM DEBUGGING ===');
+        console.log('User Agent:', navigator.userAgent);
+        console.log('MediaDevices available:', !!navigator.mediaDevices);
+        console.log('getUserMedia available:', !!navigator.mediaDevices?.getUserMedia);
+        console.log('enumerateDevices available:', !!navigator.mediaDevices?.enumerateDevices);
+        
         // Request camera permission first
+        console.log('Requesting camera permission...');
         await navigator.mediaDevices.getUserMedia({ video: true });
+        console.log('Camera permission granted!');
+        
         await getAvailableCameras();
-      } catch (error) {
-        console.error('Failed to get camera permission:', error);
+              } catch (error: any) {
+          console.error('=== PI WEBCAM ERROR ===');
+          console.error('Failed to get camera permission:', error);
+          console.error('Error name:', error.name);
+          console.error('Error message:', error.message);
+        
+        // Try to enumerate devices anyway
+        try {
+          console.log('Trying to enumerate devices without permission...');
+          await getAvailableCameras();
+        } catch (enumError) {
+          console.error('Failed to enumerate devices:', enumError);
+        }
       }
     };
     
@@ -47,7 +67,9 @@ export const useWebcam = () => {
       setIsCapturing(true);
       
       const targetCameraId = cameraId || selectedCameraId;
-      console.log("Starting USB webcam with camera ID:", targetCameraId);
+      console.log("=== STARTING WEBCAM ===");
+      console.log("Target camera ID:", targetCameraId);
+      console.log("Available cameras:", availableCameras.length);
       
       const constraints: MediaStreamConstraints = {
         video: {
@@ -60,6 +82,7 @@ export const useWebcam = () => {
       };
       
       console.log("Using constraints:", constraints);
+      console.log("Requesting media stream...");
       
       const mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
       
