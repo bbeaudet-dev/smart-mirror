@@ -11,19 +11,24 @@ const MessagePanel: React.FC<MessagePanelProps> = ({
   isLoading = false, 
   type = 'general' 
 }) => {
-  const [displayMessage, setDisplayMessage] = useState<string | null>(message);
+  const [displayMessage, setDisplayMessage] = useState<string | null>(message || null);
   const [isVisible, setIsVisible] = useState(false);
 
-  useEffect(() => {
+    useEffect(() => {
+    console.log("MessagePanel: Received message:", message);
+    console.log("MessagePanel: isLoading:", isLoading);
+    
     if (message) {
       setDisplayMessage(message);
       setIsVisible(true);
-      
+      console.log("MessagePanel: Setting message visible:", message);
+
       // Auto-hide message after 10 seconds
       const timer = setTimeout(() => {
         setIsVisible(false);
+        console.log("MessagePanel: Auto-hiding message");
       }, 10000);
-      
+
       return () => clearTimeout(timer);
     } else {
       setIsVisible(false);

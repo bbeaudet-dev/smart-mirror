@@ -24,42 +24,39 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
   const [autoAnalysisInterval, setAutoAnalysisInterval] = useState<NodeJS.Timeout | null>(null);
   const [showDebugControls, setShowDebugControls] = useState(false);
 
-  // Auto-start webcam when component mounts
+  // Auto-start webcam and setup automatic analysis when component mounts
   useEffect(() => {
     console.log("WebcamPanel: Starting webcam...");
     startWebcam();
     
-    // Cleanup on unmount
-    return () => {
-      console.log("WebcamPanel: Stopping webcam...");
-      stopWebcam();
-    };
-  }, []); // Empty dependency array - only run once
-
-  // Setup automatic analysis when webcam is initialized
-  useEffect(() => {
-    if (!isInitialized) return;
-    
     // Start automatic weather outfit analysis every 15 seconds
     const interval = setInterval(() => {
-      if (!isAnalyzing) {
+      console.log("Auto analysis interval triggered, isInitialized:", isInitialized, "isAnalyzing:", isAnalyzing);
+      if (isInitialized && !isAnalyzing) {
         handleWeatherOutfitAnalysis();
       }
     }, 15000); // 15 seconds
     
     setAutoAnalysisInterval(interval);
     
-    // Cleanup interval on unmount or when isInitialized changes
+    // Cleanup on unmount
     return () => {
+      console.log("WebcamPanel: Cleaning up...");
       if (interval) {
         clearInterval(interval);
       }
+      stopWebcam();
     };
-  }, [isInitialized]); // Only depend on isInitialized
+  }, []); // Empty dependency array - only run once
 
 
 
   const handleWeatherOutfitAnalysis = async () => {
+    console.log("handleWeatherOutfitAnalysis called");
+    console.log("isInitialized:", isInitialized);
+    console.log("onAiMessage callback:", !!onAiMessage);
+    console.log("onAiLoading callback:", !!onAiLoading);
+    
     if (!isInitialized) {
       console.error("Webcam not initialized");
       return;
@@ -96,8 +93,12 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
 
   // Manual analysis functions for debugging/testing
   const handleTestAI = async () => {
+    console.log("handleTestAI called");
+    console.log("isInitialized:", isInitialized);
+    
     if (!isInitialized) {
       console.error("Webcam not initialized");
+      onAiMessage?.("Webcam not initialized. Please start the webcam first.", 'ai-response');
       return;
     }
 
@@ -128,6 +129,7 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
   const handleOutfitAnalysis = async () => {
     if (!isInitialized) {
       console.error("Webcam not initialized");
+      onAiMessage?.("Webcam not initialized. Please start the webcam first.", 'outfit-analysis');
       return;
     }
 
@@ -158,6 +160,7 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
   const handleMotivation = async () => {
     if (!isInitialized) {
       console.error("Webcam not initialized");
+      onAiMessage?.("Webcam not initialized. Please start the webcam first.", 'motivation');
       return;
     }
 
@@ -193,7 +196,7 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
       </h3>
       
       {/* Video Feed */}
-      <div className="flex-1 relative bg-black/20 rounded-lg overflow-hidden">
+      <div className="h-48 relative bg-black/20 rounded-lg overflow-hidden mb-4">
         {stream && isInitialized ? (
           <video
             ref={videoRef}
@@ -231,10 +234,30 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
         </button>
       </div>
 
+      {/* Manual Webcam Controls */}
+      <div className="mt-2">
+        <button
+          onClick={isInitialized ? stopWebcam : startWebcam}
+          className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
+            isInitialized
+              ? 'bg-red-600 hover:bg-red-700 text-white'
+              : 'bg-green-600 hover:bg-green-700 text-white'
+          }`}
+        >
+          {isInitialized ? 'Stop Webcam' : 'Start Webcam'}
+        </button>
+      </div>
+
       {/* Debug Controls */}
       {showDebugControls && (
         <div className="mt-2 space-y-2">
           <div className="flex space-x-2">
+            <button
+              onClick={() => onAiMessage?.("This is a test message to verify the message system is working!", 'ai-response')}
+              className="px-2 py-1 rounded text-xs font-medium bg-yellow-600 hover:bg-yellow-700 text-white transition-colors"
+            >
+              Test Message
+            </button>
             <button
               onClick={handleTestAI}
               disabled={isAnalyzing}
