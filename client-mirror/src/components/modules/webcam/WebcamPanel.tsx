@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useWebcam } from '../../../hooks/useWebcam';
-import ApiClient from '../../../services/apiClient';
+import { AiAnalysisService } from '../../../services/aiAnalysisService';
 
-const WebcamPanel: React.FC = () => {
+interface WebcamPanelProps {
+  onAiMessage?: (message: string, type: 'ai-response' | 'motivation' | 'outfit-analysis' | 'general') => void;
+  onAiLoading?: (loading: boolean) => void;
+}
+
+const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) => {
   const {
     stream,
     isCapturing,
@@ -15,60 +20,55 @@ const WebcamPanel: React.FC = () => {
     captureFrameAsBlob
   } = useWebcam();
 
-  const [lastCapturedFrame, setLastCapturedFrame] = useState<string | null>(null);
-  const [captureCount, setCaptureCount] = useState(0);
-  const [aiAnalysis, setAiAnalysis] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [autoAnalysisInterval, setAutoAnalysisInterval] = useState<NodeJS.Timeout | null>(null);
+  const [showDebugControls, setShowDebugControls] = useState(false);
 
   // Auto-start webcam when component mounts
   useEffect(() => {
+    console.log("WebcamPanel: Starting webcam...");
     startWebcam();
     
     // Cleanup on unmount
     return () => {
+      console.log("WebcamPanel: Stopping webcam...");
       stopWebcam();
     };
-  }, []);
+  }, []); // Empty dependency array - only run once
 
-  const handleCaptureFrame = () => {
-    const frameData = captureFrame();
-    if (frameData) {
-      setLastCapturedFrame(frameData);
-      setCaptureCount(prev => prev + 1);
-      console.log(`Frame captured! Total captures: ${captureCount + 1}`);
-    } else {
-      console.error("Failed to capture frame");
-    }
-  };
+  // Setup automatic analysis when webcam is initialized
+  useEffect(() => {
+    if (!isInitialized) return;
+    
+    // Start automatic weather outfit analysis every 15 seconds
+    const interval = setInterval(() => {
+      if (!isAnalyzing) {
+        handleWeatherOutfitAnalysis();
+      }
+    }, 15000); // 15 seconds
+    
+    setAutoAnalysisInterval(interval);
+    
+    // Cleanup interval on unmount or when isInitialized changes
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [isInitialized]); // Only depend on isInitialized
 
-  const handleCaptureBlob = async () => {
-    const blob = await captureFrameAsBlob();
-    if (blob) {
-      console.log("Captured blob:", blob.size, "bytes");
-      // Convert blob to data URL for display
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setLastCapturedFrame(e.target?.result as string);
-        setCaptureCount(prev => prev + 1);
-      };
-      reader.readAsDataURL(blob);
-    } else {
-      console.error("Failed to capture blob");
-    }
-  };
 
-  const handleTestAI = async () => {
+
+  const handleWeatherOutfitAnalysis = async () => {
     if (!isInitialized) {
       console.error("Webcam not initialized");
       return;
     }
 
     setIsAnalyzing(true);
-    setAiAnalysis(null);
+    onAiLoading?.(true);
 
     try {
-      console.log("Testing AI analysis...");
-      
       // Capture a frame as blob
       const blob = await captureFrameAsBlob();
       if (!blob) {
@@ -76,19 +76,52 @@ const WebcamPanel: React.FC = () => {
       }
 
       // Convert blob to File object
-      const imageFile = new File([blob], 'webcam-capture.jpg', { type: 'image/jpeg' });
+      const imageFile = new File([blob], 'weather-outfit-analysis.jpg', { type: 'image/jpeg' });
       
-      // Send to test endpoint
-      const result = await ApiClient.testImage(imageFile);
+      // Use the AI analysis service
+      const result = await AiAnalysisService.analyzeOutfitWithWeather(imageFile);
+      const analysisText = AiAnalysisService.formatAnalysisWithWeather(result);
       
-      console.log("AI Analysis result:", result);
-      setAiAnalysis((result as any).analysis);
+      onAiMessage?.(analysisText, 'outfit-analysis');
       
     } catch (error) {
-      console.error("AI Analysis failed:", error);
-      setAiAnalysis("AI analysis failed. Please try again.");
+      console.error("Weather-Aware Outfit Analysis failed:", error);
+      const errorMessage = error instanceof Error ? error.message : "Weather-aware outfit analysis failed. Please try again.";
+      onAiMessage?.(errorMessage, 'outfit-analysis');
     } finally {
       setIsAnalyzing(false);
+      onAiLoading?.(false);
+    }
+  };
+
+  // Manual analysis functions for debugging/testing
+  const handleTestAI = async () => {
+    if (!isInitialized) {
+      console.error("Webcam not initialized");
+      return;
+    }
+
+    setIsAnalyzing(true);
+    onAiLoading?.(true);
+
+    try {
+      const blob = await captureFrameAsBlob();
+      if (!blob) {
+        throw new Error("Failed to capture frame");
+      }
+
+      const imageFile = new File([blob], 'test-analysis.jpg', { type: 'image/jpeg' });
+      const result = await AiAnalysisService.testImage(imageFile);
+      
+      onAiMessage?.(result.analysis, 'ai-response');
+      
+    } catch (error) {
+      console.error("Test AI failed:", error);
+      const errorMessage = error instanceof Error ? error.message : "Test AI failed. Please try again.";
+      onAiMessage?.(errorMessage, 'ai-response');
+    } finally {
+      setIsAnalyzing(false);
+      onAiLoading?.(false);
     }
   };
 
@@ -99,87 +132,68 @@ const WebcamPanel: React.FC = () => {
     }
 
     setIsAnalyzing(true);
-    setAiAnalysis(null);
+    onAiLoading?.(true);
 
     try {
-      console.log("Starting outfit analysis...");
-      
-      // Capture a frame as blob
       const blob = await captureFrameAsBlob();
       if (!blob) {
         throw new Error("Failed to capture frame");
       }
 
-      // Convert blob to File object
       const imageFile = new File([blob], 'outfit-analysis.jpg', { type: 'image/jpeg' });
+      const result = await AiAnalysisService.analyzeOutfit(imageFile);
       
-      // Use the full outfit analysis endpoint with weather context
-      const prompt = "Analyze this outfit and provide fashion advice. Consider the style, colors, and overall look. Be encouraging and constructive.";
-      const result = await ApiClient.analyzeImage(imageFile, prompt, 'outfit-analysis');
-      
-      console.log("Outfit Analysis result:", result);
-      setAiAnalysis((result as any).analysis);
+      onAiMessage?.(result.analysis, 'outfit-analysis');
       
     } catch (error) {
-      console.error("Outfit Analysis failed:", error);
-      setAiAnalysis("Outfit analysis failed. Please try again.");
+      console.error("Outfit analysis failed:", error);
+      const errorMessage = error instanceof Error ? error.message : "Outfit analysis failed. Please try again.";
+      onAiMessage?.(errorMessage, 'outfit-analysis');
     } finally {
       setIsAnalyzing(false);
+      onAiLoading?.(false);
     }
   };
 
-  const handleWeatherOutfitAnalysis = async () => {
+  const handleMotivation = async () => {
     if (!isInitialized) {
       console.error("Webcam not initialized");
       return;
     }
 
     setIsAnalyzing(true);
-    setAiAnalysis(null);
+    onAiLoading?.(true);
 
     try {
-      console.log("Starting weather-aware outfit analysis...");
-      
-      // Capture a frame as blob
       const blob = await captureFrameAsBlob();
       if (!blob) {
         throw new Error("Failed to capture frame");
       }
 
-      // Convert blob to File object
-      const imageFile = new File([blob], 'weather-outfit-analysis.jpg', { type: 'image/jpeg' });
+      const imageFile = new File([blob], 'motivation.jpg', { type: 'image/jpeg' });
+      const result = await AiAnalysisService.generateMotivation(imageFile);
       
-      // Use the weather-aware outfit analysis endpoint
-      const result = await ApiClient.analyzeOutfitWithWeather(imageFile);
-      
-      console.log("Weather-Aware Outfit Analysis result:", result);
-      
-      // Display weather info if available
-      let analysisText = (result as any).analysis;
-      if ((result as any).weather && !(result as any).weather.error) {
-        const weather = (result as any).weather.current;
-        analysisText = `🌤️ Weather: ${weather.temperature}°F, ${weather.condition}\n\n${analysisText}`;
-      }
-      
-      setAiAnalysis(analysisText);
+      onAiMessage?.(result.analysis, 'motivation');
       
     } catch (error) {
-      console.error("Weather-Aware Outfit Analysis failed:", error);
-      setAiAnalysis("Weather-aware outfit analysis failed. Please try again.");
+      console.error("Motivation generation failed:", error);
+      const errorMessage = error instanceof Error ? error.message : "Motivation generation failed. Please try again.";
+      onAiMessage?.(errorMessage, 'motivation');
     } finally {
       setIsAnalyzing(false);
+      onAiLoading?.(false);
     }
   };
 
   return (
     <div className="flex flex-col h-full">
       <h3 className="mirror-header">
-        Webcam
-        {isCapturing && <span className="text-mirror-xs text-mirror-text-dimmed animate-spin ml-1">⟳</span>}
+        AI Outfit Analysis
+        {isAnalyzing && <span className="text-mirror-xs text-mirror-text-dimmed animate-spin ml-1">⟳</span>}
       </h3>
       
       {/* Video Feed */}
-      <div className="flex-1 relative bg-black/20 rounded-lg overflow-hidden mb-4">
+      <div className="flex-1 relative bg-black/20 rounded-lg overflow-hidden">
         {stream && isInitialized ? (
           <video
             ref={videoRef}
@@ -202,110 +216,75 @@ const WebcamPanel: React.FC = () => {
 
       {/* Error Display */}
       {error && (
-        <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-2 mb-4">
+        <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-2 mt-2">
           <p className="text-red-300 text-xs">{error}</p>
         </div>
       )}
 
-      {/* Controls */}
-      <div className="flex flex-col space-y-2 mb-4">
+      {/* Debug Toggle */}
+      <div className="mt-2">
         <button
-          onClick={isInitialized ? stopWebcam : () => startWebcam()}
-          className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
-            isInitialized
-              ? 'bg-red-500 hover:bg-red-600 text-white'
-              : 'bg-green-500 hover:bg-green-600 text-white'
-          }`}
+          onClick={() => setShowDebugControls(!showDebugControls)}
+          className="px-2 py-1 rounded text-xs font-medium bg-gray-600 hover:bg-gray-700 text-white transition-colors"
         >
-          {isInitialized ? 'Stop Webcam' : 'Start Webcam'}
+          {showDebugControls ? 'Hide Debug' : 'Show Debug'}
         </button>
-        
-        {isInitialized && (
-          <>
-            <div className="flex space-x-2">
-              <button
-                onClick={handleCaptureFrame}
-                className="px-3 py-1 rounded text-xs font-medium bg-blue-500 hover:bg-blue-600 text-white transition-colors"
-              >
-                Capture Frame
-              </button>
-              <button
-                onClick={handleCaptureBlob}
-                className="px-3 py-1 rounded text-xs font-medium bg-purple-500 hover:bg-purple-600 text-white transition-colors"
-              >
-                Capture Blob
-              </button>
-            </div>
-            <div className="flex space-x-2">
-              <button
-                onClick={handleTestAI}
-                disabled={isAnalyzing}
-                className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
-                  isAnalyzing
-                    ? 'bg-gray-500 cursor-not-allowed'
-                    : 'bg-green-600 hover:bg-green-700 text-white'
-                }`}
-              >
-                {isAnalyzing ? 'Analyzing...' : 'Test AI'}
-              </button>
-              <button
-                onClick={handleOutfitAnalysis}
-                disabled={isAnalyzing}
-                className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
-                  isAnalyzing
-                    ? 'bg-gray-500 cursor-not-allowed'
-                    : 'bg-purple-600 hover:bg-purple-700 text-white'
-                }`}
-              >
-                {isAnalyzing ? 'Analyzing...' : 'Outfit Analysis'}
-              </button>
-              <button
-                onClick={handleWeatherOutfitAnalysis}
-                disabled={isAnalyzing}
-                className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
-                  isAnalyzing
-                    ? 'bg-gray-500 cursor-not-allowed'
-                    : 'bg-blue-600 hover:bg-blue-700 text-white'
-                }`}
-              >
-                {isAnalyzing ? 'Analyzing...' : 'Weather Outfit Analysis'}
-              </button>
-            </div>
-          </>
-        )}
       </div>
 
-      {/* AI Analysis Result */}
-      {aiAnalysis && (
-        <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-2 mb-4">
-          <p className="text-green-300 text-xs font-medium mb-1">AI Analysis:</p>
-          <p className="text-green-200 text-xs">{aiAnalysis}</p>
+      {/* Debug Controls */}
+      {showDebugControls && (
+        <div className="mt-2 space-y-2">
+          <div className="flex space-x-2">
+            <button
+              onClick={handleTestAI}
+              disabled={isAnalyzing}
+              className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
+                isAnalyzing
+                  ? 'bg-gray-500 cursor-not-allowed'
+                  : 'bg-green-600 hover:bg-green-700 text-white'
+              }`}
+            >
+              {isAnalyzing ? 'Processing...' : 'Test AI'}
+            </button>
+            <button
+              onClick={handleOutfitAnalysis}
+              disabled={isAnalyzing}
+              className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
+                isAnalyzing
+                  ? 'bg-gray-500 cursor-not-allowed'
+                  : 'bg-purple-600 hover:bg-purple-700 text-white'
+              }`}
+            >
+              {isAnalyzing ? 'Processing...' : 'Outfit'}
+            </button>
+            <button
+              onClick={handleMotivation}
+              disabled={isAnalyzing}
+              className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
+                isAnalyzing
+                  ? 'bg-gray-500 cursor-not-allowed'
+                  : 'bg-blue-600 hover:bg-blue-700 text-white'
+              }`}
+            >
+              {isAnalyzing ? 'Processing...' : 'Motivation'}
+            </button>
+          </div>
         </div>
       )}
 
       {/* Status Info */}
-      <div className="bg-black/10 rounded-lg p-2 text-xs">
+      <div className="bg-black/10 rounded-lg p-2 text-xs mt-2">
         <p className="text-mirror-text-dimmed mb-1">Status:</p>
         <p className="text-mirror-text">Webcam: {isInitialized ? 'Active' : 'Inactive'}</p>
-        <p className="text-mirror-text">Captures: {captureCount}</p>
+        <p className="text-mirror-text">Capturing: {isCapturing ? 'Yes' : 'No'}</p>
+        <p className="text-mirror-text">Auto Analysis: {isAnalyzing ? 'Processing...' : 'Ready'}</p>
+        {error && <p className="text-red-300 text-xs">Error: {error}</p>}
         {stream && (
           <p className="text-mirror-text">
             Resolution: {videoRef.current?.videoWidth || 0} x {videoRef.current?.videoHeight || 0}
           </p>
         )}
       </div>
-
-      {/* Last Captured Frame Preview */}
-      {lastCapturedFrame && (
-        <div className="mt-4">
-          <p className="text-mirror-xs text-mirror-text-dimmed mb-2">Last Capture:</p>
-          <img
-            src={lastCapturedFrame}
-            alt="Captured frame"
-            className="w-full h-20 object-cover rounded border border-white/20"
-          />
-        </div>
-      )}
     </div>
   );
 };

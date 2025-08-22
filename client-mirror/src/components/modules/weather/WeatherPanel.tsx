@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { WeatherData } from '../../../data/types';
 import CurrentWeather from './CurrentWeather';
 import WeeklyForecast from './WeeklyForecast';
-import OutfitRecs from './OutfitRecs';
 import ApiClient from '../../../services/apiClient';
 
 const WeatherPanel: React.FC = () => {
@@ -67,18 +66,6 @@ const WeatherPanel: React.FC = () => {
       
       {/* Weekly Forecast */}
       <WeeklyForecast weather={weather} />
-      
-      {/* Outfit Recommendations */}
-      <div className="mt-4 flex-1">
-        <OutfitRecs 
-          outfitRecommendation={null}
-          weather={{
-            temperature: weather.current?.temperature || null,
-            condition: weather.current?.condition || 'Unknown'
-          }}
-          loading={false}
-        />
-      </div>
     </div>
   );
 };
