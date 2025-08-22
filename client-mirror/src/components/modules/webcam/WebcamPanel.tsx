@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useWebcam } from '../../../hooks/useWebcam';
 import { AiAnalysisService } from '../../../services/aiAnalysisService';
+import { speechService } from '../../../services/speechService';
 
 interface WebcamPanelProps {
   onAiMessage?: (message: string, type: 'ai-response' | 'motivation' | 'outfit-analysis' | 'general') => void;
@@ -73,6 +74,7 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
       const result = await AiAnalysisService.analyzeOutfitWithWeather(imageFile);
       
       onAiMessage?.(result.analysis, 'outfit-analysis');
+      speechService.speak(result.analysis);
       
     } catch (error) {
       console.error("Weather-Aware Outfit Analysis failed:", error);
@@ -108,6 +110,7 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
       const result = await AiAnalysisService.testImage(imageFile);
       
       onAiMessage?.(result.analysis, 'ai-response');
+      speechService.speak(result.analysis);
       
     } catch (error) {
       console.error("Test AI failed:", error);
@@ -139,6 +142,7 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
       const result = await AiAnalysisService.analyzeOutfit(imageFile);
       
       onAiMessage?.(result.analysis, 'outfit-analysis');
+      speechService.speak(result.analysis);
       
     } catch (error) {
       console.error("Outfit analysis failed:", error);
@@ -170,6 +174,7 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
       const result = await AiAnalysisService.generateMotivation(imageFile);
       
       onAiMessage?.(result.analysis, 'motivation');
+      speechService.speak(result.analysis);
       
     } catch (error) {
       console.error("Motivation generation failed:", error);
@@ -201,6 +206,7 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
       const result = await AiAnalysisService.generateSnoopStyle(imageFile);
       
       onAiMessage?.(result.analysis, 'ai-response');
+      speechService.speak(result.analysis);
       
     } catch (error) {
       console.error("Snoop Dogg analysis failed:", error);
@@ -232,6 +238,7 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
       const result = await AiAnalysisService.generateSnoopWeather(imageFile);
       
       onAiMessage?.(result.analysis, 'ai-response');
+      speechService.speak(result.analysis);
       
     } catch (error) {
       console.error("Snoop Dogg Weather analysis failed:", error);
