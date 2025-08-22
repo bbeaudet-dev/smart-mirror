@@ -53,7 +53,7 @@ const MessagePanel: React.FC<MessagePanelProps> = ({
   };
 
   return (
-    <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 max-w-md w-full px-4">
+    <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 max-w-2xl w-full px-4">
       <div className={`
         bg-black/80 backdrop-blur-sm border border-mirror-text-dimmed/30 rounded-lg p-4
         transition-all duration-500 ease-in-out

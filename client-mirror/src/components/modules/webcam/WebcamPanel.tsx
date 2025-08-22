@@ -71,9 +71,8 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
       
       // Use the AI analysis service
       const result = await AiAnalysisService.analyzeOutfitWithWeather(imageFile);
-      const analysisText = AiAnalysisService.formatAnalysisWithWeather(result);
       
-      onAiMessage?.(analysisText, 'outfit-analysis');
+      onAiMessage?.(result.analysis, 'outfit-analysis');
       
     } catch (error) {
       console.error("Weather-Aware Outfit Analysis failed:", error);
@@ -213,6 +212,37 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
     }
   };
 
+  const handleSnoopWeather = async () => {
+    if (!isInitialized) {
+      console.error("Webcam not initialized");
+      onAiMessage?.("Webcam not initialized. Please start the webcam first.", 'ai-response');
+      return;
+    }
+
+    setIsAnalyzing(true);
+    onAiLoading?.(true);
+
+    try {
+      const blob = await captureFrameAsBlob();
+      if (!blob) {
+        throw new Error("Failed to capture frame");
+      }
+
+      const imageFile = new File([blob], 'snoop-weather.jpg', { type: 'image/jpeg' });
+      const result = await AiAnalysisService.generateSnoopWeather(imageFile);
+      
+      onAiMessage?.(result.analysis, 'ai-response');
+      
+    } catch (error) {
+      console.error("Snoop Dogg Weather analysis failed:", error);
+      const errorMessage = error instanceof Error ? error.message : "Snoop Dogg Weather analysis failed. Please try again.";
+      onAiMessage?.(errorMessage, 'ai-response');
+    } finally {
+      setIsAnalyzing(false);
+      onAiLoading?.(false);
+    }
+  };
+
   return (
     <div className="flex flex-col h-full">
       {/* Video Feed */}
@@ -304,17 +334,28 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
           >
             {isAnalyzing ? 'Processing...' : 'Inspire'}
           </button>
-          <button
-            onClick={handleSnoopStyle}
-            disabled={isAnalyzing}
-            className={`px-3 py-2 rounded text-xs font-medium transition-colors ${
-              isAnalyzing
-                ? 'bg-gray-500 cursor-not-allowed'
-                : 'bg-yellow-600 hover:bg-yellow-700 text-white'
-            }`}
-          >
-            {isAnalyzing ? 'Processing...' : 'Snoop Style'}
-          </button>
+                      <button
+              onClick={handleSnoopStyle}
+              disabled={isAnalyzing}
+              className={`px-3 py-2 rounded text-xs font-medium transition-colors ${
+                isAnalyzing
+                  ? 'bg-gray-500 cursor-not-allowed'
+                  : 'bg-yellow-600 hover:bg-yellow-700 text-white'
+              }`}
+            >
+              {isAnalyzing ? 'Processing...' : 'Snoop Style'}
+            </button>
+            <button
+              onClick={handleSnoopWeather}
+              disabled={isAnalyzing}
+              className={`px-3 py-2 rounded text-xs font-medium transition-colors ${
+                isAnalyzing
+                  ? 'bg-gray-500 cursor-not-allowed'
+                  : 'bg-indigo-600 hover:bg-indigo-700 text-white'
+              }`}
+            >
+              {isAnalyzing ? 'Processing...' : 'Snoop Weather'}
+            </button>
         </div>
       </div>
     </div>

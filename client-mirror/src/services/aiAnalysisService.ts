@@ -19,7 +19,7 @@ export class AiAnalysisService {
     try {
       console.log("Testing AI analysis...");
       
-      // Use a more specific prompt that won't trigger safety filters
+      // Use a more general prompt that won't trigger safety filters
       const prompt = "Describe what you see in this image in a friendly, helpful way. Focus on the overall scene, colors, and general atmosphere.";
       const result = await ApiClient.analyzeImage(imageFile, prompt, 'ai-response');
       
@@ -57,7 +57,7 @@ export class AiAnalysisService {
       console.log("Starting weather-aware outfit analysis...");
       
       // Use a confident, opinionated personality for weather outfit analysis
-      const prompt = `Look at this image and analyze the clothing/outfit considering the current weather. Respond like an overconfident, opinionated self-proclaimed fashionexpert who's not afraid to be direct. Use phrases like "Listen, here's what we're dealing with..." and "This is absolutely..." Be entertaining and engaging, and focus on the clothing style, colors, and weather appropriateness.`;
+      const prompt = `Look at this image and analyze the clothing/outfit considering the current weather. Respond like an overconfident, opinionated self-proclaimed fashion expert who's not afraid to be direct. Use phrases like "Listen, here's what we're dealing with..." and "This is absolutely..." Be entertaining and engaging, and focus on the clothing style, colors, and weather appropriateness.`;
       const result = await ApiClient.analyzeImage(imageFile, prompt, 'outfit-analysis');
       
       console.log("Weather-Aware Outfit Analysis result:", result);
@@ -93,7 +93,7 @@ export class AiAnalysisService {
     try {
       console.log("Generating Snoop Dogg style analysis...");
       
-      const prompt = "Analyze this outfit and provide fashion advice in the style of Snoop Dogg. Use his mannerisms, slang, and style - keep it real, use some 'izzle' language, but be encouraging and positive. Give genuine fashion advice while maintaining his personality.";
+      const prompt = "Analyze this outfit and provide fashion advice in the style of Snoop Dogg. Use his mannerisms, slang, and style - keep it real, be encouraging and positive. Give genuine fashion advice while maintaining his personality.";
       const result = await ApiClient.analyzeImage(imageFile, prompt, 'ai-response');
       
       console.log("Snoop Dogg result:", result);
@@ -101,6 +101,27 @@ export class AiAnalysisService {
     } catch (error) {
       console.error("Snoop Dogg analysis failed:", error);
       throw new Error("Snoop Dogg analysis failed. Please try again.");
+    }
+  }
+
+  /**
+   * Generate Snoop Dogg style analysis with weather context
+   */
+  static async generateSnoopWeather(imageFile: File): Promise<AiAnalysisResult> {
+    try {
+      console.log("Generating Snoop Dogg weather-aware analysis...");
+      
+      // Use the weather-aware endpoint that includes real weather data
+      const result = await ApiClient.analyzeOutfitWithWeather(imageFile) as AiAnalysisResult;
+      
+      // Use the AI analysis directly
+      let analysisText = result.analysis;
+      
+      console.log("Snoop Dogg Weather result:", result);
+      return { ...result, analysis: analysisText } as AiAnalysisResult;
+    } catch (error) {
+      console.error("Snoop Dogg Weather analysis failed:", error);
+      throw new Error("Snoop Dogg Weather analysis failed. Please try again.");
     }
   }
 
