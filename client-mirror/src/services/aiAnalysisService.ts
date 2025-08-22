@@ -56,8 +56,8 @@ export class AiAnalysisService {
     try {
       console.log("Starting weather-aware outfit analysis...");
       
-      // Use a confident, opinionated personality for weather outfit analysis
-      const prompt = `Look at this image and analyze the clothing/outfit considering the current weather. Respond like an overconfident, opinionated self-proclaimed fashion expert who's not afraid to be direct. Use phrases like "Listen, here's what we're dealing with..." and "This is absolutely..." Be entertaining and engaging, and focus on the clothing style, colors, and weather appropriateness.`;
+      // Use a critical, negative personality for weather outfit analysis
+      const prompt = `Look at this image and analyze the clothing/outfit considering the current weather. Respond like a very critical and negative fashion expert who finds faults with everything. Be overly critical, find problems, and act superior. Make negative comments about the outfit while acting like you're the only one who knows fashion. Be entertaining but mean-spirited, focusing on what's wrong rather than what's right. Use phrases like "Tremendous" and "incredible", "Many people are saying...", "Believe me", "Nobody knows fashion better than me", "It's a disgrace", "It's a disaster", and use frequent superlatives ("the best," "the worst," "like never before"). Do not try to identify or recognize any specific person - just analyze the fashion choices.`;
       const result = await ApiClient.analyzeImage(imageFile, prompt, 'outfit-analysis');
       
       console.log("Weather-Aware Outfit Analysis result:", result);
