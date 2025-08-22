@@ -2,6 +2,10 @@
 const API_BASE_URL = import.meta.env.VITE_API_URL || 
   (window.location.hostname === 'localhost' ? 'http://localhost:5005' : `http://${window.location.hostname}:5005`);
 
+console.log('API Client initialized with URL:', API_BASE_URL);
+console.log('Current hostname:', window.location.hostname);
+console.log('Environment VITE_API_URL:', import.meta.env.VITE_API_URL);
+
 class ApiClient {
   /**
    * Make a GET request to the API
@@ -10,13 +14,26 @@ class ApiClient {
    */
   static async get(endpoint) {
     try {
+      console.log(`API GET: ${API_BASE_URL}${endpoint}`);
       const response = await fetch(`${API_BASE_URL}${endpoint}`);
+      console.log(`API Response status: ${response.status} for ${endpoint}`);
+      
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorText = await response.text();
+        console.error(`API Error response: ${errorText}`);
+        throw new Error(`HTTP ${response.status}: ${errorText || response.statusText}`);
       }
-      return await response.json();
+      
+      const data = await response.json();
+      console.log(`API Success: ${endpoint}`, data);
+      return data;
     } catch (error) {
       console.error(`API GET Error (${endpoint}):`, error);
+      console.error(`API Base URL: ${API_BASE_URL}`);
+      console.error(`Full URL: ${API_BASE_URL}${endpoint}`);
+      console.error(`Error type:`, typeof error);
+      console.error(`Error message:`, error.message);
+      console.error(`Error stack:`, error.stack);
       throw error;
     }
   }
@@ -29,6 +46,7 @@ class ApiClient {
    */
   static async post(endpoint, data) {
     try {
+      console.log(`API POST: ${API_BASE_URL}${endpoint}`, data);
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: 'POST',
         headers: {
@@ -36,12 +54,21 @@ class ApiClient {
         },
         body: JSON.stringify(data),
       });
+      console.log(`API Response status: ${response.status} for ${endpoint}`);
+      
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorText = await response.text();
+        console.error(`API Error response: ${errorText}`);
+        throw new Error(`HTTP ${response.status}: ${errorText || response.statusText}`);
       }
-      return await response.json();
+      
+      const result = await response.json();
+      console.log(`API Success: ${endpoint}`, result);
+      return result;
     } catch (error) {
       console.error(`API POST Error (${endpoint}):`, error);
+      console.error(`API Base URL: ${API_BASE_URL}`);
+      console.error(`Full URL: ${API_BASE_URL}${endpoint}`);
       throw error;
     }
   }

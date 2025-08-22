@@ -3,6 +3,7 @@ import { WeatherData } from '../../../data/types';
 import CurrentWeather from './CurrentWeather';
 import WeeklyForecast from './WeeklyForecast';
 import OutfitRecs from './OutfitRecs';
+import ApiClient from '../../../services/apiClient';
 
 const WeatherPanel: React.FC = () => {
   const [weather, setWeather] = useState<WeatherData | null>(null);
@@ -13,14 +14,10 @@ const WeatherPanel: React.FC = () => {
     // Try to fetch weather data, but don't block the UI if it fails
     const fetchWeather = async () => {
       try {
-        const response = await fetch('http://localhost:5005/api/weather');
-        if (response.ok) {
-          const data = await response.json();
-          setWeather(data.weather);
-        } else {
-          setError('Weather API unavailable');
-        }
+        const data = await ApiClient.getWeather() as { weather: WeatherData };
+        setWeather(data.weather);
       } catch (err) {
+        console.error('Weather fetch error:', err);
         setError('Weather service unavailable');
       } finally {
         setIsLoading(false);
@@ -76,8 +73,8 @@ const WeatherPanel: React.FC = () => {
         <OutfitRecs 
           outfitRecommendation={null}
           weather={{
-            temperature: weather.current.temperature,
-            condition: weather.current.condition
+            temperature: weather.current?.temperature || null,
+            condition: weather.current?.condition || 'Unknown'
           }}
           loading={false}
         />

@@ -58,7 +58,7 @@
       "last 1 safari version"
     ]
   },
-  "main": "public/electron.js",
+  "main": "public/electron.cjs",
   "homepage": "./",
   "build": {
     "appId": "com.smartmirror.app",
@@ -69,7 +69,7 @@
     "files": [
       "build/**/*",
       "node_modules/**/*",
-      "public/electron.js"
+      "public/electron.cjs"
     ],
     "mac": {
       "category": "public.app-category.utilities"
