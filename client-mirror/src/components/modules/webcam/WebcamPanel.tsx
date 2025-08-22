@@ -92,6 +92,42 @@ const WebcamPanel: React.FC = () => {
     }
   };
 
+  const handleOutfitAnalysis = async () => {
+    if (!isInitialized) {
+      console.error("Webcam not initialized");
+      return;
+    }
+
+    setIsAnalyzing(true);
+    setAiAnalysis(null);
+
+    try {
+      console.log("Starting outfit analysis...");
+      
+      // Capture a frame as blob
+      const blob = await captureFrameAsBlob();
+      if (!blob) {
+        throw new Error("Failed to capture frame");
+      }
+
+      // Convert blob to File object
+      const imageFile = new File([blob], 'outfit-analysis.jpg', { type: 'image/jpeg' });
+      
+      // Use the full outfit analysis endpoint with weather context
+      const prompt = "Analyze this outfit and provide fashion advice. Consider the style, colors, and overall look. Be encouraging and constructive.";
+      const result = await ApiClient.analyzeImage(imageFile, prompt, 'outfit-analysis');
+      
+      console.log("Outfit Analysis result:", result);
+      setAiAnalysis((result as any).analysis);
+      
+    } catch (error) {
+      console.error("Outfit Analysis failed:", error);
+      setAiAnalysis("Outfit analysis failed. Please try again.");
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
   return (
     <div className="flex flex-col h-full">
       <h3 className="mirror-header">
@@ -142,31 +178,46 @@ const WebcamPanel: React.FC = () => {
         </button>
         
         {isInitialized && (
-          <div className="flex space-x-2">
-            <button
-              onClick={handleCaptureFrame}
-              className="px-3 py-1 rounded text-xs font-medium bg-blue-500 hover:bg-blue-600 text-white transition-colors"
-            >
-              Capture Frame
-            </button>
-            <button
-              onClick={handleCaptureBlob}
-              className="px-3 py-1 rounded text-xs font-medium bg-purple-500 hover:bg-purple-600 text-white transition-colors"
-            >
-              Capture Blob
-            </button>
-            <button
-              onClick={handleTestAI}
-              disabled={isAnalyzing}
-              className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
-                isAnalyzing
-                  ? 'bg-gray-500 cursor-not-allowed'
-                  : 'bg-green-600 hover:bg-green-700 text-white'
-              }`}
-            >
-              {isAnalyzing ? 'Analyzing...' : 'Test AI'}
-            </button>
-          </div>
+          <>
+            <div className="flex space-x-2">
+              <button
+                onClick={handleCaptureFrame}
+                className="px-3 py-1 rounded text-xs font-medium bg-blue-500 hover:bg-blue-600 text-white transition-colors"
+              >
+                Capture Frame
+              </button>
+              <button
+                onClick={handleCaptureBlob}
+                className="px-3 py-1 rounded text-xs font-medium bg-purple-500 hover:bg-purple-600 text-white transition-colors"
+              >
+                Capture Blob
+              </button>
+            </div>
+            <div className="flex space-x-2">
+              <button
+                onClick={handleTestAI}
+                disabled={isAnalyzing}
+                className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
+                  isAnalyzing
+                    ? 'bg-gray-500 cursor-not-allowed'
+                    : 'bg-green-600 hover:bg-green-700 text-white'
+                }`}
+              >
+                {isAnalyzing ? 'Analyzing...' : 'Test AI'}
+              </button>
+              <button
+                onClick={handleOutfitAnalysis}
+                disabled={isAnalyzing}
+                className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
+                  isAnalyzing
+                    ? 'bg-gray-500 cursor-not-allowed'
+                    : 'bg-purple-600 hover:bg-purple-700 text-white'
+                }`}
+              >
+                {isAnalyzing ? 'Analyzing...' : 'Outfit Analysis'}
+              </button>
+            </div>
+          </>
         )}
       </div>
 
