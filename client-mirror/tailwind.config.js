@@ -17,12 +17,12 @@ export default {
         'mirror-secondary': ['Roboto', 'sans-serif'],
       },
       fontSize: {
-        'mirror-xs': '0.75rem',
-        'mirror-sm': '1rem',
-        'mirror-base': '1.25rem',
-        'mirror-lg': '1.5rem',
-        'mirror-xl': '3.25rem',
-        'mirror-2xl': '3.75rem',
+        'mirror-xs': '1.3rem',    /* Reduced by ~15% from 1.5rem */
+        'mirror-sm': '1.7rem',    /* Reduced by ~15% from 2rem */
+        'mirror-base': '2.1rem',  /* Reduced by ~15% from 2.5rem */
+        'mirror-lg': '2.6rem',    /* Reduced by ~15% from 3rem */
+        'mirror-xl': '3.4rem',    /* Reduced by ~15% from 4rem */
+        'mirror-2xl': '4.3rem',   /* Reduced by ~15% from 5rem */
       },
       spacing: {
         'mirror-gap': '30px',
