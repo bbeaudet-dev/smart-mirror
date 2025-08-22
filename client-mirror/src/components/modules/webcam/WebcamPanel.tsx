@@ -321,7 +321,7 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
                 : 'bg-orange-600 hover:bg-orange-700 text-white'
             }`}
           >
-            {isAnalyzing ? 'Processing...' : 'Weather Fascist'}
+            {isAnalyzing ? 'Processing...' : 'Critical Fashion'}
           </button>
           <button
             onClick={handleMotivation}
