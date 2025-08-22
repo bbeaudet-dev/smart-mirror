@@ -2,6 +2,10 @@
 const API_BASE_URL = import.meta.env.VITE_API_URL || 
   (window.location.hostname === 'localhost' ? 'http://localhost:5005' : `http://${window.location.hostname}:5005`);
 
+console.log('API Client initialized with URL:', API_BASE_URL);
+console.log('Current hostname:', window.location.hostname);
+console.log('Environment VITE_API_URL:', import.meta.env.VITE_API_URL);
+
 class ApiClient {
   /**
    * Make a GET request to the API

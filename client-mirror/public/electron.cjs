@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, screen } = require('electron');
+const { app, BrowserWindow, Menu, screen, globalShortcut } = require('electron');
 const path = require('path');
 const isDev = require('electron-is-dev');
 
@@ -114,6 +114,11 @@ function createWindow() {
 // This method will be called when Electron has finished initialization
 app.whenReady().then(() => {
   createWindow();
+
+  // Register global shortcuts
+  globalShortcut.register('CommandOrControl+Q', () => {
+    app.quit();
+  });
 
   // On macOS, re-create window when dock icon is clicked
   app.on('activate', () => {
