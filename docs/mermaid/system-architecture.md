@@ -16,18 +16,18 @@ graph TB
         REACT[React Frontend<br/>Smart Mirror UI]
         SERVER[Node.js Server<br/>API Integration]
         OPENAI[OpenAI Vision API<br/>Image Analysis]
-        MOCK[Mock Data APIs<br/>Weather, Calendar, News]
+        WEATHER_API[WeatherAPI.com<br/>Real Weather Data]
+        TTS[Web Speech API<br/>Text-to-Speech]
     end
 
     subgraph Features["Smart Mirror Features"]
         TIME[Time & Date<br/>Real-time Clock]
         WEATHER[Weather Panel<br/>Current + Forecast]
-        CALENDAR[Calendar Panel<br/>Today's Schedule]
-        ROUTINE[Routine Panel<br/>Morning/Evening Tasks]
-        NEWS[News Panel<br/>Latest Headlines]
-        HOROSCOPE[Horoscope Panel<br/>Daily Reading]
+        WEBCAM_UI[Webcam Panel<br/>Live Video Feed]
         OUTFIT[Outfit Analysis<br/>AI Commentary]
         MOTIVATION[Motivational Messages<br/>AI Generated]
+        MESSAGE[Message Panel<br/>AI Responses]
+        TTS_OUT[Audio Output<br/>HDMI Speakers]
     end
 
     subgraph Connections["System Connections"]
@@ -44,20 +44,20 @@ graph TB
         RP -->|Serves| REACT
         RP -->|Runs| SERVER
         SERVER -->|Calls| OPENAI
-        SERVER -->|Uses| MOCK
-        WEBCAM -->|Video Stream| SERVER
-        SERVER -->|Updates| REACT
+        SERVER -->|Calls| WEATHER_API
+        WEBCAM -->|Video Stream| REACT
+        REACT -->|Text| TTS
+        TTS -->|Audio| MON
     end
 
-    subgraph Future["Future Integrations"]
-        GOOGLE[Google Calendar API]
-        WEATHER_API[Weather API]
-        NEWS_API[News API]
-        FITNESS[Fitness Data APIs]
+    subgraph AI_Personalities["AI Personalities"]
+        WEATHER_FASCIST[Weather Fascist<br/>Critical Fashion Expert]
+        SNOOP_STYLE[Snoop Style<br/>Snoop Dogg Personality]
+        SNOOP_WEATHER[Snoop Weather<br/>Snoop + Weather]
+        MOTIVATION[Motivation<br/>Encouraging Messages]
+        TEST_AI[Test AI<br/>Generic Analysis]
     end
 
-    MOCK -.->|Replace with| GOOGLE
-    MOCK -.->|Replace with| WEATHER_API
-    MOCK -.->|Replace with| NEWS_API
-    MOCK -.->|Add| FITNESS
+    OPENAI -->|Analyzes| AI_Personalities
+    AI_Personalities -->|Responses| MESSAGE
 ```
