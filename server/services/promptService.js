@@ -108,8 +108,27 @@ Keep the recommendation concise (under 100 words) and encouraging. This is for a
     return `Give me a brief, encouraging ${timeOfDay} motivation message. Keep it under 100 words and make it feel personal and uplifting. Consider that this is for someone using a smart mirror.`;
   }
 
+  /**
+   * Generate weather-aware outfit analysis prompt (Snoop Dogg style)
+   * @param {Object} weatherData - Weather information
+   * @returns {string} - Formatted prompt for AI
+   */
+  static generateWeatherAwareOutfitPrompt(weatherData) {
+    if (!weatherData || weatherData.error || !weatherData.current) {
+      return "Analyze this outfit and give fashion advice. Be encouraging and constructive.";
+    }
+    
+    const { temperature, condition } = weatherData.current;
+    return `Yo! It's ${temperature}°F and ${condition} out there. Check this outfit and tell me what's good, what's not, and how to keep it fresh for the weather. Keep it real but encouraging, like Snoop Dogg giving fashion advice. Make it short and sweet, nephew!`;
+  }
 
-
+  /**
+   * Generate generic image analysis prompt
+   * @returns {string} - Formatted prompt for AI
+   */
+  static generateGenericImagePrompt() {
+    return "Look at this image and provide a brief, general description of what you see. Focus on the main elements and overall scene.";
+  }
 }
 
 module.exports = PromptService;

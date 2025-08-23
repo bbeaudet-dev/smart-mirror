@@ -73,15 +73,7 @@ class ApiClient {
     }
   }
 
-  /**
-   * Get daily summary data
-   * @param {string} location - Optional location override
-   * @returns {Promise<Object>} - Complete daily data
-   */
-  static async getDailySummary(location = null) {
-    const params = location ? `?location=${encodeURIComponent(location)}` : '';
-    return this.get(`/api/daily-summary${params}`);
-  }
+
 
   /**
    * Get weather data

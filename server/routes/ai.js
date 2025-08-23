@@ -67,58 +67,7 @@ router.post('/motivation', async (req, res) => {
   }
 });
 
-// POST /api/ai/outfit-recommendation - Get AI-generated outfit recommendation
-router.post('/outfit-recommendation', async (req, res) => {
-  try {
-    const { 
-      temperature, 
-      condition, 
-      chanceOfRain, 
-      location,
-      timeOfDay,
-      recommendationType,
-      forecast
-    } = req.body;
-    
-    if (!temperature || !condition) {
-      return res.status(400).json({ 
-        error: 'Temperature and condition are required',
-        message: 'Both temperature and condition must be provided for outfit recommendations'
-      });
-    }
-    
-    const PromptService = require('../services/promptService');
-    const prompt = PromptService.generateOutfitRecommendationPrompt({
-      temperature,
-      condition,
-      chanceOfRain,
-      location,
-      timeOfDay,
-      recommendationType,
-      forecast
-    });
 
-    const recommendation = await OpenAIService.chat(prompt, 'outfit-recommendation');
-    res.json({ 
-      recommendation,
-      weather: { 
-        temperature, 
-        condition, 
-        chanceOfRain, 
-        location,
-        timeOfDay,
-        recommendationType
-      },
-      timestamp: new Date().toISOString()
-    });
-  } catch (error) {
-    console.error('Outfit Recommendation Error:', error);
-    res.status(500).json({ 
-      error: 'Failed to generate outfit recommendation',
-      message: error.message 
-    });
-  }
-});
 
 // POST /api/ai/analyze-image - Image analysis with OpenAI Vision
 router.post('/analyze-image', upload.single('image'), async (req, res) => {
@@ -167,14 +116,9 @@ router.post('/analyze-outfit-with-weather', upload.single('image'), async (req, 
       // Continue without weather data
     }
 
-    // Build weather-aware prompt with Snoop Dogg style
-    let outfitPrompt = "Analyze this outfit and give fashion advice. Be encouraging and constructive.";
-    
-    if (weatherData && !weatherData.error && weatherData.current) {
-      const { temperature, condition } = weatherData.current;
-      // outfitPrompt = `Analyze this outfit considering it's ${temperature}°F and ${condition} today. Provide fashion advice that considers the weather - suggest if the outfit is appropriate for the temperature and conditions, and offer constructive suggestions. Be encouraging and helpful.`;
-      outfitPrompt = `Yo! It's ${temperature}°F and ${condition} out there. Check this outfit and tell me what's good, what's not, and how to keep it fresh for the weather. Keep it real but encouraging, like Snoop Dogg giving fashion advice. Make it short and sweet, nephew!`;
-    }
+    // Use prompt service for weather-aware outfit analysis
+    const PromptService = require('../services/promptService');
+    const outfitPrompt = PromptService.generateWeatherAwareOutfitPrompt(weatherData);
 
     const analysis = await OpenAIService.analyzeImage(imageBuffer, imageType, outfitPrompt, 'outfit-analysis');
     res.json({ 
@@ -201,8 +145,9 @@ router.post('/test-image', upload.single('image'), async (req, res) => {
     const imageBuffer = req.file.buffer;
     const imageType = req.file.mimetype;
 
-    // Simple test prompt - just identify what's in the image
-    const testPrompt = "What do you see in this image? Please describe what the person is wearing in a brief. Respond in the voice and style of Donald Trump - be confident, use his typical phrases and mannerisms.";
+    // Use prompt service for generic image analysis
+    const PromptService = require('../services/promptService');
+    const testPrompt = PromptService.generateGenericImagePrompt();
 
     const analysis = await OpenAIService.analyzeImage(imageBuffer, imageType, testPrompt, 'smart-mirror');
     res.json({ 
