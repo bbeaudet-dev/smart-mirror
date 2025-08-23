@@ -98,18 +98,9 @@ Please provide a friendly, practical outfit recommendation that considers:
 Keep the recommendation concise (under 100 words) and encouraging. This is for a smart mirror display.`;
   }
 
-  /**
-   * Generate motivation prompt
-   * @param {string} timeOfDay - Time of day (morning/afternoon/evening)
-   * @param {string} mood - User's mood
-   * @returns {string} - Formatted prompt for AI
-   */
-  static generateMotivationPrompt(timeOfDay = 'morning', mood = 'neutral') {
-    return `Give me a brief, encouraging ${timeOfDay} motivation message. Keep it under 100 words and make it feel personal and uplifting. Consider that this is for someone using a smart mirror.`;
-  }
 
   /**
-   * Generate weather-aware outfit analysis prompt (Snoop Dogg style)
+   * Generate weather-aware outfit analysis prompt
    * @param {Object} weatherData - Weather information
    * @returns {string} - Formatted prompt for AI
    */
@@ -123,12 +114,13 @@ Keep the recommendation concise (under 100 words) and encouraging. This is for a
   }
 
   /**
-   * Generate generic image analysis prompt
+   * Generate basic outfit analysis prompt
    * @returns {string} - Formatted prompt for AI
    */
-  static generateGenericImagePrompt() {
-    return "Look at this image and provide a brief, general description of what you see. Focus on the main elements and overall scene.";
+  static generateOutfitAnalysisPrompt() {
+    return "Analyze this outfit and provide fashion advice in the style of Snoop Dogg. Use his mannerisms, slang, and style - keep it real, be encouraging and positive. Give genuine fashion advice while maintaining his personality.";
   }
+
 }
 
 module.exports = PromptService;

@@ -3,7 +3,6 @@ const dataService = require('../services/dataService');
 
 const router = express.Router();
 
-
 // GET /api/weather - Weather data only
 router.get('/weather', async (req, res) => {
   try {
@@ -20,8 +19,6 @@ router.get('/weather', async (req, res) => {
     });
   }
 });
-
-
 
 // GET /api/weather/location - Update weather location
 router.get('/weather/location', async (req, res) => {

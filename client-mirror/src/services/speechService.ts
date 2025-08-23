@@ -11,7 +11,6 @@ export class SpeechService {
     if (speechSynthesis.onvoiceschanged !== undefined) {
       speechSynthesis.onvoiceschanged = () => {
         this.voices = speechSynthesis.getVoices();
-        console.log('Available voices:', this.voices.length);
       };
     }
   }
@@ -37,7 +36,6 @@ export class SpeechService {
     // Use selected voice or try to use the best available voice
     if (this.selectedVoice) {
       utterance.voice = this.selectedVoice;
-      console.log('Using selected voice:', this.selectedVoice.name);
     } else {
       const preferredVoices = this.voices.filter(voice => 
         voice.lang.startsWith('en') && 
@@ -51,13 +49,8 @@ export class SpeechService {
       
       if (preferredVoices.length > 0) {
         utterance.voice = preferredVoices[0];
-        console.log('Using preferred voice:', preferredVoices[0].name);
-      } else {
-        console.log('Available voices:', this.voices.map(v => `${v.name} (${v.lang})`));
       }
     }
-
-    console.log('Speaking:', text.substring(0, 50) + '...');
     speechSynthesis.speak(utterance);
   }
 
@@ -99,10 +92,6 @@ export class SpeechService {
     const voice = this.voices.find(v => v.name === voiceName);
     if (voice) {
       this.selectedVoice = voice;
-      console.log('Voice set to:', voice.name);
-    } else {
-      console.log('Voice not found:', voiceName);
-      console.log('Available voices:', this.voices.map(v => v.name));
     }
   }
 }

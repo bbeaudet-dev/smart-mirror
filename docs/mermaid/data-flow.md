@@ -15,7 +15,7 @@ sequenceDiagram
 
     User->>User: Stands in front of mirror
     Webcam->>React: Live video stream
-    User->>React: Clicks "Weather Fascist" button
+    User->>React: Clicks "Weather" button
     React->>Webcam: Capture frame as blob
     React->>Server: Send image + weather request
     Server->>Weather: Get current weather data

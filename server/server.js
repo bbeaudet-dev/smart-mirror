@@ -9,8 +9,6 @@ const aiRoutes = require('./routes/ai');
 const apiRoutes = require('./routes/api');
 const { router: authRoutes } = require('./routes/auth');
 const calendarRoutes = require('./routes/calendar');
-
-
 const app = express();
 const PORT = process.env.PORT || 5005;
 
@@ -34,7 +32,6 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use('/api/ai', aiRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/calendar', calendarRoutes);
-
 app.use('/api', apiRoutes);
 
 // Health check endpoint
@@ -68,8 +65,6 @@ app.use((err, req, res, next) => {
 app.use('*', (req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
-
-
 
 // Start server
 server.listen(PORT, '0.0.0.0', () => {

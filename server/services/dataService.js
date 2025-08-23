@@ -1,11 +1,9 @@
 
-
 // Import real weather service
 const WeatherService = require('./weatherService');
 const weatherService = new WeatherService();
 
-class MockDataService {
-
+class DataService {
 
   /**
    * Get weather data
@@ -32,10 +30,6 @@ class MockDataService {
     }
   }
 
-
-
-
-
   /**
    * Get system status
    * @returns {Promise<Object>} - System status information
@@ -51,4 +45,4 @@ class MockDataService {
   }
 }
 
-module.exports = MockDataService;
+module.exports = DataService;

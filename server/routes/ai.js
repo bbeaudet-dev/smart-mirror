@@ -19,81 +19,6 @@ const upload = multer({
   },
 });
 
-// POST /api/ai/chat - General AI conversation
-router.post('/chat', async (req, res) => {
-  try {
-    const { message, context = 'smart-mirror' } = req.body;
-    
-    if (!message) {
-      return res.status(400).json({ error: 'Message is required' });
-    }
-
-    const response = await OpenAIService.chat(message, context);
-    res.json({ 
-      response,
-      timestamp: new Date().toISOString()
-    });
-  } catch (error) {
-    console.error('AI Chat Error:', error);
-    res.status(500).json({ 
-      error: 'Failed to process AI chat request',
-      message: error.message 
-    });
-  }
-});
-
-
-
-// POST /api/ai/motivation - Get motivational message
-router.post('/motivation', async (req, res) => {
-  try {
-    const { timeOfDay = 'morning', mood = 'neutral' } = req.body;
-    
-    const PromptService = require('../services/promptService');
-    const prompt = PromptService.generateMotivationPrompt(timeOfDay, mood);
-    
-    const response = await OpenAIService.chat(prompt, 'motivation');
-    res.json({ 
-      motivation: response,
-      timeOfDay,
-      timestamp: new Date().toISOString()
-    });
-  } catch (error) {
-    console.error('Motivation Error:', error);
-    res.status(500).json({ 
-      error: 'Failed to generate motivation',
-      message: error.message 
-    });
-  }
-});
-
-
-
-// POST /api/ai/analyze-image - Image analysis with OpenAI Vision
-router.post('/analyze-image', upload.single('image'), async (req, res) => {
-  try {
-    if (!req.file) {
-      return res.status(400).json({ error: 'Image file is required' });
-    }
-
-    const { prompt, context = 'outfit-analysis' } = req.body;
-    const imageBuffer = req.file.buffer;
-    const imageType = req.file.mimetype;
-
-    const analysis = await OpenAIService.analyzeImage(imageBuffer, imageType, prompt, context);
-    res.json({ 
-      analysis,
-      timestamp: new Date().toISOString()
-    });
-  } catch (error) {
-    console.error('Image Analysis Error:', error);
-    res.status(500).json({ 
-      error: 'Failed to analyze image',
-      message: error.message 
-    });
-  }
-});
-
 // POST /api/ai/analyze-outfit-with-weather - Outfit analysis with weather context
 router.post('/analyze-outfit-with-weather', upload.single('image'), async (req, res) => {
   try {
@@ -135,8 +60,8 @@ router.post('/analyze-outfit-with-weather', upload.single('image'), async (req, 
   }
 });
 
-// POST /api/ai/test-image - Simple image recognition test
-router.post('/test-image', upload.single('image'), async (req, res) => {
+// POST /api/ai/analyze-outfit - Basic outfit analysis
+router.post('/analyze-outfit', upload.single('image'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'Image file is required' });
@@ -145,20 +70,18 @@ router.post('/test-image', upload.single('image'), async (req, res) => {
     const imageBuffer = req.file.buffer;
     const imageType = req.file.mimetype;
 
-    // Use prompt service for generic image analysis
+    // Use prompt service for basic outfit analysis
     const PromptService = require('../services/promptService');
-    const testPrompt = PromptService.generateGenericImagePrompt();
-
-    const analysis = await OpenAIService.analyzeImage(imageBuffer, imageType, testPrompt, 'smart-mirror');
+    const prompt = PromptService.generateOutfitAnalysisPrompt();
+    const analysis = await OpenAIService.analyzeImage(imageBuffer, imageType, prompt, 'outfit-analysis');
     res.json({ 
       analysis,
-      timestamp: new Date().toISOString(),
-      test: true
+      timestamp: new Date().toISOString()
     });
   } catch (error) {
-    console.error('Test Image Analysis Error:', error);
+    console.error('Outfit Analysis Error:', error);
     res.status(500).json({ 
-      error: 'Failed to analyze test image',
+      error: 'Failed to analyze outfit',
       message: error.message 
     });
   }
