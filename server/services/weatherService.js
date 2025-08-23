@@ -119,10 +119,6 @@ class WeatherService {
 
     return icons[code] || '?';
   }
-
-
-
-
 }
 
 module.exports = WeatherService;

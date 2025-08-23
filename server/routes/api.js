@@ -3,24 +3,6 @@ const dataService = require('../services/dataService');
 
 const router = express.Router();
 
-// GET /api/daily-summary - Returns comprehensive daily data
-router.get('/daily-summary', async (req, res) => {
-  try {
-    const { location } = req.query;
-    const summary = await dataService.getDailySummary(location);
-    res.json({
-      ...summary,
-      timestamp: new Date().toISOString()
-    });
-  } catch (error) {
-    console.error('Daily Summary Error:', error);
-    res.status(500).json({ 
-      error: 'Failed to fetch daily summary',
-      message: error.message 
-    });
-  }
-});
-
 // GET /api/weather - Weather data only
 router.get('/weather', async (req, res) => {
   try {
@@ -37,8 +19,6 @@ router.get('/weather', async (req, res) => {
     });
   }
 });
-
-
 
 // GET /api/weather/location - Update weather location
 router.get('/weather/location', async (req, res) => {

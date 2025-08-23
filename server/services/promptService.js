@@ -98,17 +98,28 @@ Please provide a friendly, practical outfit recommendation that considers:
 Keep the recommendation concise (under 100 words) and encouraging. This is for a smart mirror display.`;
   }
 
+
   /**
-   * Generate motivation prompt
-   * @param {string} timeOfDay - Time of day (morning/afternoon/evening)
-   * @param {string} mood - User's mood
+   * Generate weather-aware outfit analysis prompt
+   * @param {Object} weatherData - Weather information
    * @returns {string} - Formatted prompt for AI
    */
-  static generateMotivationPrompt(timeOfDay = 'morning', mood = 'neutral') {
-    return `Give me a brief, encouraging ${timeOfDay} motivation message. Keep it under 100 words and make it feel personal and uplifting. Consider that this is for someone using a smart mirror.`;
+  static generateWeatherAwareOutfitPrompt(weatherData) {
+    if (!weatherData || weatherData.error || !weatherData.current) {
+      return "Analyze this outfit and give fashion advice. Be encouraging and constructive.";
+    }
+    
+    const { temperature, condition } = weatherData.current;
+    return `Yo! It's ${temperature}°F and ${condition} out there. Check this outfit and tell me what's good, what's not, and how to keep it fresh for the weather. Keep it real but encouraging, like Snoop Dogg giving fashion advice. Make it short and sweet, nephew!`;
   }
 
-
+  /**
+   * Generate basic outfit analysis prompt
+   * @returns {string} - Formatted prompt for AI
+   */
+  static generateOutfitAnalysisPrompt() {
+    return "Analyze this outfit and provide fashion advice in the style of Snoop Dogg. Use his mannerisms, slang, and style - keep it real, be encouraging and positive. Give genuine fashion advice while maintaining his personality.";
+  }
 
 }
 
