@@ -4,6 +4,7 @@ import ApiClient from '../../../services/apiClient';
 import { speechService } from '../../../services/speechService';
 import VideoFeed from './VideoFeed';
 import AiControlButtons from './AiControlButtons';
+import DetectionOverlay, { DetectionResult } from './DetectionOverlay';
 
 interface WebcamPanelProps {
   onAiMessage?: (message: string, type: 'ai-response' | 'outfit-analysis' | 'general') => void;
@@ -26,6 +27,8 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [autoAnalysisInterval, setAutoAnalysisInterval] = useState<NodeJS.Timeout | null>(null);
   const [showDebugControls, setShowDebugControls] = useState(false);
+  const [detections, setDetections] = useState<DetectionResult[]>([]);
+  const [showDetectionOverlay, setShowDetectionOverlay] = useState(true);
 
   // Auto-start webcam when component mounts
   useEffect(() => {
@@ -40,10 +43,10 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
   /**
    * Shared AI Analysis Handler
    * 
-   * This function handles both basic outfit analysis and weather-aware outfit analysis.
+   * This function handles basic outfit analysis, weather-aware outfit analysis, and enhanced analysis.
    * It captures a webcam frame and sends it to the appropriate AI service based on the type.
    */
-  const handleAiAnalysis = async (analysisType: 'basic' | 'weather') => {
+  const handleAiAnalysis = async (analysisType: 'basic' | 'weather' | 'enhanced' | 'roboflow') => {
     if (!isInitialized) {
       console.error("Webcam not initialized");
       onAiMessage?.("Webcam not initialized. Please start the webcam first.", 'ai-response');
@@ -61,20 +64,54 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
       }
 
       // Step 2: Convert blob to File object for API transmission
-      const filename = analysisType === 'weather' ? 'weather-outfit-analysis.jpg' : 'outfit-analysis.jpg';
+      const filename = analysisType === 'weather' ? 'weather-outfit-analysis.jpg' 
+        : analysisType === 'enhanced' ? 'enhanced-analysis.jpg' 
+        : 'outfit-analysis.jpg';
       const imageFile = new File([blob], filename, { type: 'image/jpeg' });
       
-      // Step 3: Send to AI service (basic or weather-aware)
-      const result = analysisType === 'weather' 
-        ? await ApiClient.analyzeOutfitWithWeather(imageFile) as any
-        : await ApiClient.analyzeOutfit(imageFile) as any;
+      // Step 3: Send to appropriate AI service
+      let result;
+      if (analysisType === 'enhanced') {
+        result = await ApiClient.analyzeOutfitEnhanced(imageFile) as any;
+        // Update detections state for overlay display
+        setDetections(result.detections || []);
+      } else if (analysisType === 'weather') {
+        result = await ApiClient.analyzeOutfitWithWeather(imageFile) as any;
+      } else if (analysisType === 'roboflow') {
+        result = await ApiClient.detectClothing(imageFile) as any;
+        // Update detections state for overlay display
+        setDetections(result.detections || []);
+      } else {
+        result = await ApiClient.analyzeOutfit(imageFile) as any;
+      }
       
-      // Step 4: Display the AI response and speak it aloud
-      onAiMessage?.(result.analysis, 'ai-response');
-      speechService.speak(result.analysis);
+      // Step 4: Display the response and speak it aloud
+      if (analysisType === 'roboflow') {
+        // Pure Roboflow detection - format the response
+        if (result.detections && result.detections.length > 0) {
+          const detectedItems = result.detections.map((d: any) => 
+            `${d.label} (${(d.confidence * 100).toFixed(0)}% confidence)`
+          ).join(', ');
+          
+          const roboflowMessage = `ROBOFLOW DETECTION: I detected the following clothing items: ${detectedItems}`;
+          onAiMessage?.(roboflowMessage, 'ai-response');
+          speechService.speak(roboflowMessage);
+        } else {
+          const noDetectionMessage = "ROBOFLOW DETECTION: No clothing items detected in the image.";
+          onAiMessage?.(noDetectionMessage, 'ai-response');
+          speechService.speak(noDetectionMessage);
+        }
+      } else {
+        // AI analysis responses
+        onAiMessage?.(result.analysis, 'ai-response');
+        speechService.speak(result.analysis);
+      }
       
     } catch (error) {
-      const errorType = analysisType === 'weather' ? 'Weather outfit analysis' : 'Outfit analysis';
+      const errorType = analysisType === 'weather' ? 'Weather outfit analysis' 
+        : analysisType === 'enhanced' ? 'Enhanced analysis' 
+        : analysisType === 'roboflow' ? 'Roboflow detection'
+        : 'Outfit analysis';
       console.error(`${errorType} failed:`, error);
       const errorMessage = error instanceof Error ? error.message : `${errorType} failed. Please try again.`;
       onAiMessage?.(errorMessage, 'ai-response');
@@ -87,6 +124,7 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
   // Wrapper functions for the buttons
   const handleOutfitAnalysis = () => handleAiAnalysis('basic');
   const handleWeatherOutfitAnalysis = () => handleAiAnalysis('weather');
+  const handleRoboflowDetection = () => handleAiAnalysis('roboflow');
 
   return (
     <div className="flex flex-col h-full">
@@ -99,12 +137,20 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
         videoRef={videoRef}
       />
 
+      {/* Detection Overlay */}
+      <DetectionOverlay
+        detections={detections}
+        videoRef={videoRef}
+        showOverlay={showDetectionOverlay}
+      />
+
       {/* AI Control Buttons Component */}
       <AiControlButtons
         isInitialized={isInitialized}
         isAnalyzing={isAnalyzing}
         onOutfitAnalysis={handleOutfitAnalysis}
         onWeatherOutfitAnalysis={handleWeatherOutfitAnalysis}
+        onEnhancedAnalysis={handleRoboflowDetection}
         onStartWebcam={startWebcam}
         onStopWebcam={stopWebcam}
       />

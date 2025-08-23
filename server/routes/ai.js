@@ -1,6 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const OpenAIService = require('../services/openai');
+const RoboflowService = require('../services/roboflowService');
 
 const router = express.Router();
 
@@ -82,6 +83,81 @@ router.post('/analyze-outfit', upload.single('image'), async (req, res) => {
     console.error('Outfit Analysis Error:', error);
     res.status(500).json({ 
       error: 'Failed to analyze outfit',
+      message: error.message 
+    });
+  }
+});
+
+// POST /api/ai/detect-clothing - Standalone clothing detection using Roboflow
+router.post('/detect-clothing', upload.single('image'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'Image file is required' });
+    }
+
+    const imageBuffer = req.file.buffer;
+    const imageBase64 = imageBuffer.toString('base64');
+    const imageData = `data:${req.file.mimetype};base64,${imageBase64}`;
+
+    const roboflowService = new RoboflowService();
+    const detections = await roboflowService.detectClothing(imageData);
+
+    res.json({ 
+      detections,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Clothing Detection Error:', error);
+    res.status(500).json({ 
+      error: 'Failed to detect clothing items',
+      message: error.message 
+    });
+  }
+});
+
+// POST /api/ai/analyze-outfit-enhanced - Enhanced outfit analysis with Roboflow + OpenAI
+router.post('/analyze-outfit-enhanced', upload.single('image'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'Image file is required' });
+    }
+
+    const imageBuffer = req.file.buffer;
+    const imageType = req.file.mimetype;
+    const imageBase64 = imageBuffer.toString('base64');
+    const imageData = `data:${req.file.mimetype};base64,${imageBase64}`;
+
+    // Step 1: Detect clothing items using Roboflow
+    const roboflowService = new RoboflowService();
+    const detections = await roboflowService.detectClothing(imageBuffer);
+
+    // Step 2: Get weather data
+    let weatherData = null;
+    try {
+      const WeatherService = require('../services/weatherService');
+      const weatherService = new WeatherService();
+      weatherData = await weatherService.getWeatherData();
+    } catch (weatherError) {
+      console.error('Failed to get weather data for enhanced analysis:', weatherError);
+    }
+
+    // Step 3: Generate enhanced prompt with detected items
+    const enhancedPrompt = roboflowService.generateEnhancedPrompt(detections, weatherData);
+
+    // Step 4: Send to OpenAI with enhanced prompt
+    const analysis = await OpenAIService.analyzeImage(imageBuffer, imageType, enhancedPrompt, 'outfit-analysis');
+
+    res.json({ 
+      analysis,
+      detections,
+      enhancedPrompt,
+      weather: weatherData,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error) {
+    console.error('Enhanced Outfit Analysis Error:', error);
+    res.status(500).json({ 
+      error: 'Failed to perform enhanced outfit analysis',
       message: error.message 
     });
   }

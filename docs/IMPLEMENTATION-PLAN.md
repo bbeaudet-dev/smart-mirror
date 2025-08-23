@@ -207,13 +207,64 @@ Building an AI-powered smart mirror with live outfit analysis and other features
 - Text-to-speech working
 - Demo-ready smart mirror
 
-#### Phase 5: Phone Backup Testing (Day 7) - OPTIONAL
+**Goal**: Add automation and polish for final demo
+
+**Tasks**:
+
+1. **Automated Trigger System** (Day 7)
+
+   - Add motion detection for automatic capture
+   - Implement smooth user experience flow
+   - Add loading states and feedback
+
+2. **Text-to-Speech Enhancement** (Day 8)
+
+   - Integrate Web Speech API
+   - Add voice output for AI responses
+   - Test audio quality and timing
+
+**Deliverables**:
+
+- Complete automated system
+- Text-to-speech working
+- Demo-ready smart mirror
+
+#### Phase 5: Roboflow Object Detection Integration (Day 7) - STRETCH GOAL
+
+**Goal**: Add real-time object detection using Roboflow for enhanced smart mirror capabilities
+
+**Tasks**:
+
+1. **Roboflow Setup & Integration** (Day 7)
+
+   - Set up Roboflow account and API access
+   - Choose/upload clothing detection dataset (shirts, pants, shoes, accessories)
+   - Train or use pre-trained clothing detection model
+   - Integrate Roboflow API into backend services
+   - Test object detection accuracy and performance
+
+2. **Real-time Detection Implementation** (Day 7)
+
+   - Implement real-time object detection on webcam feed
+   - Add visual bounding boxes and labels for detected items
+   - Create detection overlay component for mirror interface
+   - Integrate detection results with AI analysis prompts
+   - Optimize for performance on Raspberry Pi
+
+**Deliverables**:
+
+- Working Roboflow object detection
+- Real-time clothing item detection
+- Visual detection overlay on mirror
+- Enhanced AI prompts using detected objects
+
+#### Phase 6: Phone Backup Testing (Day 8) - OPTIONAL
 
 **Goal**: Ensure phone interface works as backup
 
 **Tasks**:
 
-1. **Phone Interface Testing** (Day 7)
+1. **Phone Interface Testing** (Day 8)
    - Test WebRTC connection from phone
    - Verify camera access on mobile browsers
    - Ensure phone can stream to Pi as backup
@@ -224,7 +275,7 @@ Building an AI-powered smart mirror with live outfit analysis and other features
 - Working phone backup option
 - Documentation for phone setup
 
-#### Phase 6: Final Demo Preparation (Day 8)
+#### Phase 7: Final Demo Preparation (Day 8)
 
 **Goal**: Final testing and demo preparation
 
@@ -233,6 +284,7 @@ Building an AI-powered smart mirror with live outfit analysis and other features
 1. **Final Testing** (Day 8)
    - Test complete USB webcam flow
    - Test phone backup flow
+   - Test Roboflow integration (if implemented)
    - Final UI/UX refinements
    - Demo flow preparation
 
@@ -312,12 +364,73 @@ export const useWebcam = () => {
 };
 ```
 
+### Roboflow Object Detection Integration
+
+```typescript
+// server/services/roboflowService.js
+import { Roboflow } from "roboflow";
+
+export class RoboflowService {
+  private roboflow: Roboflow;
+  private model: string;
+
+  constructor() {
+    this.roboflow = new Roboflow({
+      apiKey: process.env.ROBOFLOW_API_KEY,
+    });
+    this.model = "clothing-detection-xyz"; // Replace with actual model
+  }
+
+  async detectClothing(imageData: string): Promise<DetectionResult[]> {
+    try {
+      const predictions = await this.roboflow.detect({
+        model: this.model,
+        image: imageData,
+        confidence: 0.5,
+        overlap: 0.5,
+      });
+
+      return predictions.map((pred) => ({
+        label: pred.class,
+        confidence: pred.confidence,
+        bbox: {
+          x: pred.bbox.x,
+          y: pred.bbox.y,
+          width: pred.bbox.width,
+          height: pred.bbox.height,
+        },
+      }));
+    } catch (error) {
+      console.error("Roboflow detection failed:", error);
+      return [];
+    }
+  }
+
+  generateEnhancedPrompt(detections: DetectionResult[], weather: any): string {
+    const detectedItems = detections.map((d) => d.label).join(", ");
+
+    return `I can see you're wearing: ${detectedItems}. 
+    Considering it's ${weather.temperature}°F and ${weather.condition} today, 
+    how does this outfit work for the weather? Any suggestions for improvement?`;
+  }
+}
+```
+
 ### AI Integration Enhancement
 
 ```typescript
 // server/services/outfitAnalysisService.js
 const analyzeOutfit = async (imageData, weather, personality = "default") => {
-  const prompt = generateOutfitPrompt(weather, personality);
+  // First, detect clothing items using Roboflow
+  const roboflowService = new RoboflowService();
+  const detections = await roboflowService.detectClothing(imageData);
+
+  // Generate enhanced prompt with detected items
+  const enhancedPrompt = roboflowService.generateEnhancedPrompt(
+    detections,
+    weather
+  );
+  const prompt = generateOutfitPrompt(weather, personality, enhancedPrompt);
 
   const response = await openai.chat.completions.create({
     model: "gpt-4-vision-preview",
@@ -333,7 +446,10 @@ const analyzeOutfit = async (imageData, weather, personality = "default") => {
     max_tokens: 300,
   });
 
-  return response.choices[0].message.content;
+  return {
+    analysis: response.choices[0].message.content,
+    detections: detections,
+  };
 };
 
 const generateOutfitPrompt = (weather, personality) => {
@@ -474,12 +590,36 @@ export class SpeechService {
    - Risk: Demo runs too long or too short, or unclear presentation
    - Mitigation: Practice timing and flow, have flexible demo flow
 
+## Roboflow Integration Benefits
+
+### Technical Benefits
+
+- **Real-time Object Detection**: Identify specific clothing items (shirts, pants, shoes, accessories)
+- **Enhanced AI Prompts**: More specific analysis based on detected items
+- **Visual Feedback**: Bounding boxes and labels on detected items
+- **Performance**: Roboflow models optimized for real-time inference
+
+### Demo & Interview Benefits
+
+- **Roboflow Interview Opportunity**: Using their software makes the project eligible for their interview series
+- **Showcase Advanced AI**: Demonstrates integration of multiple AI services (OpenAI + Roboflow)
+- **Technical Sophistication**: Shows understanding of computer vision and object detection
+- **Real-world Application**: Practical use case for object detection in smart home technology
+
+### Implementation Strategy
+
+1. **Model Selection**: Use pre-trained clothing detection model or train custom model
+2. **API Integration**: Seamless integration with existing AI analysis pipeline
+3. **Visual Overlay**: Real-time bounding boxes on webcam feed
+4. **Enhanced Prompts**: AI responses reference specific detected clothing items
+
 ## Success Metrics
 
 ### Technical Metrics
 
 - Webcam latency < 100ms
 - AI response time < 3 seconds
+- Object detection accuracy > 85%
 - System uptime > 95%
 - Audio/video sync < 50ms
 
@@ -489,6 +629,7 @@ export class SpeechService {
 - Technical execution (no major failures)
 - Feature demonstration (all planned features work)
 - Professional presentation
+- Roboflow integration showcase
 
 ## Budget Summary
 

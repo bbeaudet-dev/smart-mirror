@@ -5,6 +5,7 @@ interface AiControlButtonsProps {
   isAnalyzing: boolean;
   onOutfitAnalysis: () => void;
   onWeatherOutfitAnalysis: () => void;
+  onEnhancedAnalysis: () => void;
   onStartWebcam: () => void;
   onStopWebcam: () => void;
 }
@@ -22,6 +23,8 @@ const AiControlButtons: React.FC<AiControlButtonsProps> = ({
 
   onOutfitAnalysis,
   onWeatherOutfitAnalysis,
+  onEnhancedAnalysis,
+  
   onStartWebcam,
   onStopWebcam
 }) => {
@@ -62,6 +65,18 @@ const AiControlButtons: React.FC<AiControlButtonsProps> = ({
           }`}
         >
           {isAnalyzing ? 'Processing...' : 'Outfit + Weather'}
+        </button>
+
+        <button
+          onClick={onEnhancedAnalysis}
+          disabled={isAnalyzing}
+          className={`px-3 py-2 rounded text-xs font-medium transition-colors ${
+            isAnalyzing
+              ? 'bg-gray-500 cursor-not-allowed'
+              : 'bg-purple-600 hover:bg-purple-700 text-white'
+          }`}
+        >
+          {isAnalyzing ? 'Processing...' : 'Roboflow'}
         </button>
       </div>
     </div>

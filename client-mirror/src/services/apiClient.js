@@ -177,6 +177,54 @@ class ApiClient {
     }
   }
 
+  /**
+   * Detect clothing items using Roboflow
+   * @param {File} imageFile - Image file
+   * @returns {Promise<Object>} - Clothing detection results
+   */
+  static async detectClothing(imageFile) {
+    const formData = new FormData();
+    formData.append('image', imageFile);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/ai/detect-clothing`, {
+        method: 'POST',
+        body: formData,
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Clothing Detection Error:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Enhanced outfit analysis with Roboflow + OpenAI
+   * @param {File} imageFile - Image file
+   * @returns {Promise<Object>} - Enhanced analysis results with detections
+   */
+  static async analyzeOutfitEnhanced(imageFile) {
+    const formData = new FormData();
+    formData.append('image', imageFile);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/ai/analyze-outfit-enhanced`, {
+        method: 'POST',
+        body: formData,
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Enhanced Outfit Analysis Error:', error);
+      throw error;
+    }
+  }
+
 }
 
 export default ApiClient;
