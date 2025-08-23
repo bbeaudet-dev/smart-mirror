@@ -9,7 +9,7 @@ const aiRoutes = require('./routes/ai');
 const apiRoutes = require('./routes/api');
 const { router: authRoutes } = require('./routes/auth');
 const calendarRoutes = require('./routes/calendar');
-const webrtcRoutes = require('./routes/webrtc');
+
 
 const app = express();
 const PORT = process.env.PORT || 5005;
@@ -34,7 +34,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use('/api/ai', aiRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/calendar', calendarRoutes);
-app.use('/api/webrtc', webrtcRoutes);
+
 app.use('/api', apiRoutes);
 
 // Health check endpoint
@@ -69,23 +69,16 @@ app.use('*', (req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
-// Initialize WebRTC service
-const WebRTCService = require('./services/webrtcService');
-const webrtcService = new WebRTCService(server);
+
 
 // Start server
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Smart Mirror Server running on port ${PORT}`);
   console.log(`📊 Health check:  http://localhost:${PORT}/api/health`);
   console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`🛜 WebRTC signaling service ready`);
-  console.log(`\n👤 Client Applications:`);
-  console.log(`   🪞 Mirror Interface: http://localhost:3000/`);
-  console.log(`   📱 Phone Interface:  http://localhost:3001/`);
   if (process.env.LOCAL_IP) {
     console.log(`\n🌐 Network Access:`);
     console.log(`   🪞 Mirror Interface: http://${process.env.LOCAL_IP}:3000/`);
-    console.log(`   📱 Phone Interface:  http://${process.env.LOCAL_IP}:3001/`);
     console.log(`   🔧 Server API:       http://${process.env.LOCAL_IP}:${PORT}/api/health`);
   }
 });
