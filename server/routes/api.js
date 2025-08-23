@@ -40,10 +40,6 @@ router.get('/weather', async (req, res) => {
 
 
 
-
-
-
-
 // GET /api/weather/location - Update weather location
 router.get('/weather/location', async (req, res) => {
   try {

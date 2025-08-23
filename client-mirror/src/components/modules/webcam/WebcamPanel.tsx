@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useWebcam } from '../../../hooks/useWebcam';
 import { AiAnalysisService } from '../../../services/aiAnalysisService';
 import { speechService } from '../../../services/speechService';
+import VideoFeed from './VideoFeed';
+import AiControlButtons from './AiControlButtons';
 
 interface WebcamPanelProps {
   onAiMessage?: (message: string, type: 'ai-response' | 'motivation' | 'outfit-analysis' | 'general') => void;
@@ -258,119 +260,28 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
 
   return (
     <div className="flex flex-col h-full">
-      {/* Video Feed */}
-      <div className="flex-1 relative bg-black/20 rounded-lg overflow-hidden mb-4">
-        {stream && isInitialized ? (
-          <div className="w-full h-full flex items-center justify-end pr-4">
-            <video
-              ref={videoRef}
-              autoPlay
-              playsInline
-              muted
-              className="h-96 w-auto"
-            />
-          </div>
-        ) : (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-center">
-              <p className="text-mirror-xs text-mirror-text">
-                {isCapturing ? "Starting webcam..." : "Webcam not available"}
-              </p>
-            </div>
-          </div>
-        )}
-      </div>
+      {/* Video Feed Component */}
+      <VideoFeed
+        stream={stream}
+        isInitialized={isInitialized}
+        isCapturing={isCapturing}
+        error={error}
+        videoRef={videoRef}
+      />
 
-      {/* Error Display */}
-      {error && (
-        <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-2 mt-2">
-          <p className="text-red-300 text-xs">{error}</p>
-        </div>
-      )}
-
-
-
-      {/* AI Control Buttons - Bottom of Screen */}
-      <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-40">
-        <div className="flex space-x-2">
-          <button
-            onClick={isInitialized ? stopWebcam : startWebcam}
-            className={`px-3 py-2 rounded text-xs font-medium transition-colors ${
-              isInitialized
-                ? 'bg-red-600 hover:bg-red-700 text-white'
-                : 'bg-green-600 hover:bg-green-700 text-white'
-            }`}
-          >
-            {isInitialized ? 'Stop Webcam' : 'Start Webcam'}
-          </button>
-          <button
-            onClick={handleTestAI}
-            disabled={isAnalyzing}
-            className={`px-3 py-2 rounded text-xs font-medium transition-colors ${
-              isAnalyzing
-                ? 'bg-gray-500 cursor-not-allowed'
-                : 'bg-green-600 hover:bg-green-700 text-white'
-            }`}
-          >
-            {isAnalyzing ? 'Processing...' : 'AI Analysis'}
-          </button>
-          <button
-            onClick={handleOutfitAnalysis}
-            disabled={isAnalyzing}
-            className={`px-3 py-2 rounded text-xs font-medium transition-colors ${
-              isAnalyzing
-                ? 'bg-gray-500 cursor-not-allowed'
-                : 'bg-purple-600 hover:bg-purple-700 text-white'
-            }`}
-          >
-            {isAnalyzing ? 'Processing...' : 'Fashion'}
-          </button>
-          <button
-            onClick={handleWeatherOutfitAnalysis}
-            disabled={isAnalyzing}
-            className={`px-3 py-2 rounded text-xs font-medium transition-colors ${
-              isAnalyzing
-                ? 'bg-gray-500 cursor-not-allowed'
-                : 'bg-orange-600 hover:bg-orange-700 text-white'
-            }`}
-          >
-            {isAnalyzing ? 'Processing...' : 'Critical Fashion'}
-          </button>
-          <button
-            onClick={handleMotivation}
-            disabled={isAnalyzing}
-            className={`px-3 py-2 rounded text-xs font-medium transition-colors ${
-              isAnalyzing
-                ? 'bg-gray-500 cursor-not-allowed'
-                : 'bg-blue-600 hover:bg-blue-700 text-white'
-            }`}
-          >
-            {isAnalyzing ? 'Processing...' : 'Inspire'}
-          </button>
-                      <button
-              onClick={handleSnoopStyle}
-              disabled={isAnalyzing}
-              className={`px-3 py-2 rounded text-xs font-medium transition-colors ${
-                isAnalyzing
-                  ? 'bg-gray-500 cursor-not-allowed'
-                  : 'bg-yellow-600 hover:bg-yellow-700 text-white'
-              }`}
-            >
-              {isAnalyzing ? 'Processing...' : 'Snoop Style'}
-            </button>
-            <button
-              onClick={handleSnoopWeather}
-              disabled={isAnalyzing}
-              className={`px-3 py-2 rounded text-xs font-medium transition-colors ${
-                isAnalyzing
-                  ? 'bg-gray-500 cursor-not-allowed'
-                  : 'bg-indigo-600 hover:bg-indigo-700 text-white'
-              }`}
-            >
-              {isAnalyzing ? 'Processing...' : 'Snoop Weather'}
-            </button>
-        </div>
-      </div>
+      {/* AI Control Buttons Component */}
+      <AiControlButtons
+        isInitialized={isInitialized}
+        isAnalyzing={isAnalyzing}
+        onTestAI={handleTestAI}
+        onOutfitAnalysis={handleOutfitAnalysis}
+        onWeatherOutfitAnalysis={handleWeatherOutfitAnalysis}
+        onMotivation={handleMotivation}
+        onSnoopStyle={handleSnoopStyle}
+        onSnoopWeather={handleSnoopWeather}
+        onStartWebcam={startWebcam}
+        onStopWebcam={stopWebcam}
+      />
     </div>
   );
 };

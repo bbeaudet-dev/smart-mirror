@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 
 // Components
-import TimeDisplay from './modules/clock/TimeDisplay';
+import TimeDisplay from './modules/TimeDisplay';
 import WeatherPanel from './modules/weather/WeatherPanel';
 import WebcamPanel from './modules/webcam/WebcamPanel';
-import MessagePanel from './modules/message/MessagePanel';
+import MessagePanel from './modules/MessagePanel';
 
 function MirrorInterface() {
   const [aiMessage, setAiMessage] = useState<string | null>(null);
