@@ -89,10 +89,6 @@ class MockDataService {
 
 
 
-
-
-
-
   /**
    * Get system status
    * @returns {Promise<Object>} - System status information
