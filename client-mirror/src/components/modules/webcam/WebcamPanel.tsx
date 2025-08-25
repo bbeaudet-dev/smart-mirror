@@ -29,6 +29,7 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
   const [showDebugControls, setShowDebugControls] = useState(false);
   const [detections, setDetections] = useState<DetectionResult[]>([]);
   const [showDetectionOverlay, setShowDetectionOverlay] = useState(true);
+  const [selectedVoice, setSelectedVoice] = useState('nova');
 
   // Auto-start webcam when component mounts
   useEffect(() => {
@@ -69,20 +70,38 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
         : 'outfit-analysis.jpg';
       const imageFile = new File([blob], filename, { type: 'image/jpeg' });
       
-      // Step 3: Send to appropriate AI service
+      // Step 3: Send to appropriate AI service with voice preference
       let result;
       if (analysisType === 'enhanced') {
         result = await ApiClient.analyzeOutfitEnhanced(imageFile) as any;
         // Update detections state for overlay display
         setDetections(result.detections || []);
       } else if (analysisType === 'weather') {
-        result = await ApiClient.analyzeOutfitWithWeather(imageFile) as any;
+        // Create FormData with voice preference
+        const formData = new FormData();
+        formData.append('image', imageFile);
+        formData.append('voice', selectedVoice);
+        
+        const response = await fetch('http://localhost:5005/api/ai/analyze-outfit-with-weather', {
+          method: 'POST',
+          body: formData,
+        });
+        result = await response.json();
       } else if (analysisType === 'roboflow') {
         result = await ApiClient.detectClothing(imageFile) as any;
         // Update detections state for overlay display
         setDetections(result.detections || []);
       } else {
-        result = await ApiClient.analyzeOutfit(imageFile) as any;
+        // Create FormData with voice preference
+        const formData = new FormData();
+        formData.append('image', imageFile);
+        formData.append('voice', selectedVoice);
+        
+        const response = await fetch('http://localhost:5005/api/ai/analyze-outfit', {
+          method: 'POST',
+          body: formData,
+        });
+        result = await response.json();
       }
       
       // Step 4: Display the response and play audio if available
@@ -175,6 +194,7 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
         onEnhancedAnalysis={handleRoboflowDetection}
         onStartWebcam={startWebcam}
         onStopWebcam={stopWebcam}
+        onVoiceChange={setSelectedVoice}
       />
     </div>
   );

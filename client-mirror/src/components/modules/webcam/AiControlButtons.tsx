@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface AiControlButtonsProps {
   isInitialized: boolean;
@@ -8,6 +8,7 @@ interface AiControlButtonsProps {
   onEnhancedAnalysis: () => void;
   onStartWebcam: () => void;
   onStopWebcam: () => void;
+  onVoiceChange?: (voice: string) => void;
 }
 
 /**
@@ -26,10 +27,35 @@ const AiControlButtons: React.FC<AiControlButtonsProps> = ({
   onEnhancedAnalysis,
   
   onStartWebcam,
-  onStopWebcam
+  onStopWebcam,
+  onVoiceChange
 }) => {
+  const [voices, setVoices] = useState<string[]>([]);
+  const [selectedVoice, setSelectedVoice] = useState('nova');
+  const [isLoadingVoices, setIsLoadingVoices] = useState(true);
+
+  useEffect(() => {
+    fetchVoices();
+  }, []);
+
+  const fetchVoices = async () => {
+    try {
+      const response = await fetch('http://localhost:5005/api/tts/voices');
+      const data = await response.json();
+      setVoices(data.voices || []);
+    } catch (error) {
+      console.error('Error fetching voices:', error);
+    } finally {
+      setIsLoadingVoices(false);
+    }
+  };
+
+  const handleVoiceChange = (voice: string) => {
+    setSelectedVoice(voice);
+    onVoiceChange?.(voice);
+  };
   return (
-    <div className="flex justify-end py-2 px-4">
+    <div className="flex flex-col items-end py-2 px-4 space-y-2">
       <div className="flex space-x-2">
         {/* Webcam Control Button */}
         <button
@@ -78,6 +104,27 @@ const AiControlButtons: React.FC<AiControlButtonsProps> = ({
         >
           {isAnalyzing ? 'Processing...' : 'Roboflow'}
         </button>
+      </div>
+
+      {/* Voice Selector */}
+      <div className="flex items-center space-x-2">
+        <label className="text-xs text-white font-medium">Voice:</label>
+        <select
+          value={selectedVoice}
+          onChange={(e) => handleVoiceChange(e.target.value)}
+          disabled={isLoadingVoices}
+          className="px-2 py-1 rounded text-xs bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-blue-500"
+        >
+          {isLoadingVoices ? (
+            <option>Loading...</option>
+          ) : (
+            voices.map((voice) => (
+              <option key={voice} value={voice}>
+                {voice}
+              </option>
+            ))
+          )}
+        </select>
       </div>
     </div>
   );

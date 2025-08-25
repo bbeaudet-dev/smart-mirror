@@ -43,7 +43,7 @@ const RotatingNewsPanel: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Rotate through headlines every 3 seconds
+  // Rotate through headlines every 4 seconds
   useEffect(() => {
     if (!newsData || newsData.headlines.length <= 1) return;
 
@@ -56,7 +56,7 @@ const RotatingNewsPanel: React.FC = () => {
         );
         setIsTransitioning(false);
       }, 300); // Half of transition duration
-    }, 3000);
+    }, 4000);
 
     return () => clearInterval(interval);
   }, [newsData]);

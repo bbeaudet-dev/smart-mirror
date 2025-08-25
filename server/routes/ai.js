@@ -48,17 +48,16 @@ router.post('/analyze-outfit-with-weather', upload.single('image'), async (req, 
 
     const analysis = await OpenAIService.analyzeImage(imageBuffer, imageType, outfitPrompt, 'outfit-analysis');
     
-    // Generate TTS audio in parallel
+    // Generate TTS audio in parallel with selected voice
     let audioBuffer = null;
-    let voice = 'nova';
+    let voice = req.body.voice || 'nova';
     
     try {
       const TTSService = require('../services/ttsService');
       const ttsService = new TTSService();
-      const ttsResult = await ttsService.generateSpeech(analysis, null, 'default');
+      const ttsResult = await ttsService.generateSpeech(analysis, voice, 'default');
       audioBuffer = ttsResult.audioBuffer;
       voice = ttsResult.voice;
-      console.log('TTS generated successfully with voice:', voice);
     } catch (ttsError) {
       console.error('TTS generation failed, returning text only:', ttsError);
     }
@@ -103,17 +102,16 @@ router.post('/analyze-outfit', upload.single('image'), async (req, res) => {
     const prompt = PromptService.generateOutfitAnalysisPrompt();
     const analysis = await OpenAIService.analyzeImage(imageBuffer, imageType, prompt, 'outfit-analysis');
     
-    // Generate TTS audio in parallel
+    // Generate TTS audio in parallel with selected voice
     let audioBuffer = null;
-    let voice = 'nova';
+    let voice = req.body.voice || 'nova';
     
     try {
       const TTSService = require('../services/ttsService');
       const ttsService = new TTSService();
-      const ttsResult = await ttsService.generateSpeech(analysis, null, 'default');
+      const ttsResult = await ttsService.generateSpeech(analysis, voice, 'default');
       audioBuffer = ttsResult.audioBuffer;
       voice = ttsResult.voice;
-      console.log('TTS generated successfully with voice:', voice);
     } catch (ttsError) {
       console.error('TTS generation failed, returning text only:', ttsError);
     }
