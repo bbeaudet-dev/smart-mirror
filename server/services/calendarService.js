@@ -10,6 +10,9 @@ class CalendarService {
     );
     
     this.calendar = google.calendar({ version: 'v3' });
+    
+    // Load stored tokens on initialization
+    this.loadStoredTokens();
   }
 
   /**
@@ -54,6 +57,28 @@ class CalendarService {
       // Save the new tokens
       this.saveTokens(newTokens);
     });
+  }
+
+  /**
+   * Load stored tokens from file
+   */
+  loadStoredTokens() {
+    const fs = require('fs');
+    const path = require('path');
+    
+    try {
+      const tokensFile = path.join(__dirname, '..', 'data', 'tokens.json');
+      if (fs.existsSync(tokensFile)) {
+        const tokensData = fs.readFileSync(tokensFile, 'utf8');
+        const tokens = JSON.parse(tokensData);
+        this.setCredentials(tokens);
+        console.log('Loaded stored tokens successfully');
+        return true;
+      }
+    } catch (error) {
+      console.log('No stored tokens found or error loading tokens:', error.message);
+    }
+    return false;
   }
 
   /**
