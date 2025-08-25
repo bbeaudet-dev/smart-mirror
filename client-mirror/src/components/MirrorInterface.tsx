@@ -15,12 +15,12 @@ function MirrorInterface() {
     <div className="w-full h-full bg-mirror-bg text-mirror-text font-mirror-primary">
       <div className="w-full h-full flex flex-col">
         {/* Time Display - Top Center */}
-        <div className="flex justify-center items-center py-4 mb-2">
+        <div className="flex justify-center items-center py-2 mb-1">
           <TimeDisplay />
         </div>
 
         {/* Main Content - Portrait Layout */}
-        <div className="flex-1 flex flex-col gap-4 min-h-0 overflow-hidden px-4">
+        <div className="flex-1 flex flex-col gap-2 min-h-0 overflow-hidden px-2">
           {/* Top Row */}
           <div className="h-1/4 flex justify-between">
             {/* Weather Panel - Left 1/3 */}

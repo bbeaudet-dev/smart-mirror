@@ -18,7 +18,7 @@ const WeeklyForecast: React.FC<WeeklyForecastProps> = ({ weather }) => {
             <div className="text-mirror-sm mb-1">
               {day.icon}
             </div>
-            <div className="flex justify-between text-mirror-xs">
+            <div className="flex justify-center items-center space-x-2 text-mirror-xs">
               <span className="text-mirror-text-bright font-mirror-primary">
                 {day.high}°
               </span>
