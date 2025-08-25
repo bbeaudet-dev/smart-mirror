@@ -32,7 +32,6 @@ const WeatherPanel: React.FC = () => {
       <div className="flex flex-col h-full">
         <h3 className="mirror-header">Weather</h3>
         <div className="flex-1 flex flex-col items-center justify-center text-center">
-          <div className="text-mirror-lg text-mirror-text-dimmed mb-2">WEATHER</div>
           <div className="text-mirror-xs text-mirror-text font-mirror-primary">
             <p>Loading weather...</p>
           </div>
@@ -47,7 +46,6 @@ const WeatherPanel: React.FC = () => {
       <div className="flex flex-col h-full">
         <h3 className="mirror-header">Weather</h3>
         <div className="flex-1 flex flex-col items-center justify-center text-center">
-          <div className="text-mirror-lg text-mirror-text-dimmed mb-2">WEATHER</div>
           <div className="text-mirror-xs text-mirror-text font-mirror-primary">
             <p>Weather data unavailable</p>
             <p className="text-mirror-text-dimmed">Check API configuration</p>
