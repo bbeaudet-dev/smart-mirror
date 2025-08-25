@@ -12,10 +12,10 @@ html {
 }
 
 body {
-  margin: 60px;
+  margin: 0;
   position: absolute;
-  height: calc(100% - 120px);
-  width: calc(100% - 120px);
+  height: 100%;
+  width: 100%;
   background: #000;
   color: #999;
   font-family: 'Roboto Condensed', 'Roboto', sans-serif;
