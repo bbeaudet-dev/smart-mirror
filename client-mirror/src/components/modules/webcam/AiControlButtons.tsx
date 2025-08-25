@@ -29,7 +29,7 @@ const AiControlButtons: React.FC<AiControlButtonsProps> = ({
   onStopWebcam
 }) => {
   return (
-    <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-40">
+    <div className="flex justify-end py-2 px-4">
       <div className="flex space-x-2">
         {/* Webcam Control Button */}
         <button

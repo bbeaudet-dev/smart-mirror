@@ -38,9 +38,9 @@ const TimeDisplay: React.FC = () => {
   const { dayShort, fullDate } = formatDate(currentTime);
 
   return (
-    <div className="text-center text-mirror-text-bright">
-      <div className="mb-2">
-        <span className="text-mirror-2xl font-light font-mirror-primary tracking-tighter leading-none">
+    <div className="text-left text-mirror-text-bright">
+      <div className="leading-none">
+        <span className="text-mirror-2xl font-light font-mirror-primary tracking-tighter">
           {hours}:{minutes}
         </span>
         <span className="text-mirror-xl font-light text-mirror-text-dimmed ml-1">
@@ -50,7 +50,7 @@ const TimeDisplay: React.FC = () => {
           {period}
         </span>
       </div>
-      <div className="text-mirror-lg font-normal text-mirror-text font-mirror-primary">
+      <div className="text-mirror-sm font-normal text-mirror-text font-mirror-primary mt-1">
         <span className="text-mirror-text-dimmed">{dayShort}</span>
         <span className="text-mirror-text"> {fullDate}</span>
       </div>

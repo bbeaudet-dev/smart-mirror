@@ -37,6 +37,24 @@ router.get('/today', requireAuth, async (req, res) => {
   }
 });
 
+// GET /api/calendar/tomorrow - Get tomorrow's events
+router.get('/tomorrow', requireAuth, async (req, res) => {
+  try {
+    const events = await CalendarService.getTomorrowEvents();
+    res.json({
+      events,
+      count: events.length,
+      date: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+    });
+  } catch (error) {
+    console.error('Error fetching tomorrow\'s events:', error);
+    res.status(500).json({ 
+      error: 'Failed to fetch tomorrow\'s events',
+      message: error.message 
+    });
+  }
+});
+
 // GET /api/calendar/next - Get next upcoming event
 router.get('/next', requireAuth, async (req, res) => {
   try {
@@ -76,12 +94,14 @@ router.get('/upcoming', requireAuth, async (req, res) => {
 // GET /api/calendar/summary - Get calendar summary
 router.get('/summary', requireAuth, async (req, res) => {
   try {
-    const [todayEvents, nextEvent] = await Promise.all([
+    const [todayEvents, tomorrowEvents, nextEvent] = await Promise.all([
       CalendarService.getTodayEvents(),
+      CalendarService.getTomorrowEvents(),
       CalendarService.getNextEvent()
     ]);
 
     console.log('Today events:', todayEvents);
+    console.log('Tomorrow events:', tomorrowEvents);
     console.log('Next event:', nextEvent);
 
     const now = new Date();
@@ -92,6 +112,8 @@ router.get('/summary', requireAuth, async (req, res) => {
     const response = {
       todayEvents: todayEvents,
       todayCount: todayEvents.length,
+      tomorrowEvents: tomorrowEvents,
+      tomorrowCount: tomorrowEvents.length,
       nextEvent: nextEvent ? {
         ...nextEvent,
         minutesUntil: minutesUntilNext
@@ -99,6 +121,7 @@ router.get('/summary', requireAuth, async (req, res) => {
       hasNextEvent: !!nextEvent,
       summary: {
         todayEvents: todayEvents.length,
+        tomorrowEvents: tomorrowEvents.length,
         nextEventIn: minutesUntilNext ? `${minutesUntilNext} minutes` : null
       }
     };

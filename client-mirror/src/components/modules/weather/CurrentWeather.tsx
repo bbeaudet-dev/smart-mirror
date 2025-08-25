@@ -10,14 +10,21 @@ const CurrentWeather: React.FC<CurrentWeatherProps> = ({ weather, isRefreshing =
   return (
     <div>
       {/* Current Temperature and Condition */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-baseline">
-          <span className="text-mirror-2xl font-light text-mirror-text-bright font-mirror-primary">
-            {weather.current.temperature}°
-          </span>
-          <span className="text-mirror-lg font-light text-mirror-text ml-1">
-            F
-          </span>
+      <div className="flex items-start justify-between mb-2">
+        <div className="flex flex-col">
+          <div className="flex items-baseline">
+            <span className="text-mirror-2xl font-light text-mirror-text-bright font-mirror-primary">
+              {weather.current.temperature}°
+            </span>
+            <span className="text-mirror-lg font-light text-mirror-text ml-1">
+              F
+            </span>
+          </div>
+          {/* Feels Like - Right under temperature */}
+          <div className="mt-1">
+            <span className="text-mirror-xs text-mirror-text-dimmed font-mirror-primary">Feels like </span>
+            <span className="text-mirror-xs text-mirror-text font-mirror-primary">{weather.current.feelsLike}°F</span>
+          </div>
         </div>
         
         <div className="flex flex-col items-center">
@@ -30,27 +37,20 @@ const CurrentWeather: React.FC<CurrentWeatherProps> = ({ weather, isRefreshing =
         </div>
       </div>
       
-      {/* Weather Details */}
-      <div className="space-y-1 mb-4">
-        <div className="flex justify-between items-center">
-          <span className="text-mirror-xs text-mirror-text-dimmed font-mirror-primary">Feels like:</span>
-          <span className="text-mirror-xs text-mirror-text font-mirror-primary">{weather.current.feelsLike}°F</span>
+      
+      {/* Weather Details - Compact single line */}
+      <div className="flex justify-center items-center space-x-4 mb-4">
+        <div className="flex items-center space-x-1">
+          <span className="text-mirror-xs text-mirror-text-dimmed font-mirror-primary">W</span>
+          <span className="text-mirror-xs text-mirror-text font-mirror-primary">{weather.current.windSpeed}mph</span>
         </div>
-        <div className="flex justify-between items-center">
-          <span className="text-mirror-xs text-mirror-text-dimmed font-mirror-primary">Humidity:</span>
-          <span className="text-mirror-xs text-mirror-text font-mirror-primary">{weather.current.humidity}%</span>
-        </div>
-        <div className="flex justify-between items-center">
-          <span className="text-mirror-xs text-mirror-text-dimmed font-mirror-primary">Wind:</span>
-          <span className="text-mirror-xs text-mirror-text font-mirror-primary">{weather.current.windSpeed} mph {weather.current.windDirection}</span>
-        </div>
-        <div className="flex justify-between items-center">
-          <span className="text-mirror-xs text-mirror-text-dimmed font-mirror-primary">UV Index:</span>
+        <div className="flex items-center space-x-1">
+          <span className="text-mirror-xs text-mirror-text-dimmed font-mirror-primary">UV</span>
           <span className="text-mirror-xs text-mirror-text font-mirror-primary">{weather.current.uvIndex}</span>
         </div>
-        <div className="flex justify-between items-center">
-          <span className="text-mirror-xs text-mirror-text-dimmed font-mirror-primary">Visibility:</span>
-          <span className="text-mirror-xs text-mirror-text font-mirror-primary">{weather.current.visibility} mi</span>
+        <div className="flex items-center space-x-1">
+          <span className="text-mirror-xs text-mirror-text-dimmed font-mirror-primary">H</span>
+          <span className="text-mirror-xs text-mirror-text font-mirror-primary">{weather.current.humidity}%</span>
         </div>
       </div>
     </div>

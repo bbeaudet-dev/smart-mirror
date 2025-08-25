@@ -12,10 +12,10 @@ html {
 }
 
 body {
-  margin: 60px;
+  margin: 0;
   position: absolute;
-  height: calc(100% - 120px);
-  width: calc(100% - 120px);
+  height: 100%;
+  width: 100%;
   background: #000;
   color: #999;
   font-family: 'Roboto Condensed', 'Roboto', sans-serif;
@@ -30,5 +30,5 @@ body {
 }
 
 .mirror-header {
-  @apply text-xs font-mirror-primary font-normal text-mirror-text uppercase border-b border-mirror-text-dimmed leading-4 pb-1 mb-2;
+  @apply text-lg font-mirror-primary font-normal text-mirror-text uppercase border-b border-mirror-text-dimmed leading-4 pb-1 mb-2;
 }

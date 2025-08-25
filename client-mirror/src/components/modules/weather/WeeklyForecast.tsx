@@ -8,7 +8,7 @@ interface WeeklyForecastProps {
 const WeeklyForecast: React.FC<WeeklyForecastProps> = ({ weather }) => {
   return (
     <div>
-      <h4 className="mirror-header">3-Day Forecast</h4>
+      <h4 className="mirror-header"></h4>
       <div className="grid grid-cols-3 gap-1">
         {weather.forecast.map((day, index) => (
           <div key={index} className="text-center">
@@ -18,7 +18,7 @@ const WeeklyForecast: React.FC<WeeklyForecastProps> = ({ weather }) => {
             <div className="text-mirror-sm mb-1">
               {day.icon}
             </div>
-            <div className="flex justify-between text-mirror-xs">
+            <div className="flex justify-center items-center space-x-2 text-mirror-xs">
               <span className="text-mirror-text-bright font-mirror-primary">
                 {day.high}°
               </span>
