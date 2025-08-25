@@ -7,10 +7,10 @@ const openai = new OpenAI({
 
 // Smart mirror personality and context
 const SMART_MIRROR_CONTEXT = {
-  'smart-mirror': `You are a helpful, friendly smart mirror assistant. You provide brief, encouraging responses that are perfect for someone getting ready in the morning or evening. Keep responses under 100 words and be supportive.`,
-  'motivation': `You are a motivational coach speaking through a smart mirror. Provide brief, uplifting messages that help people start their day positively or wind down in the evening. Keep it personal and encouraging.`,
-  'outfit-analysis': `You are a cool, laid-back fashion advisor with Snoop Dogg's smooth style. Give outfit advice that's real, encouraging, and considers the weather. Use his relaxed tone and phrases like "fo' shizzle", "that's fresh", "keep it cool". Keep responses under 50 words.`,
-  'outfit-recommendation': `You are a friendly fashion advisor in a smart mirror. Provide practical, weather-appropriate outfit recommendations that are encouraging and helpful. Keep responses concise (under 100 words) and consider temperature, conditions, and comfort.`
+  'smart-mirror': `You are a helpful smart mirror assistant. Keep responses under 25 words. No emojis.`,
+  'motivation': `You are a motivational coach. Keep responses under 25 words. No emojis.`,
+  'outfit-analysis': `You are a casual fashion advisor. Keep responses under 25 words. No emojis. Be direct and encouraging.`,
+  'outfit-recommendation': `You are a casual fashion advisor. Keep responses under 25 words. No emojis.`
 };
 
 class OpenAIService {
@@ -36,7 +36,7 @@ class OpenAIService {
             content: message
           }
         ],
-        max_tokens: 200,
+        max_tokens: 50,
         temperature: 0.7,
       });
 
@@ -82,7 +82,7 @@ class OpenAIService {
             ]
           }
         ],
-        max_tokens: 300,
+        max_tokens: 50,
         temperature: 0.7,
       });
 

@@ -23,11 +23,11 @@ const MessagePanel: React.FC<MessagePanelProps> = ({
       setIsVisible(true);
       console.log("MessagePanel: Setting message visible:", message);
 
-      // Auto-hide message after 10 seconds
+      // Auto-hide message after 15 seconds (longer for better readability)
       const timer = setTimeout(() => {
         setIsVisible(false);
         console.log("MessagePanel: Auto-hiding message");
-      }, 10000);
+      }, 15000);
 
       return () => clearTimeout(timer);
     } else {
@@ -53,26 +53,26 @@ const MessagePanel: React.FC<MessagePanelProps> = ({
   };
 
   return (
-    <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 max-w-2xl w-full px-4">
+    <div className="fixed bottom-16 left-1/2 transform -translate-x-1/2 z-50 max-w-5xl w-full px-4">
       <div className={`
-        bg-black/80 backdrop-blur-sm border border-mirror-text-dimmed/30 rounded-lg p-4
-        transition-all duration-500 ease-in-out
-        ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}
+        bg-black/90 backdrop-blur-md border border-mirror-text-dimmed/40 rounded-xl p-6
+        transition-all duration-700 ease-in-out
+        ${isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-95'}
       `}>
         {isLoading ? (
-          <div className="flex items-center justify-center space-x-2">
-            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-mirror-text"></div>
-            <span className="text-mirror-sm text-mirror-text font-mirror-primary">
+          <div className="flex items-center justify-center space-x-3">
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-mirror-text"></div>
+            <span className="text-mirror-base text-mirror-text font-mirror-primary">
               AI is thinking...
             </span>
           </div>
         ) : (
-          <div className="flex items-start space-x-3">
-            <div className="text-mirror-lg flex-shrink-0">
+          <div className="flex items-start space-x-4">
+            <div className="text-mirror-xl flex-shrink-0 font-bold">
               {getMessageIcon()}
             </div>
             <div className="flex-1">
-              <p className="text-mirror-sm text-mirror-text font-mirror-primary leading-relaxed">
+              <p className="text-mirror-base text-mirror-text font-mirror-primary leading-relaxed">
                 {displayMessage}
               </p>
             </div>

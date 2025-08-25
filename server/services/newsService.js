@@ -1,9 +1,14 @@
 const axios = require('axios');
+const { OpenAI } = require('openai');
+const PromptService = require('./promptService');
 
 class NewsService {
   constructor() {
     this.apiKey = process.env.NEWS_API_KEY;
     this.baseUrl = 'https://newsapi.org/v2';
+    this.openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
   }
 
   /**
@@ -38,7 +43,7 @@ class NewsService {
         throw new Error(`NewsAPI error: ${response.data.message || 'Unknown error'}`);
       }
 
-      return response.data.articles.map(article => ({
+      const articles = response.data.articles.map(article => ({
         id: article.url, // Use URL as unique identifier
         title: article.title,
         description: article.description,
@@ -46,6 +51,11 @@ class NewsService {
         url: article.url,
         publishedAt: article.publishedAt
       }));
+
+      // Summarize headlines using AI
+      const summarizedArticles = await this.summarizeHeadlines(articles);
+      
+      return summarizedArticles;
 
     } catch (error) {
       console.error('Error fetching news:', error);
@@ -59,6 +69,51 @@ class NewsService {
       } else {
         throw new Error(`Failed to fetch news: ${error.message}`);
       }
+    }
+  }
+
+  /**
+   * Summarize news headlines using AI
+   */
+  async summarizeHeadlines(headlines) {
+    try {
+      if (!process.env.OPENAI_API_KEY) {
+        console.log('OpenAI API key not configured, returning original headlines');
+        return headlines;
+      }
+
+      console.log('Summarizing headlines with AI...');
+
+      const prompt = PromptService.generateNewsSummarizationPrompt(headlines);
+
+      const response = await this.openai.chat.completions.create({
+        model: 'gpt-4o-mini',
+        messages: [
+          {
+            role: 'system',
+            content: 'You are a news editor who creates concise, clear headlines. Remove fluff and unnecessary words while keeping the essential information.'
+          },
+          {
+            role: 'user',
+            content: prompt
+          }
+        ],
+        max_tokens: 300,
+        temperature: 0.3
+      });
+
+      const summarizedText = response.choices[0].message.content.trim();
+      const summarizedHeadlines = summarizedText.split('\n').filter(line => line.trim());
+
+      // Map summarized headlines back to original data
+      return headlines.map((headline, index) => ({
+        ...headline,
+        title: summarizedHeadlines[index] || headline.title
+      }));
+
+    } catch (error) {
+      console.error('Error summarizing headlines:', error);
+      return headlines; // Fallback to original headlines
     }
   }
 
