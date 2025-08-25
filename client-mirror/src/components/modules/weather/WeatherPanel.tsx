@@ -30,7 +30,7 @@ const WeatherPanel: React.FC = () => {
   if (isLoading) {
     return (
       <div className="flex flex-col h-full">
-        <h3 className="text-lg font-mirror-primary font-normal text-mirror-text uppercase border-b border-mirror-text-dimmed leading-4 pb-1 mb-2"></h3>
+        <h3 className="text-lg font-mirror-primary font-normal text-mirror-text uppercase border-b border-mirror-text-dimmed leading-4 pb-1 mb-2">Weather</h3>
         <div className="flex-1 flex flex-col items-center justify-center text-center">
           <div className="text-mirror-xs text-mirror-text font-mirror-primary">
             <p>Loading weather...</p>
@@ -44,7 +44,7 @@ const WeatherPanel: React.FC = () => {
   if (error || !weather) {
     return (
       <div className="flex flex-col h-full">
-        <h3 className="text-lg font-mirror-primary font-normal text-mirror-text uppercase border-b border-mirror-text-dimmed leading-4 pb-1 mb-2"></h3>
+        <h3 className="text-lg font-mirror-primary font-normal text-mirror-text uppercase border-b border-mirror-text-dimmed leading-4 pb-1 mb-2">Weather</h3>
         <div className="flex-1 flex flex-col items-center justify-center text-center">
           <div className="text-mirror-xs text-mirror-text font-mirror-primary">
             <p>Weather data unavailable</p>
@@ -57,7 +57,7 @@ const WeatherPanel: React.FC = () => {
 
   return (
     <div className="flex flex-col h-full">
-      <h3 className="text-lg font-mirror-primary font-normal text-mirror-text uppercase border-b border-mirror-text-dimmed leading-4 pb-1 mb-2"></h3>
+      <h3 className="text-lg font-mirror-primary font-normal text-mirror-text uppercase border-b border-mirror-text-dimmed leading-4 pb-1 mb-2">Weather</h3>
       
       {/* Current Weather */}
       <CurrentWeather weather={weather} isRefreshing={false} />
