@@ -72,7 +72,7 @@ const CalendarPanel: React.FC = () => {
   if (isLoading) {
     return (
       <div className="flex flex-col h-full">
-        <h3 className="mirror-header">Calendar</h3>
+        <h3 className="text-lg font-mirror-primary font-normal text-mirror-text uppercase border-b border-mirror-text-dimmed leading-4 pb-1 mb-2">Calendar</h3>
         <div className="flex-1 flex flex-col items-center justify-center text-center">
           <div className="text-mirror-xs text-mirror-text font-mirror-primary">
             <p>Loading events...</p>
@@ -86,7 +86,7 @@ const CalendarPanel: React.FC = () => {
   if (error || !calendarData) {
     return (
       <div className="flex flex-col h-full">
-        <h3 className="mirror-header">Calendar</h3>
+        <h3 className="text-lg font-mirror-primary font-normal text-mirror-text uppercase border-b border-mirror-text-dimmed leading-4 pb-1 mb-2">Calendar</h3>
         <div className="flex-1 flex flex-col items-center justify-center text-center">
           <div className="text-mirror-xs text-mirror-text font-mirror-primary">
             <p>Calendar unavailable</p>
@@ -99,7 +99,7 @@ const CalendarPanel: React.FC = () => {
 
   return (
     <div className="flex flex-col h-full">
-      <h3 className="mirror-header">Calendar</h3>
+      <h3 className="text-lg font-mirror-primary font-normal text-mirror-text uppercase border-b border-mirror-text-dimmed leading-4 pb-1 mb-2">Calendar</h3>
       
       <div className="flex-1 overflow-hidden">
         {calendarData.events.length === 0 ? (
@@ -110,13 +110,13 @@ const CalendarPanel: React.FC = () => {
             </div>
           </div>
         ) : (
-          <div className="space-y-2 overflow-y-auto h-full">
+          <div className="space-y-1 overflow-y-auto h-full">
             {calendarData.events.slice(0, 5).map((event) => (
               <div key={event.id} className="border-l-2 border-mirror-text-dimmed pl-2">
                 <div className="text-mirror-xs font-mirror-primary text-mirror-text">
                   {event.summary}
                 </div>
-                <div className="text-mirror-xs text-mirror-text-dimmed">
+                <div className="text-[0.75rem] text-mirror-text-dimmed mt-0.5">
                   {formatEventTime(event.start, event.end, event.isAllDay)}
                 </div>
                 {event.location && (

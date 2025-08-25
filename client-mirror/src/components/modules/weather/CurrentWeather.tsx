@@ -41,15 +41,15 @@ const CurrentWeather: React.FC<CurrentWeatherProps> = ({ weather, isRefreshing =
       {/* Weather Details - Compact single line */}
       <div className="flex justify-center items-center space-x-4 mb-4">
         <div className="flex items-center space-x-1">
-          <span className="text-mirror-xs text-mirror-text-dimmed font-mirror-primary">→</span>
+          <span className="text-mirror-xs text-mirror-text-dimmed font-mirror-primary">Wind</span>
           <span className="text-mirror-xs text-mirror-text font-mirror-primary">{weather.current.windSpeed}mph</span>
         </div>
         <div className="flex items-center space-x-1">
-          <span className="text-mirror-xs text-mirror-text-dimmed font-mirror-primary">●</span>
+          <span className="text-mirror-xs text-mirror-text-dimmed font-mirror-primary">UV</span>
           <span className="text-mirror-xs text-mirror-text font-mirror-primary">{weather.current.uvIndex}</span>
         </div>
         <div className="flex items-center space-x-1">
-          <span className="text-mirror-xs text-mirror-text-dimmed font-mirror-primary">°</span>
+          <span className="text-mirror-xs text-mirror-text-dimmed font-mirror-primary">Humidity</span>
           <span className="text-mirror-xs text-mirror-text font-mirror-primary">{weather.current.humidity}%</span>
         </div>
       </div>

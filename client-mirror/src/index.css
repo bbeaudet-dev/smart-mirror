@@ -30,5 +30,5 @@ body {
 }
 
 .mirror-header {
-  @apply text-xs font-mirror-primary font-normal text-mirror-text uppercase border-b border-mirror-text-dimmed leading-4 pb-1 mb-2;
+  @apply text-lg font-mirror-primary font-normal text-mirror-text uppercase border-b border-mirror-text-dimmed leading-4 pb-1 mb-2;
 }
