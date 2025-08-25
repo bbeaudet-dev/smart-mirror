@@ -43,10 +43,57 @@ class CalendarService {
   }
 
   /**
-   * Set credentials from stored tokens
+   * Set credentials from stored tokens with automatic refresh
    */
   setCredentials(tokens) {
     this.oAuth2Client.setCredentials(tokens);
+    
+    // Set up automatic token refresh
+    this.oAuth2Client.on('tokens', (newTokens) => {
+      console.log('Tokens refreshed automatically');
+      // Save the new tokens
+      this.saveTokens(newTokens);
+    });
+  }
+
+  /**
+   * Save tokens to file
+   */
+  saveTokens(tokens) {
+    const fs = require('fs');
+    const path = require('path');
+    
+    try {
+      const dataDir = path.join(__dirname, '..', 'data');
+      if (!fs.existsSync(dataDir)) {
+        fs.mkdirSync(dataDir, { recursive: true });
+      }
+      
+      fs.writeFileSync(
+        path.join(dataDir, 'tokens.json'),
+        JSON.stringify(tokens, null, 2)
+      );
+      console.log('Tokens saved successfully');
+    } catch (error) {
+      console.error('Error saving tokens:', error);
+    }
+  }
+
+  /**
+   * Refresh tokens if needed
+   */
+  async refreshTokensIfNeeded() {
+    try {
+      if (this.oAuth2Client.credentials && this.oAuth2Client.credentials.refresh_token) {
+        await this.oAuth2Client.refreshAccessToken();
+        console.log('Tokens refreshed successfully');
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Error refreshing tokens:', error);
+      return false;
+    }
   }
 
   /**
@@ -58,6 +105,9 @@ class CalendarService {
       if (!this.oAuth2Client.credentials || !this.oAuth2Client.credentials.access_token) {
         throw new Error('Google Calendar not authenticated. Please complete OAuth setup.');
       }
+
+      // Try to refresh tokens if they might be expired
+      await this.refreshTokensIfNeeded();
 
       // Get the date in UTC and let Google Calendar handle timezone conversion
       const startOfDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());

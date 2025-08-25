@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import TimeDisplay from './modules/TimeDisplay';
 import WeatherPanel from './modules/weather/WeatherPanel';
 import CalendarPanel from './modules/CalendarPanel';
+import NewsPanel from './modules/NewsPanel';
 import WebcamPanel from './modules/webcam/WebcamPanel';
 import MessagePanel from './modules/MessagePanel';
 
@@ -37,6 +38,13 @@ function MirrorInterface() {
           {/* Calendar Panel - Right 30% */}
           <div className="w-[30%]">
             <CalendarPanel />
+          </div>
+        </div>
+        
+        {/* News Panel - Underneath calendar */}
+        <div className="flex justify-end px-1 mt-4">
+          <div className="w-[30%]">
+            <NewsPanel />
           </div>
         </div>
         

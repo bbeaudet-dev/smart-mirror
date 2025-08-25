@@ -9,6 +9,7 @@ const aiRoutes = require('./routes/ai');
 const apiRoutes = require('./routes/api');
 const { router: authRoutes } = require('./routes/auth');
 const calendarRoutes = require('./routes/calendar');
+const newsRoutes = require('./routes/news');
 const app = express();
 const PORT = process.env.PORT || 5005;
 
@@ -32,6 +33,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use('/api/ai', aiRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/calendar', calendarRoutes);
+app.use('/api/news', newsRoutes);
 app.use('/api', apiRoutes);
 
 // Health check endpoint
