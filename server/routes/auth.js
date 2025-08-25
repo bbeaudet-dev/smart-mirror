@@ -79,11 +79,13 @@ router.get('/google/callback', async (req, res) => {
     CalendarService.setCredentials(tokens);
     
     // Redirect back to the React app with success message
-    res.redirect('http://localhost:3000?calendar=connected');
+    const clientUrl = process.env.CLIENT_URL || 'http://localhost:3000';
+    res.redirect(`${clientUrl}?calendar=connected`);
   } catch (error) {
     console.error('Error in OAuth callback:', error);
     // Redirect back to the React app with error message
-    res.redirect('http://localhost:3000?calendar=error&message=' + encodeURIComponent(error.message));
+    const clientUrl = process.env.CLIENT_URL || 'http://localhost:3000';
+    res.redirect(`${clientUrl}?calendar=error&message=` + encodeURIComponent(error.message));
   }
 });
 

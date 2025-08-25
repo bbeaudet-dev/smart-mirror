@@ -24,16 +24,18 @@ const TimeDisplay: React.FC = () => {
     return { hours: hoursStr, minutes, seconds, period };
   };
 
-  const formatDate = (date: Date): string => {
-    return date.toLocaleDateString('en-US', {
-      weekday: 'long',
+  const formatDate = (date: Date): { dayShort: string; fullDate: string } => {
+    const dayShort = date.toLocaleDateString('en-US', { weekday: 'long' });
+    const fullDate = date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
     });
+    return { dayShort, fullDate };
   };
 
   const { hours, minutes, seconds, period } = formatTime(currentTime);
+  const { dayShort, fullDate } = formatDate(currentTime);
 
   return (
     <div className="text-center text-mirror-text-bright">
@@ -48,8 +50,9 @@ const TimeDisplay: React.FC = () => {
           {period}
         </span>
       </div>
-      <div className="text-mirror-lg font-normal text-mirror-text font-mirror-primary uppercase">
-        {formatDate(currentTime)}
+      <div className="text-mirror-lg font-normal text-mirror-text font-mirror-primary">
+        <span className="text-mirror-text-dimmed">{dayShort}</span>
+        <span className="text-mirror-text"> {fullDate}</span>
       </div>
     </div>
   );
