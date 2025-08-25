@@ -50,18 +50,17 @@ class CalendarService {
   }
 
   /**
-   * Get today's calendar events
+   * Get events for a specific date
    */
-  async getTodayEvents() {
+  async getEventsForDate(date) {
     try {
       // Check if credentials are properly configured
       if (!this.oAuth2Client.credentials || !this.oAuth2Client.credentials.access_token) {
         throw new Error('Google Calendar not authenticated. Please complete OAuth setup.');
       }
 
-      // Get today's date in UTC and let Google Calendar handle timezone conversion
-      const now = new Date();
-      const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      // Get the date in UTC and let Google Calendar handle timezone conversion
+      const startOfDay = new Date(date.getFullYear(), date.getMonth(), date.getDate());
       const endOfDay = new Date(startOfDay.getTime() + (24 * 60 * 60 * 1000));
 
       console.log('Fetching events from:', startOfDay.toISOString(), 'to:', endOfDay.toISOString());
@@ -109,6 +108,23 @@ class CalendarService {
         throw new Error(`Failed to fetch calendar events: ${error.message}`);
       }
     }
+  }
+
+  /**
+   * Get today's calendar events
+   */
+  async getTodayEvents() {
+    const now = new Date();
+    return this.getEventsForDate(now);
+  }
+
+  /**
+   * Get tomorrow's calendar events
+   */
+  async getTomorrowEvents() {
+    const now = new Date();
+    const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+    return this.getEventsForDate(tomorrow);
   }
 
   /**

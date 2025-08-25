@@ -13,9 +13,17 @@ interface CalendarEvent {
 }
 
 interface CalendarData {
-  events: CalendarEvent[];
-  count: number;
-  date: string;
+  todayEvents: CalendarEvent[];
+  todayCount: number;
+  tomorrowEvents: CalendarEvent[];
+  tomorrowCount: number;
+  nextEvent: CalendarEvent | null;
+  hasNextEvent: boolean;
+  summary: {
+    todayEvents: number;
+    tomorrowEvents: number;
+    nextEventIn: string | null;
+  };
 }
 
 const CalendarPanel: React.FC = () => {
@@ -26,7 +34,7 @@ const CalendarPanel: React.FC = () => {
   useEffect(() => {
     const fetchCalendar = async () => {
       try {
-        const data = await CalendarClient.getTodayEvents() as CalendarData;
+        const data = await CalendarClient.getCalendarSummary() as CalendarData;
         setCalendarData(data);
       } catch (err) {
         console.error('Calendar fetch error:', err);
@@ -102,7 +110,7 @@ const CalendarPanel: React.FC = () => {
       <h3 className="text-lg font-mirror-primary font-normal text-mirror-text uppercase border-b border-mirror-text-dimmed leading-4 pb-1 mb-2">Calendar</h3>
       
       <div className="flex-1 overflow-hidden">
-        {calendarData.events.length === 0 ? (
+        {calendarData.todayEvents.length === 0 && calendarData.tomorrowEvents.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center">
             <div className="text-mirror-lg text-mirror-text-dimmed mb-2">TODAY</div>
             <div className="text-mirror-xs text-mirror-text font-mirror-primary">
@@ -110,25 +118,64 @@ const CalendarPanel: React.FC = () => {
             </div>
           </div>
         ) : (
-          <div className="space-y-1 overflow-y-auto h-full">
-            {calendarData.events.slice(0, 5).map((event) => (
-              <div key={event.id} className="border-l-2 border-mirror-text-dimmed pl-2">
-                <div className="text-mirror-xs font-mirror-primary text-mirror-text">
-                  {event.summary}
+          <div className="space-y-2 overflow-y-auto h-full">
+            {/* Today's Events */}
+            {calendarData.todayEvents.length > 0 && (
+              <>
+                <div className="text-mirror-xs text-mirror-text-dimmed font-mirror-primary border-b border-mirror-text-dimmed pb-1">
+                  TODAY
                 </div>
-                <div className="text-[0.75rem] text-mirror-text-dimmed mt-0.5">
-                  {formatEventTime(event.start, event.end, event.isAllDay)}
-                </div>
-                {event.location && (
-                  <div className="text-mirror-xs text-mirror-text-dimmed">
-                    📍 {event.location}
+                {calendarData.todayEvents.slice(0, 3).map((event: CalendarEvent) => (
+                  <div key={event.id} className="border-l-2 border-mirror-text-dimmed pl-2">
+                    <div className="text-mirror-xs font-mirror-primary text-mirror-text">
+                      {event.summary}
+                    </div>
+                    <div className="text-[0.75rem] text-mirror-text-dimmed">
+                      {formatEventTime(event.start, event.end, event.isAllDay)}
+                    </div>
+                    {event.location && (
+                      <div className="text-mirror-xs text-mirror-text-dimmed">
+                        📍 {event.location}
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            ))}
-            {calendarData.events.length > 5 && (
+                ))}
+              </>
+            )}
+            
+            {/* Spacing between today and tomorrow */}
+            {calendarData.todayEvents.length > 0 && calendarData.tomorrowEvents.length > 0 && (
+              <div className="h-2"></div>
+            )}
+            
+            {/* Tomorrow's Events */}
+            {calendarData.tomorrowEvents.length > 0 && (
+              <>
+                <div className="text-mirror-xs text-mirror-text-dimmed font-mirror-primary border-b border-mirror-text-dimmed pb-1">
+                  TOMORROW
+                </div>
+                {calendarData.tomorrowEvents.slice(0, 2).map((event: CalendarEvent) => (
+                  <div key={event.id} className="border-l-2 border-mirror-text-dimmed pl-2">
+                    <div className="text-mirror-xs font-mirror-primary text-mirror-text">
+                      {event.summary}
+                    </div>
+                    <div className="text-[0.75rem] text-mirror-text-dimmed">
+                      {formatEventTime(event.start, event.end, event.isAllDay)}
+                    </div>
+                    {event.location && (
+                      <div className="text-mirror-xs text-mirror-text-dimmed">
+                        📍 {event.location}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </>
+            )}
+            
+            {/* Show more events indicator */}
+            {(calendarData.todayEvents.length > 3 || calendarData.tomorrowEvents.length > 2) && (
               <div className="text-mirror-xs text-mirror-text-dimmed text-center pt-2">
-                +{calendarData.events.length - 5} more events
+                +{(calendarData.todayEvents.length - 3) + (calendarData.tomorrowEvents.length - 2)} more events
               </div>
             )}
           </div>
