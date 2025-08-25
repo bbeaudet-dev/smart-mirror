@@ -54,6 +54,11 @@ class CalendarService {
    */
   async getTodayEvents() {
     try {
+      // Check if credentials are properly configured
+      if (!this.oAuth2Client.credentials || !this.oAuth2Client.credentials.access_token) {
+        throw new Error('Google Calendar not authenticated. Please complete OAuth setup.');
+      }
+
       // Get today's date in UTC and let Google Calendar handle timezone conversion
       const now = new Date();
       const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -92,7 +97,17 @@ class CalendarService {
       });
     } catch (error) {
       console.error('Error fetching calendar events:', error);
-      throw new Error('Failed to fetch calendar events');
+      
+      // Provide more specific error messages
+      if (error.message.includes('invalid_grant')) {
+        throw new Error('Google Calendar access token expired. Please re-authenticate.');
+      } else if (error.message.includes('access_denied')) {
+        throw new Error('Google Calendar access denied. Please check permissions.');
+      } else if (error.message.includes('not authenticated')) {
+        throw new Error('Google Calendar not authenticated. Please complete OAuth setup.');
+      } else {
+        throw new Error(`Failed to fetch calendar events: ${error.message}`);
+      }
     }
   }
 
