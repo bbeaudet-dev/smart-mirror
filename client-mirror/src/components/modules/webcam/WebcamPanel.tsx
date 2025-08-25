@@ -85,7 +85,7 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
         result = await ApiClient.analyzeOutfit(imageFile) as any;
       }
       
-      // Step 4: Display the response and speak it aloud
+      // Step 4: Display the response and play audio if available
       if (analysisType === 'roboflow') {
         // Pure Roboflow detection - format the response
         if (result.detections && result.detections.length > 0) {
@@ -102,9 +102,31 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
           speechService.speak(noDetectionMessage);
         }
       } else {
-        // AI analysis responses
+        // AI analysis responses with combined audio
         onAiMessage?.(result.analysis, 'ai-response');
-        speechService.speak(result.analysis);
+        
+        // Play audio immediately if provided in response
+        if (result.audio) {
+          try {
+            const audioBlob = new Blob([Uint8Array.from(atob(result.audio), c => c.charCodeAt(0))], { type: 'audio/opus' });
+            const audioUrl = URL.createObjectURL(audioBlob);
+            const audio = new Audio(audioUrl);
+            
+            await audio.play();
+            console.log('Playing pre-generated opus audio with voice:', result.voice);
+            
+            // Clean up URL when audio finishes
+            audio.onended = () => {
+              URL.revokeObjectURL(audioUrl);
+            };
+          } catch (audioError) {
+            console.error('Failed to play pre-generated audio, falling back to TTS:', audioError);
+            speechService.speak(result.analysis);
+          }
+        } else {
+          // Fallback to TTS if no audio provided
+          speechService.speak(result.analysis);
+        }
       }
       
     } catch (error) {

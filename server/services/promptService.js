@@ -106,11 +106,11 @@ Keep the recommendation concise (under 100 words) and encouraging. This is for a
    */
   static generateWeatherAwareOutfitPrompt(weatherData) {
     if (!weatherData || weatherData.error || !weatherData.current) {
-      return "Analyze this outfit and give fashion advice. Be encouraging and constructive.";
+      return "Analyze this outfit.";
     }
     
     const { temperature, condition } = weatherData.current;
-    return `Yo! It's ${temperature}°F and ${condition} out there. Check this outfit and tell me what's good, what's not, and how to keep it fresh for the weather. Keep it real but encouraging, like Snoop Dogg giving fashion advice. Make it short and sweet, nephew!`;
+    return `It's ${temperature}°F and ${condition}. Analyze this outfit.`;
   }
 
   /**
@@ -118,7 +118,30 @@ Keep the recommendation concise (under 100 words) and encouraging. This is for a
    * @returns {string} - Formatted prompt for AI
    */
   static generateOutfitAnalysisPrompt() {
-    return "Analyze this outfit and provide fashion advice in the style of Snoop Dogg. Use his mannerisms, slang, and style - keep it real, be encouraging and positive. Give genuine fashion advice while maintaining his personality.";
+    return "Analyze this outfit.";
+  }
+
+  /**
+   * Generate news headline summarization prompt
+   * @param {Array} headlines - Array of news headlines with titles and descriptions
+   * @returns {string} - Formatted prompt for AI
+   */
+  static generateNewsSummarizationPrompt(headlines) {
+    const headlinesText = headlines.map((headline, index) => 
+      `${index + 1}. ${headline.title}\n   ${headline.description || 'No description'}`
+    ).join('\n\n');
+
+    return `Summarize these news headlines. For each headline:
+1. Remove unnecessary words and fluff
+2. Keep the core news story
+3. Make it concise (max 60 characters)
+4. Keep it factual and clear
+5. Remove source names from titles
+
+Format each response as just the summarized headline, one per line.
+
+Headlines:
+${headlinesText}`;
   }
 
 }

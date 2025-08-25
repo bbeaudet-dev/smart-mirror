@@ -47,11 +47,38 @@ router.post('/analyze-outfit-with-weather', upload.single('image'), async (req, 
     const outfitPrompt = PromptService.generateWeatherAwareOutfitPrompt(weatherData);
 
     const analysis = await OpenAIService.analyzeImage(imageBuffer, imageType, outfitPrompt, 'outfit-analysis');
-    res.json({ 
-      analysis,
-      weather: weatherData,
-      timestamp: new Date().toISOString()
-    });
+    
+    // Generate TTS audio in parallel
+    let audioBuffer = null;
+    let voice = 'nova';
+    
+    try {
+      const TTSService = require('../services/ttsService');
+      const ttsService = new TTSService();
+      const ttsResult = await ttsService.generateSpeech(analysis, null, 'default');
+      audioBuffer = ttsResult.audioBuffer;
+      voice = ttsResult.voice;
+      console.log('TTS generated successfully with voice:', voice);
+    } catch (ttsError) {
+      console.error('TTS generation failed, returning text only:', ttsError);
+    }
+
+    // Return both text and audio
+    if (audioBuffer) {
+      res.json({ 
+        analysis,
+        audio: audioBuffer.toString('base64'),
+        voice,
+        weather: weatherData,
+        timestamp: new Date().toISOString()
+      });
+    } else {
+      res.json({ 
+        analysis,
+        weather: weatherData,
+        timestamp: new Date().toISOString()
+      });
+    }
   } catch (error) {
     console.error('Weather-Aware Outfit Analysis Error:', error);
     res.status(500).json({ 
@@ -75,10 +102,36 @@ router.post('/analyze-outfit', upload.single('image'), async (req, res) => {
     const PromptService = require('../services/promptService');
     const prompt = PromptService.generateOutfitAnalysisPrompt();
     const analysis = await OpenAIService.analyzeImage(imageBuffer, imageType, prompt, 'outfit-analysis');
-    res.json({ 
-      analysis,
-      timestamp: new Date().toISOString()
-    });
+    
+    // Generate TTS audio in parallel
+    let audioBuffer = null;
+    let voice = 'nova';
+    
+    try {
+      const TTSService = require('../services/ttsService');
+      const ttsService = new TTSService();
+      const ttsResult = await ttsService.generateSpeech(analysis, null, 'default');
+      audioBuffer = ttsResult.audioBuffer;
+      voice = ttsResult.voice;
+      console.log('TTS generated successfully with voice:', voice);
+    } catch (ttsError) {
+      console.error('TTS generation failed, returning text only:', ttsError);
+    }
+
+    // Return both text and audio
+    if (audioBuffer) {
+      res.json({ 
+        analysis,
+        audio: audioBuffer.toString('base64'),
+        voice,
+        timestamp: new Date().toISOString()
+      });
+    } else {
+      res.json({ 
+        analysis,
+        timestamp: new Date().toISOString()
+      });
+    }
   } catch (error) {
     console.error('Outfit Analysis Error:', error);
     res.status(500).json({ 

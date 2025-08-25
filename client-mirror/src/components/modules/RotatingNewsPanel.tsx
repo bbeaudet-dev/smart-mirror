@@ -16,15 +16,17 @@ interface NewsData {
   timestamp: string;
 }
 
-const NewsPanel: React.FC = () => {
+const RotatingNewsPanel: React.FC = () => {
   const [newsData, setNewsData] = useState<NewsData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const data = await NewsClient.getHeadlines(5) as NewsData;
+        const data = await NewsClient.getHeadlines(8) as NewsData; // Get more headlines for rotation
         setNewsData(data);
       } catch (err) {
         console.error('News fetch error:', err);
@@ -40,6 +42,24 @@ const NewsPanel: React.FC = () => {
     const interval = setInterval(fetchNews, 15 * 60 * 1000);
     return () => clearInterval(interval);
   }, []);
+
+  // Rotate through headlines every 3 seconds
+  useEffect(() => {
+    if (!newsData || newsData.headlines.length <= 1) return;
+
+    const interval = setInterval(() => {
+      setIsTransitioning(true);
+      
+      setTimeout(() => {
+        setCurrentIndex((prevIndex) => 
+          prevIndex + 1 >= newsData.headlines.length ? 0 : prevIndex + 1
+        );
+        setIsTransitioning(false);
+      }, 300); // Half of transition duration
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [newsData]);
 
   // Show loading state briefly
   if (isLoading) {
@@ -70,6 +90,8 @@ const NewsPanel: React.FC = () => {
     );
   }
 
+  const currentHeadline = newsData.headlines[currentIndex];
+
   return (
     <div className="flex flex-col h-full">
       <h3 className="text-lg font-mirror-primary font-normal text-mirror-text uppercase border-b border-mirror-text-dimmed leading-4 pb-1 mb-2">News</h3>
@@ -83,20 +105,24 @@ const NewsPanel: React.FC = () => {
             </div>
           </div>
         ) : (
-          <div className="space-y-2 overflow-y-auto h-full">
-            {newsData.headlines.slice(0, 5).map((headline) => (
-              <div key={headline.id} className="border-l-2 border-mirror-text-dimmed pl-2">
-                <div className="text-mirror-xs font-mirror-primary text-mirror-text leading-tight">
-                  {headline.title}
-                </div>
-                <div className="text-[0.75rem] text-mirror-text-dimmed mt-1">
-                  {headline.source} • {NewsClient.formatTimestamp(headline.publishedAt)}
-                </div>
+          <div 
+            className={`transition-opacity duration-600 ${
+              isTransitioning ? 'opacity-0' : 'opacity-100'
+            }`}
+          >
+            <div key={currentHeadline.id} className="border-l-2 border-mirror-text-dimmed pl-2">
+              <div className="text-mirror-xs font-mirror-primary text-mirror-text leading-tight">
+                {currentHeadline.title}
               </div>
-            ))}
-            {newsData.headlines.length > 5 && (
+              <div className="text-[0.75rem] text-mirror-text-dimmed mt-1">
+                {currentHeadline.source} • {NewsClient.formatTimestamp(currentHeadline.publishedAt)}
+              </div>
+            </div>
+            
+            {/* Show rotation indicator if there are more headlines */}
+            {newsData.headlines.length > 1 && (
               <div className="text-mirror-xs text-mirror-text-dimmed text-center pt-2">
-                +{newsData.headlines.length - 5} more headlines
+                {currentIndex + 1} of {newsData.headlines.length}
               </div>
             )}
           </div>
@@ -106,4 +132,4 @@ const NewsPanel: React.FC = () => {
   );
 };
 
-export default NewsPanel;
+export default RotatingNewsPanel;
