@@ -15,7 +15,7 @@ function MirrorInterface() {
     <div className="w-full h-full bg-mirror-bg text-mirror-text font-mirror-primary">
       <div className="w-full h-full flex flex-col">
                 {/* Time Display - Top Left */}
-        <div className="flex justify-start items-center py-2 px-2">
+        <div className="flex justify-start items-center py-1 px-1">
           <TimeDisplay />
         </div>
         
@@ -23,7 +23,7 @@ function MirrorInterface() {
         <div className="h-8"></div>
         
         {/* Main Content - Portrait Layout */}
-        <div className="flex-1 flex flex-col gap-2 min-h-0 overflow-hidden px-2">
+        <div className="flex-1 flex flex-col gap-2 min-h-0 overflow-hidden px-1">
           {/* Top Row */}
           <div className="h-1/4 flex justify-between">
             {/* Weather Panel - Left 30% */}
@@ -31,11 +31,11 @@ function MirrorInterface() {
               <WeatherPanel />
             </div>
             
-            {/* Blank Space - Middle 40% */}
-            <div className="w-[40%]"></div>
+            {/* Blank Space - Middle 45% */}
+            <div className="w-[45%]"></div>
             
-            {/* Calendar Panel - Right 30% */}
-            <div className="w-[30%]">
+            {/* Calendar Panel - Right 25% */}
+            <div className="w-[25%]">
               <CalendarPanel />
             </div>
           </div>

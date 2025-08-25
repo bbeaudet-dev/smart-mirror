@@ -50,7 +50,7 @@ const TimeDisplay: React.FC = () => {
           {period}
         </span>
       </div>
-      <div className="text-mirror-base font-normal text-mirror-text font-mirror-primary mt-1">
+      <div className="text-mirror-sm font-normal text-mirror-text font-mirror-primary mt-1">
         <span className="text-mirror-text-dimmed">{dayShort}</span>
         <span className="text-mirror-text"> {fullDate}</span>
       </div>
