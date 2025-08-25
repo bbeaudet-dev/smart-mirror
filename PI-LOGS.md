@@ -3,7 +3,7 @@
 benbeau@raspberrypi:~/smart-mirror $ npm run dev
 
 > smart-mirror@1.0.0 dev
-> concurrently "cd server && npm run dev" "cd client-mirror && npm run electron-dev" "cd client-mobile && npm run dev"
+> concurrently "cd server && npm run dev" "cd client-mirror && npm run electron-dev"
 
 [0] 
 [0] > smart-mirror-server@1.0.0 dev
@@ -13,82 +13,91 @@ benbeau@raspberrypi:~/smart-mirror $ npm run dev
 [1] > smart-mirror@0.1.0 electron-dev
 [1] > concurrently "npm run dev" "wait-on http://localhost:3000 && electron ."
 [1] 
-[2] 
-[2] > smart-mirror-mobile@0.1.0 dev
-[2] > vite
-[2] 
 [0] [nodemon] 3.1.10
 [0] [nodemon] to restart at any time, enter `rs`
 [0] [nodemon] watching path(s): *.*
 [0] [nodemon] watching extensions: js,mjs,cjs,json
 [0] [nodemon] starting `node server.js`
-[2] 
-[2]   VITE v5.4.19  ready in 310 ms
-[2] 
-[2]   ➜  Local:   http://localhost:3001/
-[2]   ➜  Network: http://192.168.1.225:3001/
+[0] node:internal/modules/cjs/loader:1368
+[0]   throw err;
+[0]   ^
+[0] 
+[0] Error: Cannot find module 'roboflow'
+[0] Require stack:
+[0] - /home/benbeau/smart-mirror/server/services/roboflowService.js
+[0] - /home/benbeau/smart-mirror/server/routes/ai.js
+[0] - /home/benbeau/smart-mirror/server/server.js
+[0]     at Function._resolveFilename (node:internal/modules/cjs/loader:1365:15)
+[0]     at defaultResolveImpl (node:internal/modules/cjs/loader:1021:19)
+[0]     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1026:22)
+[0]     at Function._load (node:internal/modules/cjs/loader:1175:37)
+[0]     at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+[0]     at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+[0]     at Module.require (node:internal/modules/cjs/loader:1445:12)
+[0]     at require (node:internal/modules/helpers:135:16)
+[0]     at Object.<anonymous> (/home/benbeau/smart-mirror/server/services/roboflowService.js:1:26)
+[0]     at Module._compile (node:internal/modules/cjs/loader:1688:14) {
+[0]   code: 'MODULE_NOT_FOUND',
+[0]   requireStack: [
+[0]     '/home/benbeau/smart-mirror/server/services/roboflowService.js',
+[0]     '/home/benbeau/smart-mirror/server/routes/ai.js',
+[0]     '/home/benbeau/smart-mirror/server/server.js'
+[0]   ]
+[0] }
+[0] 
+[0] Node.js v22.18.0
+[0] [nodemon] app crashed - waiting for file changes before starting...
 [1] [0] 
 [1] [0] > smart-mirror@0.1.0 dev
 [1] [0] > vite
 [1] [0] 
 [1] [0] 
-[1] [0]   VITE v7.1.3  ready in 370 ms
+[1] [0]   VITE v7.1.3  ready in 233 ms
 [1] [0] 
 [1] [0]   ➜  Local:   http://localhost:3000/
-[1] [0]   ➜  Network: http://192.168.1.225:3000/
-[0] 🚀 Smart Mirror Server running on port 5005
-[0] 📊 Health check:  http://localhost:5005/api/health
-[0] 🌍 Environment: production
-[0] 🛜 WebRTC signaling service ready
-[0] 
-[0] 👤 Client Applications:
-[0]    🪞 Mirror Interface: http://localhost:3000/
-[0]    📱 Phone Interface:  http://localhost:3001/
-[0] No stored tokens found
-[1] [1] [5971:0822/124415.048485:ERROR:gbm_wrapper.cc(75)] Failed to get fd for plane.: No such file or directory (2)
-[1] [1] [5971:0822/124415.048663:ERROR:gbm_wrapper.cc(258)] Failed to export buffer to dma_buf: No such file or directory (2)
-[1] [1] [5971:0822/124415.048751:ERROR:gbm_wrapper.cc(75)] Failed to get fd for plane.: No such file or directory (2)
-[1] [1] [5971:0822/124415.048785:ERROR:gbm_wrapper.cc(258)] Failed to export buffer to dma_buf: No such file or directory (2)
-[1] [1] [5971:0822/124415.048842:ERROR:gbm_wrapper.cc(75)] Failed to get fd for plane.: No such file or directory (2)
-[1] [1] [5971:0822/124415.048875:ERROR:gbm_wrapper.cc(258)] Failed to export buffer to dma_buf: No such file or directory (2)
-[1] [1] [5971:0822/124415.048929:ERROR:gbm_wrapper.cc(75)] Failed to get fd for plane.: No such file or directory (2)
-[1] [1] [5971:0822/124415.048958:ERROR:gbm_wrapper.cc(258)] Failed to export buffer to dma_buf: No such file or directory (2)
-[1] [1] [5971:0822/124415.049009:ERROR:gbm_wrapper.cc(75)] Failed to get fd for plane.: No such file or directory (2)
-[1] [1] [5971:0822/124415.049039:ERROR:gbm_wrapper.cc(258)] Failed to export buffer to dma_buf: No such file or directory (2)
-[1] [1] [5971:0822/124415.049090:ERROR:gbm_wrapper.cc(75)] Failed to get fd for plane.: No such file or directory (2)
-[1] [1] [5971:0822/124415.049125:ERROR:gbm_wrapper.cc(258)] Failed to export buffer to dma_buf: No such file or directory (2)
-[1] [1] [5971:0822/124415.049177:ERROR:gbm_wrapper.cc(75)] Failed to get fd for plane.: No such file or directory (2)
-[1] [1] [5971:0822/124415.049206:ERROR:gbm_wrapper.cc(258)] Failed to export buffer to dma_buf: No such file or directory (2)
-[1] [1] [5971:0822/124415.049254:ERROR:gbm_wrapper.cc(75)] Failed to get fd for plane.: No such file or directory (2)
-[1] [1] [5971:0822/124415.049282:ERROR:gbm_wrapper.cc(258)] Failed to export buffer to dma_buf: No such file or directory (2)
-[1] [1] [5971:0822/124415.050812:ERROR:gbm_wrapper.cc(75)] Failed to get fd for plane.: No such file or directory (2)
-[1] [1] [5971:0822/124415.050877:ERROR:gbm_wrapper.cc(258)] Failed to export buffer to dma_buf: No such file or directory (2)
-[1] [1] [5971:0822/124415.050935:ERROR:gbm_wrapper.cc(75)] Failed to get fd for plane.: No such file or directory (2)
-[1] [1] [5971:0822/124415.050971:ERROR:gbm_wrapper.cc(258)] Failed to export buffer to dma_buf: No such file or directory (2)
-[1] [1] [5971:0822/124415.051019:ERROR:gbm_wrapper.cc(75)] Failed to get fd for plane.: No such file or directory (2)
-[1] [1] [5971:0822/124415.051046:ERROR:gbm_wrapper.cc(258)] Failed to export buffer to dma_buf: No such file or directory (2)
-[1] [1] [5971:0822/124415.051092:ERROR:gbm_wrapper.cc(75)] Failed to get fd for plane.: No such file or directory (2)
-[1] [1] [5971:0822/124415.051119:ERROR:gbm_wrapper.cc(258)] Failed to export buffer to dma_buf: No such file or directory (2)
-[1] [1] [5971:0822/124415.051164:ERROR:gbm_wrapper.cc(75)] Failed to get fd for plane.: No such file or directory (2)
-[1] [1] [5971:0822/124415.051189:ERROR:gbm_wrapper.cc(258)] Failed to export buffer to dma_buf: No such file or directory (2)
-[1] [1] [5971:0822/124415.051233:ERROR:gbm_wrapper.cc(75)] Failed to get fd for plane.: No such file or directory (2)
-[1] [1] [5971:0822/124415.051259:ERROR:gbm_wrapper.cc(258)] Failed to export buffer to dma_buf: No such file or directory (2)
-[1] [1] [5971:0822/124415.051310:ERROR:gbm_wrapper.cc(75)] Failed to get fd for plane.: No such file or directory (2)
-[1] [1] [5971:0822/124415.051336:ERROR:gbm_wrapper.cc(258)] Failed to export buffer to dma_buf: No such file or directory (2)
-[1] [1] [5971:0822/124415.051379:ERROR:gbm_wrapper.cc(75)] Failed to get fd for plane.: No such file or directory (2)
-[1] [1] [5971:0822/124415.051405:ERROR:gbm_wrapper.cc(258)] Failed to export buffer to dma_buf: No such file or directory (2)
-[0] 127.0.0.1 - - [22/Aug/2025:16:44:16 +0000] "GET /api/auth/google/status HTTP/1.1" 200 41 "http://localhost:3000/" "Mozilla/5.0 (X11; Linux aarch64) AppleWebKit/537.36 (KHTML, like Gecko) smart-mirror/0.1.0 Chrome/120.0.6099.291 Electron/28.3.3 Safari/537.36"
-[0] 127.0.0.1 - - [22/Aug/2025:16:44:16 +0000] "GET /api/auth/google/status HTTP/1.1" 200 41 "http://localhost:3000/" "Mozilla/5.0 (X11; Linux aarch64) AppleWebKit/537.36 (KHTML, like Gecko) smart-mirror/0.1.0 Chrome/120.0.6099.291 Electron/28.3.3 Safari/537.36"
-[0] 127.0.0.1 - - [22/Aug/2025:16:44:16 +0000] "GET /api/weather HTTP/1.1" 200 622 "http://localhost:3000/" "Mozilla/5.0 (X11; Linux aarch64) AppleWebKit/537.36 (KHTML, like Gecko) smart-mirror/0.1.0 Chrome/120.0.6099.291 Electron/28.3.3 Safari/537.36"
-[0] 127.0.0.1 - - [22/Aug/2025:16:44:16 +0000] "GET /api/weather HTTP/1.1" 200 622 "http://localhost:3000/" "Mozilla/5.0 (X11; Linux aarch64) AppleWebKit/537.36 (KHTML, like Gecko) smart-mirror/0.1.0 Chrome/120.0.6099.291 Electron/28.3.3 Safari/537.36"
-[1] [1] [5971:0822/124419.182187:ERROR:gl_surface_presentation_helper.cc(260)] GetVSyncParametersIfAvailable() failed for 1 times!
-[1] [1] [5971:0822/124421.222268:ERROR:gl_surface_presentation_helper.cc(260)] GetVSyncParametersIfAvailable() failed for 2 times!
-[1] [1] [5971:0822/124421.339840:ERROR:gl_surface_presentation_helper.cc(260)] GetVSyncParametersIfAvailable() failed for 3 times!
-[0] 127.0.0.1 - - [22/Aug/2025:16:44:39 +0000] "POST /api/ai/test-image HTTP/1.1" 200 389 "http://localhost:3000/" "Mozilla/5.0 (X11; Linux aarch64) AppleWebKit/537.36 (KHTML, like Gecko) smart-mirror/0.1.0 Chrome/120.0.6099.291 Electron/28.3.3 Safari/537.36"
-[0] 127.0.0.1 - - [22/Aug/2025:16:44:46 +0000] "POST /api/ai/analyze-image HTTP/1.1" 200 302 "http://localhost:3000/" "Mozilla/5.0 (X11; Linux aarch64) AppleWebKit/537.36 (KHTML, like Gecko) smart-mirror/0.1.0 Chrome/120.0.6099.291 Electron/28.3.3 Safari/537.36"
-^C[2] cd client-mobile && npm run dev exited with code SIGINT
-[1] [0] npm run dev exited with code SIGINT
-[1] [1] /home/benbeau/smart-mirror/client-mirror/node_modules/electron/dist/electron exited with signal SIGINT
-[1] [1] wait-on http://localhost:3000 && electron . exited with code SIGINT
-[0] cd server && npm run dev exited with code SIGINT
-[1] cd client-mirror && npm run electron-dev exited with code SIGINT
+[1] [0]   ➜  Network: http://192.168.1.39:3000/
+[1] [1] [8416:0825/120051.100020:ERROR:gbm_wrapper.cc(75)] Failed to get fd for plane.: No such file or directory (2)
+[1] [1] [8416:0825/120051.100362:ERROR:gbm_wrapper.cc(258)] Failed to export buffer to dma_buf: No such file or directory (2)
+[1] [1] [8416:0825/120051.106851:ERROR:gbm_wrapper.cc(75)] Failed to get fd for plane.: No such file or directory (2)
+[1] [1] [8416:0825/120051.107002:ERROR:gbm_wrapper.cc(258)] Failed to export buffer to dma_buf: No such file or directory (2)
+[1] [1] [8416:0825/120051.107139:ERROR:gbm_wrapper.cc(75)] Failed to get fd for plane.: No such file or directory (2)
+[1] [1] [8416:0825/120051.107651:ERROR:gbm_wrapper.cc(258)] Failed to export buffer to dma_buf: No such file or directory (2)
+[1] [1] [8416:0825/120051.107818:ERROR:gbm_wrapper.cc(75)] Failed to get fd for plane.: No such file or directory (2)
+[1] [1] [8416:0825/120051.107890:ERROR:gbm_wrapper.cc(258)] Failed to export buffer to dma_buf: No such file or directory (2)
+[1] [1] [8416:0825/120051.108014:ERROR:gbm_wrapper.cc(75)] Failed to get fd for plane.: No such file or directory (2)
+[1] [1] [8416:0825/120051.108077:ERROR:gbm_wrapper.cc(258)] Failed to export buffer to dma_buf: No such file or directory (2)
+[1] [1] [8416:0825/120051.108204:ERROR:gbm_wrapper.cc(75)] Failed to get fd for plane.: No such file or directory (2)
+[1] [1] [8416:0825/120051.108472:ERROR:gbm_wrapper.cc(258)] Failed to export buffer to dma_buf: No such file or directory (2)
+[1] [1] [8416:0825/120051.108716:ERROR:gbm_wrapper.cc(75)] Failed to get fd for plane.: No such file or directory (2)
+[1] [1] [8416:0825/120051.108779:ERROR:gbm_wrapper.cc(258)] Failed to export buffer to dma_buf: No such file or directory (2)
+[1] [1] [8416:0825/120051.108910:ERROR:gbm_wrapper.cc(75)] Failed to get fd for plane.: No such file or directory (2)
+[1] [1] [8416:0825/120051.108973:ERROR:gbm_wrapper.cc(258)] Failed to export buffer to dma_buf: No such file or directory (2)
+[1] [1] [8416:0825/120051.111867:ERROR:gbm_wrapper.cc(75)] Failed to get fd for plane.: No such file or directory (2)
+[1] [1] [8416:0825/120051.112146:ERROR:gbm_wrapper.cc(258)] Failed to export buffer to dma_buf: No such file or directory (2)
+[1] [1] [8416:0825/120051.112593:ERROR:gbm_wrapper.cc(75)] Failed to get fd for plane.: No such file or directory (2)
+[1] [1] [8416:0825/120051.112704:ERROR:gbm_wrapper.cc(258)] Failed to export buffer to dma_buf: No such file or directory (2)
+[1] [1] [8416:0825/120051.113271:ERROR:gbm_wrapper.cc(75)] Failed to get fd for plane.: No such file or directory (2)
+[1] [1] [8416:0825/120051.113350:ERROR:gbm_wrapper.cc(258)] Failed to export buffer to dma_buf: No such file or directory (2)
+[1] [1] [8416:0825/120051.113505:ERROR:gbm_wrapper.cc(75)] Failed to get fd for plane.: No such file or directory (2)
+[1] [1] [8416:0825/120051.113581:ERROR:gbm_wrapper.cc(258)] Failed to export buffer to dma_buf: No such file or directory (2)
+[1] [1] [8416:0825/120051.113699:ERROR:gbm_wrapper.cc(75)] Failed to get fd for plane.: No such file or directory (2)
+[1] [1] [8416:0825/120051.113792:ERROR:gbm_wrapper.cc(258)] Failed to export buffer to dma_buf: No such file or directory (2)
+[1] [1] [8416:0825/120051.113903:ERROR:gbm_wrapper.cc(75)] Failed to get fd for plane.: No such file or directory (2)
+[1] [1] [8416:0825/120051.113954:ERROR:gbm_wrapper.cc(258)] Failed to export buffer to dma_buf: No such file or directory (2)
+[1] [1] [8416:0825/120051.114058:ERROR:gbm_wrapper.cc(75)] Failed to get fd for plane.: No such file or directory (2)
+[1] [1] [8416:0825/120051.114159:ERROR:gbm_wrapper.cc(258)] Failed to export buffer to dma_buf: No such file or directory (2)
+[1] [1] [8416:0825/120051.114263:ERROR:gbm_wrapper.cc(75)] Failed to get fd for plane.: No such file or directory (2)
+[1] [1] [8416:0825/120051.114314:ERROR:gbm_wrapper.cc(258)] Failed to export buffer to dma_buf: No such file or directory (2)
+[1] [1] [8416:0825/120057.170977:ERROR:gl_surface_presentation_helper.cc(260)] GetVSyncParametersIfAvailable() failed for 1 times!
+[1] [1] [8416:0825/120057.176564:ERROR:gl_surface_presentation_helper.cc(260)] GetVSyncParametersIfAvailable() failed for 2 times!
+[1] [1] [8416:0825/120059.156955:ERROR:gl_surface_presentation_helper.cc(260)] GetVSyncParametersIfAvailable() failed for 3 times!
+[1] [1] Warning: Insufficient Vulkan limits for maxTextureDimension1D. VkPhysicalDeviceLimits::maxImageDimension1D must be at least 8192
+[1] [1]  - While gathering supported limits for "V3D 7.1.7.0" - "V3DV Mesa: Mesa 24.2.8-1~bpo12+rpt3" (vendorId=0x14e4 deviceId=0x55701c33 backend=BackendType::Vulkan type=AdapterType::IntegratedGPU)
+[1] [1]     at InitializeSupportedLimitsImpl (../../third_party/dawn/src/dawn/native/vulkan/PhysicalDeviceVk.cpp:396)
+[1] [1]     at Initialize (../../third_party/dawn/src/dawn/native/PhysicalDevice.cpp:61)
+[1] [1] 
+[1] [1] Warning: eglChooseConfig returned zero configs
+[1] [1]     at Create (../../third_party/dawn/src/dawn/native/opengl/ContextEGL.cpp:65)
+[1] [1]     at Create (../../third_party/dawn/src/dawn/native/opengl/PhysicalDeviceGL.cpp:110)
+[1] [1] 
+
