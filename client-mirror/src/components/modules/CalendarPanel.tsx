@@ -125,7 +125,7 @@ const CalendarPanel: React.FC = () => {
                 <div className="text-mirror-xs text-mirror-text-dimmed font-mirror-primary border-b border-mirror-text-dimmed pb-1">
                   TODAY
                 </div>
-                {calendarData.todayEvents.slice(0, 3).map((event: CalendarEvent) => (
+                {calendarData.todayEvents.slice(0, 5).map((event: CalendarEvent) => (
                   <div key={event.id} className="border-l-2 border-mirror-text-dimmed pl-2">
                     <div className="text-mirror-xs font-mirror-primary text-mirror-text">
                       {event.summary}
@@ -154,7 +154,7 @@ const CalendarPanel: React.FC = () => {
                 <div className="text-mirror-xs text-mirror-text-dimmed font-mirror-primary border-b border-mirror-text-dimmed pb-1">
                   TOMORROW
                 </div>
-                {calendarData.tomorrowEvents.slice(0, 2).map((event: CalendarEvent) => (
+                {calendarData.tomorrowEvents.slice(0, 3).map((event: CalendarEvent) => (
                   <div key={event.id} className="border-l-2 border-mirror-text-dimmed pl-2">
                     <div className="text-mirror-xs font-mirror-primary text-mirror-text">
                       {event.summary}
@@ -173,9 +173,9 @@ const CalendarPanel: React.FC = () => {
             )}
             
             {/* Show more events indicator */}
-            {(calendarData.todayEvents.length > 3 || calendarData.tomorrowEvents.length > 2) && (
+            {(calendarData.todayEvents.length > 5 || calendarData.tomorrowEvents.length > 3) && (
               <div className="text-mirror-xs text-mirror-text-dimmed text-center pt-2">
-                +{(calendarData.todayEvents.length - 3) + (calendarData.tomorrowEvents.length - 2)} more events
+                +{(calendarData.todayEvents.length - 5) + (calendarData.tomorrowEvents.length - 3)} more events
               </div>
             )}
           </div>
