@@ -165,6 +165,7 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
   // Wrapper functions for the buttons
   const handleOutfitAnalysis = () => handleAiAnalysis('basic');
   const handleWeatherOutfitAnalysis = () => handleAiAnalysis('weather');
+  const handleEnhancedAnalysis = () => handleAiAnalysis('enhanced');
   const handleRoboflowDetection = () => handleAiAnalysis('roboflow');
 
   return (
@@ -191,7 +192,8 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
         isAnalyzing={isAnalyzing}
         onOutfitAnalysis={handleOutfitAnalysis}
         onWeatherOutfitAnalysis={handleWeatherOutfitAnalysis}
-        onEnhancedAnalysis={handleRoboflowDetection}
+        onEnhancedAnalysis={handleEnhancedAnalysis}
+        onRoboflowDetection={handleRoboflowDetection}
         onStartWebcam={startWebcam}
         onStopWebcam={stopWebcam}
         onVoiceChange={setSelectedVoice}

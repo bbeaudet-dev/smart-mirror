@@ -6,6 +6,7 @@ interface AiControlButtonsProps {
   onOutfitAnalysis: () => void;
   onWeatherOutfitAnalysis: () => void;
   onEnhancedAnalysis: () => void;
+  onRoboflowDetection: () => void;
   onStartWebcam: () => void;
   onStopWebcam: () => void;
   onVoiceChange?: (voice: string) => void;
@@ -25,6 +26,7 @@ const AiControlButtons: React.FC<AiControlButtonsProps> = ({
   onOutfitAnalysis,
   onWeatherOutfitAnalysis,
   onEnhancedAnalysis,
+  onRoboflowDetection,
   
   onStartWebcam,
   onStopWebcam,
@@ -54,77 +56,92 @@ const AiControlButtons: React.FC<AiControlButtonsProps> = ({
     setSelectedVoice(voice);
     onVoiceChange?.(voice);
   };
+  
   return (
-    <div className="flex flex-col items-end py-2 px-4 space-y-2">
-      <div className="flex space-x-2">
-        {/* Webcam Control Button */}
-        <button
-          onClick={isInitialized ? onStopWebcam : onStartWebcam}
-          className={`px-3 py-2 rounded text-xs font-medium transition-colors ${
-            isInitialized
-              ? 'bg-red-600 hover:bg-red-700 text-white'
-              : 'bg-green-600 hover:bg-green-700 text-white'
-          }`}
-        >
-          {isInitialized ? 'Stop Webcam' : 'Start Webcam'}
-        </button>
+    <div className="fixed bottom-4 left-6 right-6 z-50">
+      <div className="flex flex-col items-center space-y-2">
+        <div className="flex space-x-2">
+          {/* Webcam Control Button */}
+          <button
+            onClick={isInitialized ? onStopWebcam : onStartWebcam}
+            className={`px-3 py-2 rounded text-xs font-medium transition-colors ${
+              isInitialized
+                ? 'bg-gray-700 hover:bg-gray-600 text-gray-200 border border-gray-600'
+                : 'bg-gray-600 hover:bg-gray-500 text-gray-200 border border-gray-500'
+            }`}
+          >
+            {isInitialized ? 'Stop Webcam' : 'Start Webcam'}
+          </button>
 
-        <button
-          onClick={onOutfitAnalysis}
-          disabled={isAnalyzing}
-          className={`px-3 py-2 rounded text-xs font-medium transition-colors ${
-            isAnalyzing
-              ? 'bg-gray-500 cursor-not-allowed'
-              : 'bg-yellow-600 hover:bg-yellow-700 text-white'
-          }`}
-        >
-          {isAnalyzing ? 'Processing...' : 'Outfit'}
-        </button>
+          <button
+            onClick={onOutfitAnalysis}
+            disabled={isAnalyzing}
+            className={`px-3 py-2 rounded text-xs font-medium transition-colors ${
+              isAnalyzing
+                ? 'bg-gray-500 cursor-not-allowed text-gray-400 border border-gray-500'
+                : 'bg-gray-700 hover:bg-gray-600 text-gray-200 border border-gray-600'
+            }`}
+          >
+            {isAnalyzing ? 'Processing...' : 'Outfit'}
+          </button>
 
-        <button
-          onClick={onWeatherOutfitAnalysis}
-          disabled={isAnalyzing}
-          className={`px-3 py-2 rounded text-xs font-medium transition-colors ${
-            isAnalyzing
-              ? 'bg-gray-500 cursor-not-allowed'
-              : 'bg-indigo-600 hover:bg-indigo-700 text-white'
-          }`}
-        >
-          {isAnalyzing ? 'Processing...' : 'Outfit + Weather'}
-        </button>
+          <button
+            onClick={onWeatherOutfitAnalysis}
+            disabled={isAnalyzing}
+            className={`px-3 py-2 rounded text-xs font-medium transition-colors ${
+              isAnalyzing
+                ? 'bg-gray-500 cursor-not-allowed text-gray-400 border border-gray-500'
+                : 'bg-gray-700 hover:bg-gray-600 text-gray-200 border border-gray-600'
+            }`}
+          >
+            {isAnalyzing ? 'Processing...' : 'Weather + Outfit'}
+          </button>
 
-        <button
-          onClick={onEnhancedAnalysis}
-          disabled={isAnalyzing}
-          className={`px-3 py-2 rounded text-xs font-medium transition-colors ${
-            isAnalyzing
-              ? 'bg-gray-500 cursor-not-allowed'
-              : 'bg-purple-600 hover:bg-purple-700 text-white'
-          }`}
-        >
-          {isAnalyzing ? 'Processing...' : 'Roboflow'}
-        </button>
-      </div>
+          <button
+            onClick={onEnhancedAnalysis}
+            disabled={isAnalyzing}
+            className={`px-3 py-2 rounded text-xs font-medium transition-colors ${
+              isAnalyzing
+                ? 'bg-gray-500 cursor-not-allowed text-gray-400 border border-gray-500'
+                : 'bg-gray-700 hover:bg-gray-600 text-gray-200 border border-gray-600'
+            }`}
+          >
+            {isAnalyzing ? 'Processing...' : 'Enhanced'}
+          </button>
 
-      {/* Voice Selector */}
-      <div className="flex items-center space-x-2">
-        <label className="text-xs text-white font-medium">Voice:</label>
-        <select
-          value={selectedVoice}
-          onChange={(e) => handleVoiceChange(e.target.value)}
-          disabled={isLoadingVoices}
-          className="px-2 py-1 rounded text-xs bg-gray-700 text-white border border-gray-600 focus:outline-none focus:border-blue-500"
-        >
-          {isLoadingVoices ? (
-            <option>Loading...</option>
-          ) : (
-            voices.map((voice) => (
-              <option key={voice} value={voice}>
-                {voice}
-              </option>
-            ))
-          )}
-        </select>
+          <button
+            onClick={onRoboflowDetection}
+            disabled={isAnalyzing}
+            className={`px-3 py-2 rounded text-xs font-medium transition-colors ${
+              isAnalyzing
+                ? 'bg-gray-500 cursor-not-allowed text-gray-400 border border-gray-500'
+                : 'bg-gray-700 hover:bg-gray-600 text-gray-200 border border-gray-600'
+            }`}
+          >
+            {isAnalyzing ? 'Processing...' : 'Detect'}
+          </button>
+        </div>
+
+        {/* Voice Selector */}
+        <div className="flex items-center space-x-2">
+          <label className="text-xs text-gray-300 font-medium">Voice:</label>
+          <select
+            value={selectedVoice}
+            onChange={(e) => handleVoiceChange(e.target.value)}
+            disabled={isLoadingVoices}
+            className="px-2 py-1 rounded text-xs bg-gray-700 text-gray-200 border border-gray-600 focus:outline-none focus:border-gray-500"
+          >
+            {isLoadingVoices ? (
+              <option>Loading...</option>
+            ) : (
+              voices.map((voice) => (
+                <option key={voice} value={voice}>
+                  {voice}
+                </option>
+              ))
+            )}
+          </select>
+        </div>
       </div>
     </div>
   );
