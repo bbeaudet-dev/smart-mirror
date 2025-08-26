@@ -106,8 +106,12 @@ function createWindow() {
   });
 
   // Open DevTools in development
+  console.log('isDev:', isDev, 'NODE_ENV:', process.env.NODE_ENV);
   if (isDev) {
+    console.log('Opening DevTools in development mode');
     mainWindow.webContents.openDevTools({ mode: 'detach' });
+  } else {
+    console.log('Running in production mode - no DevTools');
   }
 }
 
