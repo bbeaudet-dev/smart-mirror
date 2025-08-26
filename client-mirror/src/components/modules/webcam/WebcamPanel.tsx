@@ -47,7 +47,7 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
    * This function handles basic outfit analysis, weather-aware outfit analysis, and enhanced analysis.
    * It captures a webcam frame and sends it to the appropriate AI service based on the type.
    */
-  const handleAiAnalysis = async (analysisType: 'basic' | 'weather' | 'enhanced' | 'roboflow') => {
+  const handleAiAnalysis = async (analysisType: 'basic' | 'weather' | 'enhanced' | 'roboflow' | 'magic-mirror' | 'magic-mirror-tts' | 'snoop-tts') => {
     if (!isInitialized) {
       console.error("Webcam not initialized");
       onAiMessage?.("Webcam not initialized. Please start the webcam first.", 'ai-response');
@@ -67,6 +67,7 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
       // Step 2: Convert blob to File object for API transmission
       const filename = analysisType === 'weather' ? 'weather-outfit-analysis.jpg' 
         : analysisType === 'enhanced' ? 'enhanced-analysis.jpg' 
+        : analysisType === 'magic-mirror' ? 'magic-mirror-analysis.jpg'
         : 'outfit-analysis.jpg';
       const imageFile = new File([blob], filename, { type: 'image/jpeg' });
       
@@ -87,6 +88,15 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
           body: formData,
         });
         result = await response.json();
+      } else if (analysisType === 'magic-mirror') {
+        // Magic Mirror - text only, no voice needed
+        result = await ApiClient.magicMirrorAnalysis(imageFile) as any;
+      } else if (analysisType === 'magic-mirror-tts') {
+        // Magic Mirror with TTS - uses fable voice
+        result = await ApiClient.magicMirrorTTS(imageFile) as any;
+      } else if (analysisType === 'snoop-tts') {
+        // Snoop TTS - uses onyx voice
+        result = await ApiClient.snoopAnalysis(imageFile) as any;
       } else if (analysisType === 'roboflow') {
         result = await ApiClient.detectClothing(imageFile) as any;
         // Update detections state for overlay display
@@ -120,6 +130,54 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
           onAiMessage?.(noDetectionMessage, 'ai-response');
           speechService.speak(noDetectionMessage);
         }
+      } else if (analysisType === 'magic-mirror') {
+        // Magic Mirror - text only, no audio
+        onAiMessage?.(result.analysis, 'ai-response');
+        // No TTS for speed
+      } else if (analysisType === 'magic-mirror-tts') {
+        // Magic Mirror with TTS - play audio if available
+        onAiMessage?.(result.analysis, 'ai-response');
+        
+        // Play audio immediately if provided in response
+        if (result.audio) {
+          try {
+            const audioBlob = new Blob([Uint8Array.from(atob(result.audio), c => c.charCodeAt(0))], { type: 'audio/opus' });
+            const audioUrl = URL.createObjectURL(audioBlob);
+            const audio = new Audio(audioUrl);
+            
+            await audio.play();
+            console.log('Playing Magic Mirror TTS audio with fable voice');
+            
+            // Clean up URL when audio finishes
+            audio.onended = () => {
+              URL.revokeObjectURL(audioUrl);
+            };
+          } catch (audioError) {
+            console.error('Failed to play Magic Mirror TTS audio:', audioError);
+          }
+        }
+      } else if (analysisType === 'snoop-tts') {
+        // Snoop TTS - play audio if available
+        onAiMessage?.(result.analysis, 'ai-response');
+        
+        // Play audio immediately if provided in response
+        if (result.audio) {
+          try {
+            const audioBlob = new Blob([Uint8Array.from(atob(result.audio), c => c.charCodeAt(0))], { type: 'audio/opus' });
+            const audioUrl = URL.createObjectURL(audioBlob);
+            const audio = new Audio(audioUrl);
+            
+            await audio.play();
+            console.log('Playing Snoop TTS audio with onyx voice');
+            
+            // Clean up URL when audio finishes
+            audio.onended = () => {
+              URL.revokeObjectURL(audioUrl);
+            };
+          } catch (audioError) {
+            console.error('Failed to play Snoop TTS audio:', audioError);
+          }
+        }
       } else {
         // AI analysis responses with combined audio
         onAiMessage?.(result.analysis, 'ai-response');
@@ -152,6 +210,7 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
       const errorType = analysisType === 'weather' ? 'Weather outfit analysis' 
         : analysisType === 'enhanced' ? 'Enhanced analysis' 
         : analysisType === 'roboflow' ? 'Roboflow detection'
+        : analysisType === 'magic-mirror' ? 'Magic Mirror analysis'
         : 'Outfit analysis';
       console.error(`${errorType} failed:`, error);
       const errorMessage = error instanceof Error ? error.message : `${errorType} failed. Please try again.`;
@@ -167,6 +226,9 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
   const handleWeatherOutfitAnalysis = () => handleAiAnalysis('weather');
   const handleEnhancedAnalysis = () => handleAiAnalysis('enhanced');
   const handleRoboflowDetection = () => handleAiAnalysis('roboflow');
+  const handleMagicMirrorAnalysis = () => handleAiAnalysis('magic-mirror');
+  const handleMagicMirrorTTS = () => handleAiAnalysis('magic-mirror-tts');
+  const handleSnoopTTS = () => handleAiAnalysis('snoop-tts');
 
   return (
     <div className="flex flex-col h-full">
@@ -194,6 +256,9 @@ const WebcamPanel: React.FC<WebcamPanelProps> = ({ onAiMessage, onAiLoading }) =
         onWeatherOutfitAnalysis={handleWeatherOutfitAnalysis}
         onEnhancedAnalysis={handleEnhancedAnalysis}
         onRoboflowDetection={handleRoboflowDetection}
+        onMagicMirrorAnalysis={handleMagicMirrorAnalysis}
+        onMagicMirrorTTS={handleMagicMirrorTTS}
+        onSnoopTTS={handleSnoopTTS}
         onStartWebcam={startWebcam}
         onStopWebcam={stopWebcam}
         onVoiceChange={setSelectedVoice}

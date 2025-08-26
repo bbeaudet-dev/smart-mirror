@@ -100,6 +100,42 @@ Keep the recommendation concise (under 100 words) and encouraging. This is for a
 
 
   /**
+   * Generate Snoop Dogg outfit analysis prompt
+   * @param {Object} weatherData - Weather information
+   * @returns {string} - Formatted prompt for AI
+   */
+  static generateSnoopPrompt(weatherData) {
+    if (!weatherData || weatherData.error || !weatherData.current) {
+      return `You are Snoop Dogg. Analyze this outfit with your unique style and provide a brief, entertaining response. Keep it under 50 words and speak like Snoop Dogg would - use his slang, style, and personality.`;
+    }
+    
+    const { temperature, condition } = weatherData.current;
+    return `You are Snoop Dogg. It's ${temperature}°F and ${condition} today. 
+
+Analyze this outfit with your unique style and provide a brief, entertaining response. Consider the weather conditions and speak like Snoop Dogg would - use his slang, style, and personality.
+
+Keep your response under 50 words, be entertaining and use Snoop's signature style while being practical about the weather.`;
+  }
+
+  /**
+   * Generate Magic Mirror outfit analysis prompt
+   * @param {Object} weatherData - Weather information
+   * @returns {string} - Formatted prompt for AI
+   */
+  static generateMagicMirrorPrompt(weatherData) {
+    if (!weatherData || weatherData.error || !weatherData.current) {
+      return `You are the Magic Mirror from Snow White. Analyze this outfit with your mystical wisdom and provide a brief, enchanting response. Keep it under 50 words and speak as if you're addressing Snow White herself.`;
+    }
+    
+    const { temperature, condition } = weatherData.current;
+    return `You are the Magic Mirror from Snow White. It's ${temperature}°F and ${condition} today. 
+
+Analyze this outfit with your mystical wisdom and provide a brief, enchanting response. Consider the weather conditions and speak as if you're addressing Snow White herself. 
+
+Keep your response under 50 words, be poetic and magical, but also practical about the weather.`;
+  }
+
+  /**
    * Generate weather-aware outfit analysis prompt
    * @param {Object} weatherData - Weather information
    * @returns {string} - Formatted prompt for AI

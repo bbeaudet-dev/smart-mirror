@@ -41,7 +41,17 @@ function MirrorInterface() {
           </div>
         </div>
         
-        {/* News Panel - Underneath calendar */}
+        {/* Webcam Panel - Underneath weather */}
+        <div className="flex justify-start px-1 mt-4">
+          <div className="w-64 h-48">
+            <WebcamPanel 
+              onAiMessage={setAiMessage}
+              onAiLoading={setIsAiLoading}
+            />
+          </div>
+        </div>
+        
+        {/* News Panel - Underneath webcam */}
         <div className="flex justify-end px-1 mt-4">
           <div className="w-[30%]">
             <RotatingNewsPanel />
@@ -50,16 +60,6 @@ function MirrorInterface() {
         
         {/* Spacer to push content to bottom */}
         <div className="flex-1"></div>
-
-        {/* Webcam Panel - Bottom Right */}
-        <div className="flex justify-end mb-20">
-          <div className="w-64 h-48">
-            <WebcamPanel 
-              onAiMessage={setAiMessage}
-              onAiLoading={setIsAiLoading}
-            />
-          </div>
-        </div>
 
         {/* AI Message Panel - Bottom Center */}
         <MessagePanel 

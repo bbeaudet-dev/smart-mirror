@@ -73,16 +73,24 @@ export const useWebcam = () => {
           return null;
         }
         
-        // Set canvas size to match video dimensions
-        canvas.width = videoRef.current.videoWidth;
-        canvas.height = videoRef.current.videoHeight;
+        // For 90-degree rotation, swap width and height
+        const videoWidth = videoRef.current.videoWidth;
+        const videoHeight = videoRef.current.videoHeight;
         
-        // Draw the current video frame to canvas
-        ctx.drawImage(videoRef.current, 0, 0);
+        // Set canvas size to rotated dimensions
+        canvas.width = videoHeight;  // Swapped
+        canvas.height = videoWidth;  // Swapped
+        
+        // Apply rotation transformation
+        ctx.save();
+        ctx.translate(canvas.width / 2, canvas.height / 2);
+        ctx.rotate((90 * Math.PI) / 180); // 90 degrees clockwise
+        ctx.drawImage(videoRef.current, -videoWidth / 2, -videoHeight / 2, videoWidth, videoHeight);
+        ctx.restore();
         
         // Convert to base64 JPEG
-        const frameData = canvas.toDataURL("image/jpeg", 0.8);
-        console.log("Frame captured:", frameData.substring(0, 50) + "...");
+        const frameData = canvas.toDataURL("image/jpeg", 0.7); // Reduced quality to 70% for speed
+        console.log("Frame captured (rotated):", frameData.substring(0, 50) + "...");
         
         return frameData;
       } catch (error) {
@@ -106,19 +114,30 @@ export const useWebcam = () => {
             return;
           }
           
-          canvas.width = videoRef.current.videoWidth;
-          canvas.height = videoRef.current.videoHeight;
-          ctx.drawImage(videoRef.current, 0, 0);
+          // For 90-degree rotation, swap width and height
+          const videoWidth = videoRef.current.videoWidth;
+          const videoHeight = videoRef.current.videoHeight;
+          
+          // Set canvas size to rotated dimensions
+          canvas.width = videoHeight;  // Swapped
+          canvas.height = videoWidth;  // Swapped
+          
+          // Apply rotation transformation
+          ctx.save();
+          ctx.translate(canvas.width / 2, canvas.height / 2);
+          ctx.rotate((90 * Math.PI) / 180); // 90 degrees clockwise
+          ctx.drawImage(videoRef.current, -videoWidth / 2, -videoHeight / 2, videoWidth, videoHeight);
+          ctx.restore();
           
           canvas.toBlob((blob) => {
             if (blob) {
-              console.log("Frame captured as blob:", blob.size, "bytes");
+              console.log("Frame captured as blob (rotated):", blob.size, "bytes");
               resolve(blob);
             } else {
               console.error("Failed to create blob from canvas");
               resolve(null);
             }
-          }, "image/jpeg", 0.8);
+          }, "image/jpeg", 0.7); // Reduced quality to 70% for speed
         } catch (error) {
           console.error("Frame capture failed:", error);
           resolve(null);

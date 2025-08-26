@@ -109,7 +109,8 @@ class TTSService {
       default: 'nova',    // Balanced, natural voice
       news: 'echo',       // Clear, authoritative voice
       weather: 'fable',   // Warm, friendly voice
-      calendar: 'alloy'   // Professional, clear voice
+      calendar: 'alloy',  // Professional, clear voice
+      'magic-mirror': 'fable'  // Warm, friendly voice for Magic Mirror
     };
 
     return this.voices[personalityVoices[personality] || 'nova'];
