@@ -5,7 +5,7 @@ import TimeDisplay from './modules/TimeDisplay';
 import WeatherPanel from './modules/weather/WeatherPanel';
 import CalendarPanel from './modules/CalendarPanel';
 import RotatingNewsPanel from './modules/RotatingNewsPanel';
-import WebcamPanel from './modules/webcam/WebcamPanel';
+import DebugPanel from './modules/webcam/DebugPanel';
 import MessagePanel from './modules/MessagePanel';
 
 function MirrorInterface() {
@@ -41,17 +41,7 @@ function MirrorInterface() {
           </div>
         </div>
         
-        {/* Webcam Panel - Underneath weather */}
-        <div className="flex justify-start px-1 mt-4">
-          <div className="w-64 h-48">
-            <WebcamPanel 
-              onAiMessage={setAiMessage}
-              onAiLoading={setIsAiLoading}
-            />
-          </div>
-        </div>
-        
-        {/* News Panel - Underneath webcam */}
+        {/* News Panel - Underneath calendar */}
         <div className="flex justify-end px-1 mt-4">
           <div className="w-[30%]">
             <RotatingNewsPanel />
@@ -60,6 +50,14 @@ function MirrorInterface() {
         
         {/* Spacer to push content to bottom */}
         <div className="flex-1"></div>
+
+        {/* Debug Panel - Bottom Right */}
+        <div className="flex justify-end mb-4">
+          <DebugPanel 
+            onAiMessage={setAiMessage}
+            onAiLoading={setIsAiLoading}
+          />
+        </div>
 
         {/* AI Message Panel - Bottom Center */}
         <MessagePanel 
