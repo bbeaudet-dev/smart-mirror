@@ -27,21 +27,17 @@ const VideoFeed: React.FC<VideoFeedProps> = ({
       {/* Live Video Feed */}
       {stream && isInitialized ? (
         <div className="w-full h-full flex items-center justify-center p-4">
-          {/* Container for rotated video - original was 256x192, rotated becomes 192x256 */}
-          <div className="relative" style={{ width: '192px', height: '256px' }}>
-            <video
-              ref={videoRef}
-              autoPlay
-              playsInline
-              muted
-              className="absolute inset-0 w-full h-full"
-              style={{
-                transform: 'rotate(90deg)',
-                transformOrigin: 'center center',
-                objectFit: 'cover'
-              }}
-            />
-          </div>
+          <video
+            ref={videoRef}
+            autoPlay
+            playsInline
+            muted
+            className="h-48 w-auto"
+            style={{
+              transform: 'rotate(90deg)',
+              transformOrigin: 'center center'
+            }}
+          />
         </div>
       ) : (
         /* Loading/Error State */
