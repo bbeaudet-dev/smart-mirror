@@ -15,7 +15,7 @@ function MirrorInterface() {
   const [isWebcamAnalyzing, setIsWebcamAnalyzing] = useState(false);
 
   return (
-    <div className="w-full h-full bg-mirror-bg text-mirror-text font-mirror-primary pl-14 pr-2 pt-2 pb-2">
+    <div className="w-full h-full bg-mirror-bg text-mirror-text font-mirror-primary pl-16 pr-2 pt-2 pb-2">
       <div className="w-full h-full flex flex-col">
         {/* Time Display - Top Left */}
         <div className="flex justify-start py-1 px-1">
@@ -51,12 +51,14 @@ function MirrorInterface() {
         {/* Spacer to push content to bottom */}
         <div className="flex-1"></div>
 
-        {/* Webcam Panel - Bottom */}
-        <div className="flex flex-col h-full">
-          <WebcamPanel 
-            onAiMessage={setAiMessage}
-            onAiLoading={setIsAiLoading}
-          />
+        {/* Webcam Panel - Bottom Right */}
+        <div className="flex justify-end mb-20">
+          <div className="w-64 h-48">
+            <WebcamPanel 
+              onAiMessage={setAiMessage}
+              onAiLoading={setIsAiLoading}
+            />
+          </div>
         </div>
 
         {/* AI Message Panel - Bottom Center */}

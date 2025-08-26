@@ -4,7 +4,6 @@
 
 /* Magic Mirror Base Styles */
 html {
-  cursor: none;
   overflow: hidden;
   background: #000;
   user-select: none;
