@@ -15,7 +15,7 @@ function MirrorInterface() {
   const [isWebcamAnalyzing, setIsWebcamAnalyzing] = useState(false);
 
   return (
-    <div className="w-full h-full bg-mirror-bg text-mirror-text font-mirror-primary">
+    <div className="w-full h-full bg-mirror-bg text-mirror-text font-mirror-primary p-2">
       <div className="w-full h-full flex flex-col">
         {/* Time Display - Top Left */}
         <div className="flex justify-start py-1 px-1">

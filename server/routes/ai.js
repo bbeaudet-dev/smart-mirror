@@ -78,6 +78,7 @@ router.post('/analyze-outfit-with-weather', upload.single('image'), async (req, 
         timestamp: new Date().toISOString()
       });
     }
+
   } catch (error) {
     console.error('Weather-Aware Outfit Analysis Error:', error);
     res.status(500).json({ 
@@ -130,6 +131,7 @@ router.post('/analyze-outfit', upload.single('image'), async (req, res) => {
         timestamp: new Date().toISOString()
       });
     }
+
   } catch (error) {
     console.error('Outfit Analysis Error:', error);
     res.status(500).json({ 
