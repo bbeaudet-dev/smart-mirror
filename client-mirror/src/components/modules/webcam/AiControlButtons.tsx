@@ -7,6 +7,9 @@ interface AiControlButtonsProps {
   onWeatherOutfitAnalysis: () => void;
   onEnhancedAnalysis: () => void;
   onRoboflowDetection: () => void;
+  onMagicMirrorAnalysis: () => void;
+  onMagicMirrorTTS: () => void;
+  onSnoopTTS: () => void;
   onStartWebcam: () => void;
   onStopWebcam: () => void;
   onVoiceChange?: (voice: string) => void;
@@ -27,6 +30,9 @@ const AiControlButtons: React.FC<AiControlButtonsProps> = ({
   onWeatherOutfitAnalysis,
   onEnhancedAnalysis,
   onRoboflowDetection,
+  onMagicMirrorAnalysis,
+  onMagicMirrorTTS,
+  onSnoopTTS,
   
   onStartWebcam,
   onStopWebcam,
@@ -96,6 +102,18 @@ const AiControlButtons: React.FC<AiControlButtonsProps> = ({
           >
             {isAnalyzing ? 'Processing...' : 'Weather + Outfit'}
           </button>
+
+          <button
+            onClick={onRoboflowDetection}
+            disabled={isAnalyzing}
+            className={`px-3 py-2 rounded text-xs font-medium transition-colors ${
+              isAnalyzing
+                ? 'bg-gray-500 cursor-not-allowed text-gray-400 border border-gray-500'
+                : 'bg-gray-700 hover:bg-gray-600 text-gray-200 border border-gray-600'
+            }`}
+          >
+            {isAnalyzing ? 'Processing...' : 'Detect'}
+          </button>
         </div>
 
         {/* Row 2: Advanced Analysis + Voice Selector */}
@@ -113,7 +131,7 @@ const AiControlButtons: React.FC<AiControlButtonsProps> = ({
           </button>
 
           <button
-            onClick={onRoboflowDetection}
+            onClick={onMagicMirrorAnalysis}
             disabled={isAnalyzing}
             className={`px-3 py-2 rounded text-xs font-medium transition-colors ${
               isAnalyzing
@@ -121,7 +139,31 @@ const AiControlButtons: React.FC<AiControlButtonsProps> = ({
                 : 'bg-gray-700 hover:bg-gray-600 text-gray-200 border border-gray-600'
             }`}
           >
-            {isAnalyzing ? 'Processing...' : 'Detect'}
+            {isAnalyzing ? 'Processing...' : 'Magic Mirror'}
+          </button>
+
+          <button
+            onClick={onMagicMirrorTTS}
+            disabled={isAnalyzing}
+            className={`px-3 py-2 rounded text-xs font-medium transition-colors ${
+              isAnalyzing
+                ? 'bg-gray-500 cursor-not-allowed text-gray-400 border border-gray-500'
+                : 'bg-gray-700 hover:bg-gray-600 text-gray-200 border border-gray-600'
+            }`}
+          >
+            {isAnalyzing ? 'Processing...' : 'Magic Mirror TTS'}
+          </button>
+
+          <button
+            onClick={onSnoopTTS}
+            disabled={isAnalyzing}
+            className={`px-3 py-2 rounded text-xs font-medium transition-colors ${
+              isAnalyzing
+                ? 'bg-gray-500 cursor-not-allowed text-gray-400 border border-gray-500'
+                : 'bg-gray-700 hover:bg-gray-600 text-gray-200 border border-gray-600'
+            }`}
+          >
+            {isAnalyzing ? 'Processing...' : 'Snoop TTS'}
           </button>
 
           {/* Voice Selector */}

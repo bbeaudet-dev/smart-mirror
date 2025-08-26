@@ -25,7 +25,7 @@ class OpenAIService {
       const systemPrompt = SMART_MIRROR_CONTEXT[context] || SMART_MIRROR_CONTEXT['smart-mirror'];
       
       const completion = await openai.chat.completions.create({
-        model: "gpt-4",
+        model: "gpt-4o-mini", // Changed to mini for faster responses
         messages: [
           {
             role: "system",
@@ -60,7 +60,7 @@ class OpenAIService {
       const systemPrompt = SMART_MIRROR_CONTEXT[context] || SMART_MIRROR_CONTEXT['outfit-analysis'];
       
       const completion = await openai.chat.completions.create({
-        model: "gpt-4o",
+        model: "gpt-4o-mini", // Changed to mini for faster responses
         messages: [
           {
             role: "system",

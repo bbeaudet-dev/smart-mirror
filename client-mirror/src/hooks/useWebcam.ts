@@ -89,7 +89,7 @@ export const useWebcam = () => {
         ctx.restore();
         
         // Convert to base64 JPEG
-        const frameData = canvas.toDataURL("image/jpeg", 0.8);
+        const frameData = canvas.toDataURL("image/jpeg", 0.7); // Reduced quality to 70% for speed
         console.log("Frame captured (rotated):", frameData.substring(0, 50) + "...");
         
         return frameData;
@@ -137,7 +137,7 @@ export const useWebcam = () => {
               console.error("Failed to create blob from canvas");
               resolve(null);
             }
-          }, "image/jpeg", 0.8);
+          }, "image/jpeg", 0.7); // Reduced quality to 70% for speed
         } catch (error) {
           console.error("Frame capture failed:", error);
           resolve(null);

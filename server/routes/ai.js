@@ -20,6 +20,182 @@ const upload = multer({
   },
 });
 
+// POST /api/ai/snoop - Snoop Dogg analysis with TTS
+router.post('/snoop', upload.single('image'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'Image file is required' });
+    }
+
+    const imageBuffer = req.file.buffer;
+    const imageType = req.file.mimetype;
+
+    // Get weather data
+    let weatherData = null;
+    try {
+      const WeatherService = require('../services/weatherService');
+      const weatherService = new WeatherService();
+      weatherData = await weatherService.getWeatherData();
+      console.log('Weather data retrieved for Snoop analysis:', weatherData);
+    } catch (weatherError) {
+      console.error('Failed to get weather data for Snoop analysis:', weatherError);
+      // Continue without weather data
+    }
+
+    // Use prompt service for Snoop analysis
+    const PromptService = require('../services/promptService');
+    const snoopPrompt = PromptService.generateSnoopPrompt(weatherData);
+
+    const analysis = await OpenAIService.analyzeImage(imageBuffer, imageType, snoopPrompt, 'snoop-analysis');
+    
+    // Generate TTS audio with onyx voice for Snoop Dogg personality
+    let audioBuffer = null;
+    
+    try {
+      const TTSService = require('../services/ttsService');
+      const ttsService = new TTSService();
+      const ttsResult = await ttsService.generateSpeech(analysis, 'onyx', 'snoop');
+      audioBuffer = ttsResult.audioBuffer;
+    } catch (ttsError) {
+      console.error('TTS generation failed for Snoop:', ttsError);
+    }
+
+    // Return both text and audio
+    if (audioBuffer) {
+      res.json({ 
+        analysis,
+        audio: audioBuffer.toString('base64'),
+        voice: 'onyx',
+        weather: weatherData,
+        timestamp: new Date().toISOString()
+      });
+    } else {
+      res.json({ 
+        analysis,
+        weather: weatherData,
+        timestamp: new Date().toISOString()
+      });
+    }
+
+  } catch (error) {
+    console.error('Snoop Analysis Error:', error);
+    res.status(500).json({ 
+      error: 'Failed to perform Snoop analysis',
+      message: error.message 
+    });
+  }
+});
+
+// POST /api/ai/magic-mirror-tts - Magic Mirror analysis with TTS
+router.post('/magic-mirror-tts', upload.single('image'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'Image file is required' });
+    }
+
+    const imageBuffer = req.file.buffer;
+    const imageType = req.file.mimetype;
+
+    // Get weather data
+    let weatherData = null;
+    try {
+      const WeatherService = require('../services/weatherService');
+      const weatherService = new WeatherService();
+      weatherData = await weatherService.getWeatherData();
+      console.log('Weather data retrieved for Magic Mirror TTS analysis:', weatherData);
+    } catch (weatherError) {
+      console.error('Failed to get weather data for Magic Mirror TTS analysis:', weatherError);
+      // Continue without weather data
+    }
+
+    // Use prompt service for Magic Mirror analysis
+    const PromptService = require('../services/promptService');
+    const magicMirrorPrompt = PromptService.generateMagicMirrorPrompt(weatherData);
+
+    const analysis = await OpenAIService.analyzeImage(imageBuffer, imageType, magicMirrorPrompt, 'magic-mirror-analysis');
+    
+    // Generate TTS audio with fable voice for Magic Mirror personality
+    let audioBuffer = null;
+    
+    try {
+      const TTSService = require('../services/ttsService');
+      const ttsService = new TTSService();
+      const ttsResult = await ttsService.generateSpeech(analysis, 'fable', 'magic-mirror');
+      audioBuffer = ttsResult.audioBuffer;
+    } catch (ttsError) {
+      console.error('TTS generation failed for Magic Mirror:', ttsError);
+    }
+
+    // Return both text and audio
+    if (audioBuffer) {
+      res.json({ 
+        analysis,
+        audio: audioBuffer.toString('base64'),
+        voice: 'fable',
+        weather: weatherData,
+        timestamp: new Date().toISOString()
+      });
+    } else {
+      res.json({ 
+        analysis,
+        weather: weatherData,
+        timestamp: new Date().toISOString()
+      });
+    }
+
+  } catch (error) {
+    console.error('Magic Mirror TTS Analysis Error:', error);
+    res.status(500).json({ 
+      error: 'Failed to perform Magic Mirror TTS analysis',
+      message: error.message 
+    });
+  }
+});
+
+// POST /api/ai/magic-mirror - Magic Mirror text-only analysis
+router.post('/magic-mirror', upload.single('image'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'Image file is required' });
+    }
+
+    const imageBuffer = req.file.buffer;
+    const imageType = req.file.mimetype;
+
+    // Get weather data
+    let weatherData = null;
+    try {
+      const WeatherService = require('../services/weatherService');
+      const weatherService = new WeatherService();
+      weatherData = await weatherService.getWeatherData();
+      console.log('Weather data retrieved for Magic Mirror analysis:', weatherData);
+    } catch (weatherError) {
+      console.error('Failed to get weather data for Magic Mirror analysis:', weatherError);
+      // Continue without weather data
+    }
+
+    // Use prompt service for Magic Mirror analysis
+    const PromptService = require('../services/promptService');
+    const magicMirrorPrompt = PromptService.generateMagicMirrorPrompt(weatherData);
+
+    const analysis = await OpenAIService.analyzeImage(imageBuffer, imageType, magicMirrorPrompt, 'magic-mirror-analysis');
+    
+    // Return text-only response (no TTS for speed)
+    res.json({ 
+      analysis,
+      weather: weatherData,
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error('Magic Mirror Analysis Error:', error);
+    res.status(500).json({ 
+      error: 'Failed to perform Magic Mirror analysis',
+      message: error.message 
+    });
+  }
+});
+
 // POST /api/ai/analyze-outfit-with-weather - Outfit analysis with weather context
 router.post('/analyze-outfit-with-weather', upload.single('image'), async (req, res) => {
   try {

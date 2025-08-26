@@ -225,6 +225,78 @@ class ApiClient {
     }
   }
 
+  /**
+   * Magic Mirror text-only analysis
+   * @param {File} imageFile - Image file
+   * @returns {Promise<Object>} - Magic Mirror analysis result
+   */
+  static async magicMirrorAnalysis(imageFile) {
+    const formData = new FormData();
+    formData.append('image', imageFile);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/ai/magic-mirror`, {
+        method: 'POST',
+        body: formData,
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Magic Mirror Analysis Error:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Magic Mirror analysis with TTS
+   * @param {File} imageFile - Image file
+   * @returns {Promise<Object>} - Magic Mirror analysis result with audio
+   */
+  static async magicMirrorTTS(imageFile) {
+    const formData = new FormData();
+    formData.append('image', imageFile);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/ai/magic-mirror-tts`, {
+        method: 'POST',
+        body: formData,
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Magic Mirror TTS Analysis Error:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Snoop Dogg analysis with TTS
+   * @param {File} imageFile - Image file
+   * @returns {Promise<Object>} - Snoop Dogg analysis result with audio
+   */
+  static async snoopAnalysis(imageFile) {
+    const formData = new FormData();
+    formData.append('image', imageFile);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/ai/snoop`, {
+        method: 'POST',
+        body: formData,
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Snoop Analysis Error:', error);
+      throw error;
+    }
+  }
+
 }
 
 export default ApiClient;
