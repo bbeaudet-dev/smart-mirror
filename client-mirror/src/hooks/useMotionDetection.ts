@@ -392,7 +392,7 @@ export const useMotionDetection = (
             // Play sendoff after analysis audio completes with delay
             setTimeout(() => {
               playSendoffResponse();
-            }, 500); // 0.5 second delay between analysis and sendoff
+            }, 100); // 0.1 second delay between analysis and sendoff
           };
         } catch (audioError) {
           console.error('Failed to play automatic analysis TTS audio:', audioError);
