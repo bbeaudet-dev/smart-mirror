@@ -38,10 +38,10 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
   const [lastCapturedImage, setLastCapturedImage] = useState<string | null>(null);
   const [isDebugPanelVisible, setIsDebugPanelVisible] = useState(true);
   const [analysisCompleteTime, setAnalysisCompleteTime] = useState(0);
+  const [isInteractionActive, setIsInteractionActive] = useState(false); // Track if we're in an active interaction
   const isAnalysisRunningRef = useRef(false);
   const lastAnalysisTimeRef = useRef(0);
   const currentInteractionVoiceRef = useRef<string>('coral'); // Track voice for current interaction
-  const isInteractionCompleteRef = useRef(false); // Track if interaction is complete
 
   // Pre-generated responses (will be loaded from server)
   const [motionResponses, setMotionResponses] = useState<string[]>([]);
@@ -147,37 +147,33 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
       timeSinceLastAnalysis,
       minTimeBetweenAnalyses,
       canTrigger: timeSinceLastAnalysis > minTimeBetweenAnalyses,
-      isInteractionComplete: isInteractionCompleteRef.current
+      isInteractionActive
     });
     
     if (isAutomaticMode && isMotionDetected && !isAnalyzing && !isAnalysisRunningRef.current && 
-        timeSinceLastAnalysis > minTimeBetweenAnalyses && !isInteractionCompleteRef.current) {
+        timeSinceLastAnalysis > minTimeBetweenAnalyses && !isInteractionActive) {
       console.log('Motion detected - starting four-stage flow');
+      
+      // Set interaction as active immediately
+      setIsInteractionActive(true);
+      isAnalysisRunningRef.current = true;
       
       // Stage 1: Immediate motion response (pre-generated audio only)
       playMotionResponse();
       
-      // Set interaction as in progress AFTER motion response starts
-      isInteractionCompleteRef.current = true;
-      isAnalysisRunningRef.current = true;
-      
       // Stage 2: Start AI analysis immediately (before welcome message)
       setTimeout(() => {
-        if (isMotionDetected) {
-          console.log('Starting AI analysis before welcome message');
-          handleAutomaticAnalysis();
-        }
+        console.log('Starting AI analysis before welcome message');
+        handleAutomaticAnalysis();
       }, 500); // Start analysis 500ms after motion response
       
       // Stage 3: Welcome message with pause (3 seconds after motion response)
       setTimeout(() => {
-        if (isMotionDetected) {
-          console.log('Playing welcome message');
-          playWelcomeResponse();
-        }
+        console.log('Playing welcome message');
+        playWelcomeResponse();
       }, 3000); // 3 seconds after motion response (increased pause)
     }
-  }, [isAutomaticMode, isMotionDetected, isAnalyzing, analysisCompleteTime]);
+  }, [isAutomaticMode, isMotionDetected, isAnalyzing, analysisCompleteTime, isInteractionActive]);
 
   const fetchVoices = async () => {
     try {
@@ -305,7 +301,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
         console.log('Sendoff audio blob size:', audioBlob.size, 'bytes');
         
         // Reset interaction state IMMEDIATELY when sendoff starts (allows new interactions)
-        isInteractionCompleteRef.current = false;
+        setIsInteractionActive(false);
         isAnalysisRunningRef.current = false;
         setIsAnalyzing(false);
         
@@ -332,7 +328,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
           console.error('Sendoff audio play() failed:', playError);
         }
         
-        // Clean up URL when audio finishes and reset motion detection
+        // Clean up URL when audio finishes
         audio.onended = () => {
           URL.revokeObjectURL(audioUrl);
           
@@ -565,7 +561,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
               // Reset analysis time when toggling auto mode to allow immediate motion detection
               if (newMode) {
                 setAnalysisCompleteTime(0);
-                isInteractionCompleteRef.current = false;
+                setIsInteractionActive(false);
                 isAnalysisRunningRef.current = false;
                 console.log('Auto mode enabled - motion detection and interaction state reset');
               }
@@ -594,7 +590,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
             }}
             onResetMotionDetection={() => {
               setAnalysisCompleteTime(0);
-              isInteractionCompleteRef.current = false;
+              setIsInteractionActive(false);
               isAnalysisRunningRef.current = false;
               resetMotionDetection();
               console.log('Motion detection and interaction state manually reset');
