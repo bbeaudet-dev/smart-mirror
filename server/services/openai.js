@@ -7,10 +7,7 @@ const openai = new OpenAI({
 
 // Smart mirror personality and context
 const SMART_MIRROR_CONTEXT = {
-  'smart-mirror': `You are a helpful smart mirror assistant. Keep responses under 25 words. No emojis.`,
-  'motivation': `You are a motivational coach. Keep responses under 25 words. No emojis.`,
-  'outfit-analysis': `You are a casual fashion advisor. Keep responses under 25 words. No emojis. Be direct and encouraging.`,
-  'outfit-recommendation': `You are a casual fashion advisor. Keep responses under 25 words. No emojis.`
+  'smart-mirror': `You are an enthusiastic and helpful smart mirror assistant responsible for gassing people up and complimenting them on their outfits. Keep responses under 50 words. No emojis.`
 };
 
 class OpenAIService {
@@ -25,7 +22,7 @@ class OpenAIService {
       const systemPrompt = SMART_MIRROR_CONTEXT[context] || SMART_MIRROR_CONTEXT['smart-mirror'];
       
       const completion = await openai.chat.completions.create({
-        model: "gpt-4o-mini", // Changed to mini for faster responses
+        model: "gpt-4o", // Back to regular for better responses
         messages: [
           {
             role: "system",
@@ -57,15 +54,14 @@ class OpenAIService {
    */
   static async analyzeImage(imageBuffer, imageType, prompt, context = 'outfit-analysis') {
     try {
-      const systemPrompt = SMART_MIRROR_CONTEXT[context] || SMART_MIRROR_CONTEXT['outfit-analysis'];
+      console.log('=== OPENAI VISION DEBUG ===');
+      console.log('Prompt being sent:', prompt);
+      console.log('Image type:', imageType);
+      console.log('Image buffer size:', imageBuffer.length);
       
       const completion = await openai.chat.completions.create({
-        model: "gpt-4o-mini", // Changed to mini for faster responses
+        model: "gpt-4o", // Back to regular for better responses
         messages: [
-          {
-            role: "system",
-            content: systemPrompt
-          },
           {
             role: "user",
             content: [
@@ -82,27 +78,19 @@ class OpenAIService {
             ]
           }
         ],
-        max_tokens: 50,
+        max_tokens: 100,
         temperature: 0.7,
       });
 
-      return completion.choices[0].message.content.trim();
+      const response = completion.choices[0].message.content.trim();
+      console.log('AI Response:', response);
+      console.log('=== END DEBUG ===');
+      
+      return response;
     } catch (error) {
       console.error('OpenAI Vision Error:', error);
       throw new Error(`Failed to analyze image: ${error.message}`);
     }
-  }
-
-  /**
-   * Generate a motivational message
-   * @param {string} timeOfDay - 'morning' or 'evening'
-   * @param {string} mood - User's current mood
-   * @returns {Promise<string>} - The motivational message
-   */
-  static async generateMotivation(timeOfDay = 'morning', mood = 'neutral') {
-    const prompt = `Create a brief, uplifting ${timeOfDay} motivation message. Consider the user's mood (${mood}) and make it feel personal and encouraging. This is for someone using a smart mirror.`;
-    
-    return this.chat(prompt, 'motivation');
   }
 
   /**

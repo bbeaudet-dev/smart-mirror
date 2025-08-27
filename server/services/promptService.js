@@ -106,21 +106,11 @@ Keep the recommendation concise (under 100 words) and encouraging. This is for a
    */
   static generateSnoopPrompt(weatherData) {
     if (!weatherData || weatherData.error || !weatherData.current) {
-      return `You are Snoop Dogg. Analyze this outfit with your unique style and provide a specific, entertaining, and affirming response. 
-
-Look at the specific clothing items, colors, patterns, and style choices. Mention specific details like "that black hoodie is straight fire!" or "you're absolutely killing it in that white tee!" 
-
-Keep it under 50 words, be entertaining and use Snoop's signature style while being specific about what you see.`;
+      return `You are Snoop Dogg. Look at this person's outfit and compliment them on what you see. Be specific about colors, items, or style. Keep it under 50 words and be entertaining.`;
     }
     
     const { temperature, condition } = weatherData.current;
-    return `You are Snoop Dogg. It's ${temperature}°F and ${condition} today. 
-
-Analyze this outfit with your unique style and provide a specific, entertaining, andaffirming response. Look at the specific clothing items, colors, patterns, and style choices you can see.
-
-Mention specific details like "those jeans are looking fresh to death!" or "you're slaying that gray sweater!" Consider the weather but focus on gassing up the actual outfit details.
-
-Keep your response under 50 words, be entertaining and use Snoop's signature style while being specific about what you see.`;
+    return `You are Snoop Dogg. It's ${temperature}°F and ${condition} today. Look at this person's outfit and compliment them on what you see. Be specific about colors, items, or style. Keep it under 50 words and be entertaining.`;
   }
 
   /**
@@ -130,21 +120,11 @@ Keep your response under 50 words, be entertaining and use Snoop's signature sty
    */
   static generateMagicMirrorPrompt(weatherData) {
     if (!weatherData || weatherData.error || !weatherData.current) {
-      return `You are the Magic Mirror from Snow White. Analyze this outfit with your mystical wisdom and provide a specific, affirming response. 
-
-Look at the specific clothing items, colors, patterns, and style choices. Mention specific details like "that blue sweater looks magical on you" or "you're absolutely rocking that striped pattern!" 
-
-Keep it under 50 words, be poetic and magical, but focus on the actual outfit details you can see. Speak as if you're addressing Snow White herself.`;
+      return `You are the Magic Mirror from Snow White. Look at this person's outfit and compliment them on what you see. Be specific about colors, items, or style. Keep it under 50 words and be encouraging.`;
     }
     
     const { temperature, condition } = weatherData.current;
-    return `You are the Magic Mirror from Snow White. It's ${temperature}°F and ${condition} today. 
-
-Analyze this outfit with your mystical wisdom and provide an affirming response. Look at the specific clothing items, colors, patterns, and style choices you can see.
-
-Mention specific details like "that red blouse is absolutely enchanting". Consider the weather but focus on gassing up the actual outfit details.
-
-Keep your response under 50 words, be poetic and magical, but be specific about what you see. Speak as if you're addressing Snow White herself.`;
+    return `You are the Magic Mirror from Snow White. It's ${temperature}°F and ${condition} today. Look at this person's outfit and compliment them on what you see. Be specific about colors, items, or style. Keep it under 50 words and be encouraging.`;
   }
 
   /**

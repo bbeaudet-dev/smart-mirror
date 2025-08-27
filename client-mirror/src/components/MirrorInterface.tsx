@@ -5,7 +5,7 @@ import TimeDisplay from './modules/TimeDisplay';
 import WeatherPanel from './modules/weather/WeatherPanel';
 import CalendarPanel from './modules/CalendarPanel';
 import RotatingNewsPanel from './modules/RotatingNewsPanel';
-import DebugPanel from './modules/webcam/DebugPanel';
+import DebugPanel from './modules/debug/DebugPanel';
 import MessagePanel from './modules/MessagePanel';
 
 function MirrorInterface() {
