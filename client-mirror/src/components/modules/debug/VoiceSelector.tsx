@@ -25,15 +25,6 @@ const VoiceSelector: React.FC<VoiceSelectorProps> = ({ onVoiceChange, currentVoi
     }
   };
 
-  const voiceDescriptions = {
-    alloy: 'Professional & Clear',
-    echo: 'Authoritative & Strong',
-    fable: 'Warm & Friendly',
-    onyx: 'Deep & Smooth (Snoop)',
-    nova: 'Natural & Balanced',
-    shimmer: 'Bright & Energetic (Elle)'
-  };
-
   if (isLoading) {
     return <div className="text-mirror-xs text-mirror-text-dimmed">Loading voices...</div>;
   }
@@ -51,7 +42,7 @@ const VoiceSelector: React.FC<VoiceSelectorProps> = ({ onVoiceChange, currentVoi
               : 'bg-mirror-text-dimmed/20 text-mirror-text hover:bg-mirror-text-dimmed/30'
             }
           `}
-          title={voiceDescriptions[voice as keyof typeof voiceDescriptions] || voice}
+          title={voice}
         >
           {voice}
         </button>

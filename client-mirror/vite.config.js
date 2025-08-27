@@ -15,8 +15,10 @@ export default defineConfig({
       output: {
         manualChunks: undefined
       }
-    }
+    },
+    assetsInlineLimit: 0
   },
+  base: './',
   server: {
     port: 3000,
     host: '0.0.0.0', // Allow external connections

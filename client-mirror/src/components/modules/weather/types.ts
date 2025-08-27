@@ -26,15 +26,3 @@ export interface WeatherData {
   location?: string;
   lastUpdated?: string;
 }
-
-
-
-
-
-
-
-
-
-
-
-

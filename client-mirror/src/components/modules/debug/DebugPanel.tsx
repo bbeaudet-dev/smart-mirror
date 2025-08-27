@@ -12,6 +12,7 @@ import DebugControls from './DebugControls';
 import AiControlButtons from './AiControlButtons';
 import DebugImageDisplay from './DebugImageDisplay';
 
+
 interface DebugPanelProps {
   onAiMessage?: (message: string, type: 'ai-response' | 'outfit-analysis' | 'general') => void;
   onAiLoading?: (loading: boolean) => void;
@@ -34,29 +35,15 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
   const [selectedVoice, setSelectedVoice] = useState('nova');
   const [voices, setVoices] = useState<string[]>([]);
   const [isLoadingVoices, setIsLoadingVoices] = useState(true);
-  const [isAutomaticMode, setIsAutomaticMode] = useState(false);
+  const [isAutomaticMode, setIsAutomaticMode] = useState(true);
   const [lastCapturedImage, setLastCapturedImage] = useState<string | null>(null);
   const [isDebugPanelVisible, setIsDebugPanelVisible] = useState(true);
   const isAnalysisRunningRef = useRef(false);
   const lastAnalysisTimeRef = useRef(0);
 
-  // Pre-generated responses
-  const motionResponses = [
-    "Hey you! Over here!",
-    "Don't look at me like that!",
-    "Well, well, well, what do we have here?",
-    "Someone's looking fancy today!",
-    "Oh my, what a sight for sore eyes!",
-    "Are you just going to ignore me?"
-  ];
-
-  const welcomeResponses = [
-    "Why hello there!",
-    "Welcome, step right up!",
-    "Ah, a visitor!",
-    "Let me take a look at you!",
-    "What have we here?"
-  ];
+  // Pre-generated responses (will be loaded from server)
+  const [motionResponses, setMotionResponses] = useState<string[]>([]);
+  const [welcomeResponses, setWelcomeResponses] = useState<string[]>([]);
 
   // Motion detection hook
   const {
@@ -76,12 +63,26 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
   useEffect(() => {
     startWebcam();
     fetchVoices();
+    loadPreGeneratedResponses();
     
     return () => {
       stopWebcam();
       stopMotionDetection();
     };
   }, []);
+
+  // Load pre-generated responses from server
+  const loadPreGeneratedResponses = async () => {
+    try {
+      const response = await ApiClient.getResponses() as any;
+      if (response.success) {
+        setMotionResponses(response.responses.motion);
+        setWelcomeResponses(response.responses.welcome);
+      }
+    } catch (error) {
+      console.error('Failed to load pre-generated responses:', error);
+    }
+  };
 
   // Keyboard shortcut to toggle debug panel
   useEffect(() => {
@@ -136,10 +137,10 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
     if (isAutomaticMode && isMotionDetected && !isAnalyzing && !isAnalysisRunningRef.current && timeSinceLastAnalysis > minTimeBetweenAnalyses) {
       console.log('Motion detected - starting three-stage flow');
       
-      // Stage 1: Immediate motion response (pre-generated)
+      // Stage 1: Immediate motion response (pre-generated audio only)
       playMotionResponse();
       
-      // Stage 2: Stabilization period (1 second for better image quality)
+      // Stage 2: Stabilization period (2 seconds to avoid overlap)
       setTimeout(() => {
         // Stage 3: Person detection check (simplified - if motion still detected, assume person)
         if (isMotionDetected && !isAnalysisRunningRef.current) {
@@ -150,7 +151,8 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
           playWelcomeResponse();
           handleAutomaticAnalysis();
         }
-      }, 1000);
+      }, 2000); // Increased from 1 second to 2 seconds
+      // TODO: Add person-detection logic for welcome messages, or some other trigger
     }
   }, [isAutomaticMode, isMotionDetected, isAnalyzing]);
 
@@ -171,16 +173,64 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
   };
 
   // Pre-generated response functions
-  const playMotionResponse = () => {
-    const randomResponse = motionResponses[Math.floor(Math.random() * motionResponses.length)];
-    console.log('Playing motion response:', randomResponse);
-    onAiMessage?.(randomResponse, 'general');
+  const playMotionResponse = async () => {
+    try {
+      // Get random motion response audio only (no text display)
+      const audioResponse = await fetch(ApiClient.getMotionAudioUrl());
+      
+      if (audioResponse.ok) {
+        const audioBlob = await audioResponse.blob();
+        
+        console.log('Playing motion response audio');
+        
+        // Play the audio (no text display)
+        const audioUrl = URL.createObjectURL(audioBlob);
+        const audio = new Audio(audioUrl);
+        await audio.play();
+        
+        // Clean up URL when audio finishes
+        audio.onended = () => {
+          URL.revokeObjectURL(audioUrl);
+        };
+      }
+    } catch (error) {
+      console.error('Error playing motion response:', error);
+    }
   };
 
-  const playWelcomeResponse = () => {
-    const randomResponse = welcomeResponses[Math.floor(Math.random() * welcomeResponses.length)];
-    console.log('Playing welcome response:', randomResponse);
-    onAiMessage?.(randomResponse, 'general');
+  const playWelcomeResponse = async () => {
+    try {
+      // Get random welcome response text and audio
+      const [textResponse, audioResponse] = await Promise.all([
+        ApiClient.getWelcomeText(),
+        fetch(ApiClient.getWelcomeAudioUrl())
+      ]);
+      
+      if ((textResponse as any).success && audioResponse.ok) {
+        const text = (textResponse as any).text;
+        const audioBlob = await audioResponse.blob();
+        
+        console.log('Playing welcome response:', text);
+        
+        // Display the text
+        onAiMessage?.(text, 'general');
+        
+        // Play the audio
+        const audioUrl = URL.createObjectURL(audioBlob);
+        const audio = new Audio(audioUrl);
+        await audio.play();
+        
+        // Clean up URL when audio finishes
+        audio.onended = () => {
+          URL.revokeObjectURL(audioUrl);
+        };
+      }
+    } catch (error) {
+      console.error('Error playing welcome response:', error);
+      // Fallback to text-only
+      const randomResponse = welcomeResponses[Math.floor(Math.random() * welcomeResponses.length)];
+      onAiMessage?.(randomResponse, 'general');
+    }
   };
 
   // Debug function to capture and display current frame
@@ -390,12 +440,16 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
             onToggleAutomaticMode={() => setIsAutomaticMode(!isAutomaticMode)}
           />
 
+
+
           {/* Debug Controls */}
           <DebugControls
             isInitialized={isInitialized}
             isAnalyzing={isAnalyzing}
             onCaptureDebugImage={captureDebugImage}
             onTestMagicMirror={() => handleAiAnalysis('magic-mirror-tts')}
+            onTestMotionAudio={playMotionResponse}
+            onTestWelcomeAudio={playWelcomeResponse}
           />
 
           {/* AI Control Buttons */}

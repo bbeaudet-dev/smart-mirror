@@ -11,6 +11,7 @@ const { router: authRoutes } = require('./routes/auth');
 const calendarRoutes = require('./routes/calendar');
 const newsRoutes = require('./routes/news');
 const ttsRoutes = require('./routes/tts');
+const preGeneratedAudioRoutes = require('./routes/preGeneratedAudio');
 const app = express();
 const PORT = process.env.PORT || 5005;
 
@@ -36,6 +37,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/calendar', calendarRoutes);
 app.use('/api/news', newsRoutes);
 app.use('/api/tts', ttsRoutes);
+app.use('/api/pre-generated-audio', preGeneratedAudioRoutes);
 app.use('/api', apiRoutes);
 
 // Health check endpoint

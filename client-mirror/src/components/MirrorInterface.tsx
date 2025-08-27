@@ -6,7 +6,7 @@ import WeatherPanel from './modules/weather/WeatherPanel';
 import CalendarPanel from './modules/CalendarPanel';
 import RotatingNewsPanel from './modules/RotatingNewsPanel';
 import DebugPanel from './modules/debug/DebugPanel';
-import MessagePanel from './modules/MessagePanel';
+import MessagePanel from './modules/messages/MessagePanel';
 
 function MirrorInterface() {
   const [aiMessage, setAiMessage] = useState<string | null>(null);

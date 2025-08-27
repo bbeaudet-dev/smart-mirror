@@ -1,6 +1,10 @@
 // Use environment variable or try to detect the correct server URL
 const API_BASE_URL = import.meta.env.VITE_API_URL || 
-  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:5005' : `http://${window.location.hostname}:5005`);
+  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || !window.location.hostname ? 'http://localhost:5005' : `http://${window.location.hostname}:5005`);
+
+console.log('🔧 API_BASE_URL:', API_BASE_URL);
+console.log('🔧 window.location.hostname:', window.location.hostname);
+console.log('🔧 import.meta.env.VITE_API_URL:', import.meta.env.VITE_API_URL);
   
 
 class ApiClient {
@@ -11,6 +15,7 @@ class ApiClient {
    */
   static async get(endpoint) {
     try {
+      console.log(`🌐 API GET Request: ${API_BASE_URL}${endpoint}`);
       const response = await fetch(`${API_BASE_URL}${endpoint}`);
       
       if (!response.ok) {
@@ -40,6 +45,7 @@ class ApiClient {
    */
   static async post(endpoint, data) {
     try {
+      console.log(`🌐 API POST Request: ${API_BASE_URL}${endpoint}`);
       const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: 'POST',
         headers: {
@@ -319,6 +325,62 @@ class ApiClient {
       console.error('Automatic Analysis Error:', error);
       throw error;
     }
+  }
+
+  /**
+   * Get pre-generated audio status
+   * @returns {Promise<Object>} - Status of pre-generated audio files
+   */
+  static async getPreGeneratedAudioStatus() {
+    return this.get('/api/pre-generated-audio/status');
+  }
+
+  /**
+   * Generate all pre-generated audio files
+   * @returns {Promise<Object>} - Generation result
+   */
+  static async generatePreGeneratedAudio() {
+    return this.post('/api/pre-generated-audio/generate', {});
+  }
+
+  /**
+   * Get a random motion response audio URL
+   * @returns {string} - URL to motion audio file
+   */
+  static getMotionAudioUrl() {
+    return `${API_BASE_URL}/api/pre-generated-audio/motion`;
+  }
+
+  /**
+   * Get a random welcome response audio URL
+   * @returns {string} - URL to welcome audio file
+   */
+  static getWelcomeAudioUrl() {
+    return `${API_BASE_URL}/api/pre-generated-audio/welcome`;
+  }
+
+  /**
+   * Get a random motion response text
+   * @returns {Promise<Object>} - Motion response text
+   */
+  static async getMotionText() {
+    return this.get('/api/pre-generated-audio/motion-text');
+  }
+
+  /**
+   * Get a random welcome response text
+   * @returns {Promise<Object>} - Welcome response text
+   */
+  static async getWelcomeText() {
+    return this.get('/api/pre-generated-audio/welcome-text');
+  }
+
+  /**
+   * Get all available response messages
+   * @returns {Promise<Object>} - All response messages
+   */
+  static async getResponses() {
+    return this.get('/api/pre-generated-audio/responses');
   }
 
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { WeatherData } from '../../../data/types';
+import { WeatherData } from './types';
 import CurrentWeather from './CurrentWeather';
 import WeeklyForecast from './WeeklyForecast';
 import ApiClient from '../../../services/apiClient';

@@ -15,7 +15,9 @@ class TTSService {
       fable: 'fable',
       onyx: 'onyx',
       nova: 'nova',
-      shimmer: 'shimmer'
+      shimmer: 'shimmer',
+      coral: 'coral',
+      ash: 'ash'
     };
     
     // Default voice

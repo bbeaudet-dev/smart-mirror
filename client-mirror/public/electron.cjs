@@ -1,6 +1,7 @@
 const { app, BrowserWindow, Menu, screen, globalShortcut } = require('electron');
 const path = require('path');
-const isDev = require('electron-is-dev');
+
+
 
 let mainWindow;
 
@@ -19,7 +20,8 @@ function createWindow() {
       nodeIntegration: false,
       contextIsolation: true,
       enableRemoteModule: false,
-      preload: path.join(__dirname, 'preload.js')
+      preload: path.join(__dirname, 'preload.cjs'),
+      webSecurity: true
     },
     // Magic Mirror specific settings
     frame: false, // Remove window frame
@@ -39,11 +41,22 @@ function createWindow() {
   });
 
   // Load the app
-  const startUrl = isDev 
+  const startUrl = process.env.NODE_ENV !== 'production'
     ? 'http://localhost:3000' 
     : `file://${path.join(__dirname, '../dist/index.html')}`;
   
   mainWindow.loadURL(startUrl);
+
+  // Add error handling for page load
+  mainWindow.webContents.on('did-fail-load', (event, errorCode, errorDescription, validatedURL) => {
+    console.error('Failed to load URL:', validatedURL);
+    console.error('Error code:', errorCode);
+    console.error('Error description:', errorDescription);
+  });
+
+  mainWindow.webContents.on('did-finish-load', () => {
+    console.log('Page loaded successfully');
+  });
 
   // Show window when ready
   mainWindow.once('ready-to-show', () => {
@@ -73,7 +86,7 @@ function createWindow() {
   // Handle keyboard shortcuts
   mainWindow.webContents.on('before-input-event', (event, input) => {
     // Allow Ctrl+Shift+I for developer tools in development
-    if (isDev && input.control && input.shift && input.key.toLowerCase() === 'i') {
+    if (process.env.NODE_ENV !== 'production' && input.control && input.shift && input.key.toLowerCase() === 'i') {
       return;
     }
     
@@ -106,9 +119,9 @@ function createWindow() {
   });
 
   // Open DevTools in development
-  console.log('isDev:', isDev, 'NODE_ENV:', process.env.NODE_ENV);
+  console.log('NODE_ENV:', process.env.NODE_ENV);
   console.log('Loading URL:', startUrl);
-  if (isDev) {
+  if (process.env.NODE_ENV !== 'production') {
     console.log('Opening DevTools in development mode');
     mainWindow.webContents.openDevTools({ mode: 'detach' });
   } else {
@@ -160,7 +173,7 @@ app.on('web-contents-created', (event, contents) => {
     const parsedUrl = new URL(navigationUrl);
     
     // Only allow navigation to localhost in development
-    if (isDev && parsedUrl.hostname === 'localhost') {
+    if (process.env.NODE_ENV !== 'production' && parsedUrl.hostname === 'localhost') {
       return;
     }
     
