@@ -20,7 +20,7 @@ class PreGeneratedAudioService {
       "I've been WAITING all day for you!",
       "You're finally here!",
       "Hey, you can't sneak past me that easily!",
-      "Pssst. Psssst. Yes, you. Over here!",
+      "Hey, you. Yes, you! Over here!",
       "Hello stranger! What brings you here?",
     ];
     
