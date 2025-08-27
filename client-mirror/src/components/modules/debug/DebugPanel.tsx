@@ -38,6 +38,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
   const [isAutomaticMode, setIsAutomaticMode] = useState(true);
   const [lastCapturedImage, setLastCapturedImage] = useState<string | null>(null);
   const [isDebugPanelVisible, setIsDebugPanelVisible] = useState(true);
+  const [analysisCompleteTime, setAnalysisCompleteTime] = useState(0);
   const isAnalysisRunningRef = useRef(false);
   const lastAnalysisTimeRef = useRef(0);
 
@@ -131,8 +132,18 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
   // Handle motion detection with proper three-stage flow from spec
   useEffect(() => {
     const now = Date.now();
-    const timeSinceLastAnalysis = now - lastAnalysisTimeRef.current;
+    const timeSinceLastAnalysis = now - analysisCompleteTime;
     const minTimeBetweenAnalyses = 10000; // 10 seconds as per spec
+    
+    console.log('Motion detection check:', {
+      isAutomaticMode,
+      isMotionDetected,
+      isAnalyzing,
+      isAnalysisRunning: isAnalysisRunningRef.current,
+      timeSinceLastAnalysis,
+      minTimeBetweenAnalyses,
+      canTrigger: timeSinceLastAnalysis > minTimeBetweenAnalyses
+    });
     
     if (isAutomaticMode && isMotionDetected && !isAnalyzing && !isAnalysisRunningRef.current && timeSinceLastAnalysis > minTimeBetweenAnalyses) {
       console.log('Motion detected - starting three-stage flow');
@@ -145,16 +156,16 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
         // Stage 3: Person detection check (simplified - if motion still detected, assume person)
         if (isMotionDetected && !isAnalysisRunningRef.current) {
           console.log('Person confirmed - playing welcome + starting AI analysis');
-          lastAnalysisTimeRef.current = Date.now();
           
           // Play welcome response and start AI analysis simultaneously
+          // Note: lastAnalysisTimeRef.current will be set AFTER AI analysis audio finishes
           playWelcomeResponse();
           handleAutomaticAnalysis();
         }
       }, 2000); // Increased from 1 second to 2 seconds
       // TODO: Add person-detection logic for welcome messages, or some other trigger
     }
-  }, [isAutomaticMode, isMotionDetected, isAnalyzing]);
+  }, [isAutomaticMode, isMotionDetected, isAnalyzing, analysisCompleteTime]);
 
   const fetchVoices = async () => {
     try {
@@ -311,6 +322,11 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
       isAnalysisRunningRef.current = false;
       setIsAnalyzing(false);
       onAiLoading?.(false);
+      // Set the analysis complete time to trigger motion detection re-evaluation
+      const now = Date.now();
+      lastAnalysisTimeRef.current = now;
+      setAnalysisCompleteTime(now);
+      console.log('AI analysis completed - motion detection re-enabled at:', new Date(now).toISOString());
     }
   };
 
@@ -427,7 +443,15 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
           <AutomaticModeToggle
             isAutomaticMode={isAutomaticMode}
             isAnalyzing={isAnalyzing}
-            onToggleAutomaticMode={() => setIsAutomaticMode(!isAutomaticMode)}
+            onToggleAutomaticMode={() => {
+              const newMode = !isAutomaticMode;
+              setIsAutomaticMode(newMode);
+              // Reset analysis time when toggling auto mode to allow immediate motion detection
+              if (newMode) {
+                setAnalysisCompleteTime(0);
+                console.log('Auto mode enabled - motion detection reset');
+              }
+            }}
           />
 
 
@@ -440,6 +464,10 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
             onTestMagicMirror={() => handleAiAnalysis('magic-mirror-tts')}
             onTestMotionAudio={playMotionResponse}
             onTestWelcomeAudio={playWelcomeResponse}
+            onResetMotionDetection={() => {
+              setAnalysisCompleteTime(0);
+              console.log('Motion detection manually reset');
+            }}
           />
 
           {/* AI Control Buttons */}

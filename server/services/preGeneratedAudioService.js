@@ -16,7 +16,6 @@ class PreGeneratedAudioService {
         "Welcome, step right up!",
         "Let me take a look at you!",
         "Ahhh, a visitor!",
-        "Don't look at me like that!",
         "Step into the spotlight!",
         "Hello there, beautiful!",
         "Time for your close-up!",

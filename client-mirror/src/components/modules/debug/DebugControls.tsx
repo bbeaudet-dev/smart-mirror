@@ -7,6 +7,7 @@ interface DebugControlsProps {
   onTestMagicMirror: () => void;
   onTestMotionAudio: () => Promise<void>;
   onTestWelcomeAudio: () => Promise<void>;
+  onResetMotionDetection: () => void;
 }
 
 const DebugControls: React.FC<DebugControlsProps> = ({
@@ -15,7 +16,8 @@ const DebugControls: React.FC<DebugControlsProps> = ({
   onCaptureDebugImage,
   onTestMagicMirror,
   onTestMotionAudio,
-  onTestWelcomeAudio
+  onTestWelcomeAudio,
+  onResetMotionDetection
 }) => {
   return (
     <div className="flex items-center space-x-2">
@@ -65,6 +67,18 @@ const DebugControls: React.FC<DebugControlsProps> = ({
         }`}
       >
         Test Welcome Audio
+      </button>
+      
+      <button
+        onClick={onResetMotionDetection}
+        disabled={isAnalyzing}
+        className={`px-3 py-2 rounded text-xs font-medium transition-colors ${
+          isAnalyzing
+            ? 'bg-gray-500 cursor-not-allowed text-gray-400 border border-gray-500'
+            : 'bg-red-700 hover:bg-red-600 text-red-200 border border-red-600'
+        }`}
+      >
+        Reset Motion Detection
       </button>
     </div>
   );
