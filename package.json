@@ -7,7 +7,11 @@
     "dev": "concurrently \"cd server && npm run dev\" \"cd client-mirror && npm run electron-dev\"",
     "build": "cd client-mirror && npm run build",
     "start": "cd server && npm start",
-    "prod": "npm run build && concurrently \"cd server && npm start\" \"cd client-mirror && electron .\"",
+    "prod": "npm run build && concurrently \"cd server && NODE_ENV=production npm start\" \"cd client-mirror && NODE_ENV=production npx electron .\"",
+    "prod:pi": "npm run install:all && npm run build && concurrently \"cd server && NODE_ENV=production npm start\" \"cd client-mirror && NODE_ENV=production npx electron .\"",
+    "prod:debug": "echo 'Building...' && npm run build && echo 'Starting server...' && cd server && npm start & echo 'Starting electron...' && cd ../client-mirror && npx electron .",
+    "test:build": "npm run build && echo 'Build completed successfully!' && ls -la client-mirror/dist/",
+    "generate-audio": "cd server && node -e \"require('dotenv').config(); require('./services/preGeneratedAudioService').generateAllAudio().then(() => console.log('✅ Audio generation complete')).catch(console.error)\"",
     "install:all": "npm install && cd server && npm install && cd .. && cd client-mirror && npm install",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

@@ -120,7 +120,4 @@ server/data/tokens.json
 # Debug images and audio cache
 server/debug-images/
 server/data/audio-cache/
-
-# Debug images and audio cache
-server/debug-images/
-server/data/audio-cache/
+server/data/audio-pre-generated/

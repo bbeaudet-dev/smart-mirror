@@ -74,7 +74,11 @@ export class SpeechService {
    */
   private async generateSpeech(text: string, personality: string): Promise<Blob> {
     try {
-      const response = await fetch(`http://localhost:5005/api/tts/generate`, {
+      // Use the same API URL logic as ApiClient
+      const API_BASE_URL = (import.meta as any).env.VITE_API_URL || 
+        (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || !window.location.hostname ? 'http://localhost:5005' : `http://${window.location.hostname}:5005`);
+      
+      const response = await fetch(`${API_BASE_URL}/api/tts/generate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

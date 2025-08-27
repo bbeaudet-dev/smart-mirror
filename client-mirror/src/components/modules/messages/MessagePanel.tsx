@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import AiLoadingSpinner from './AiLoadingSpinner';
 
 interface MessagePanelProps {
   message?: string | null;
@@ -14,7 +15,7 @@ const MessagePanel: React.FC<MessagePanelProps> = ({
   const [displayMessage, setDisplayMessage] = useState<string | null>(message || null);
   const [isVisible, setIsVisible] = useState(false);
 
-    useEffect(() => {
+  useEffect(() => {
     console.log("MessagePanel: Received message:", message);
     console.log("MessagePanel: isLoading:", isLoading);
     
@@ -60,11 +61,8 @@ const MessagePanel: React.FC<MessagePanelProps> = ({
         ${isVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-95'}
       `}>
         {isLoading ? (
-          <div className="flex items-center justify-center space-x-3">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-mirror-text"></div>
-            <span className="text-mirror-base text-mirror-text font-mirror-primary">
-              AI is thinking...
-            </span>
+          <div className="flex items-center justify-center">
+            <AiLoadingSpinner isVisible={isLoading} />
           </div>
         ) : (
           <div className="flex items-start space-x-4">
