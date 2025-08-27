@@ -115,13 +115,13 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
 
   return (
     <div className="fixed bottom-4 right-6 z-50">
-      {/* Video element for frame capture and display */}
+      {/* Video element for frame capture (hidden for production) */}
       <video
         ref={videoRef}
         autoPlay
         playsInline
         muted
-        className={isDebugPanelVisible ? "w-32 h-24 object-cover rounded" : "hidden"}
+        className="hidden"
         style={{
           transform: 'rotate(90deg)',
           transformOrigin: 'center center'
