@@ -152,6 +152,95 @@ router.post('/magic-mirror-tts', upload.single('image'), async (req, res) => {
   }
 });
 
+// POST /api/ai/automatic - Automatic analysis for motion detection
+router.post('/automatic', upload.single('image'), async (req, res) => {
+  console.log('=== AUTOMATIC ROUTE CALLED ===');
+  console.log('Request body keys:', Object.keys(req.body || {}));
+  console.log('File received:', req.file ? 'YES' : 'NO');
+  if (req.file) {
+    console.log('File mimetype:', req.file.mimetype);
+    console.log('File size:', req.file.size);
+  }
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'Image file is required' });
+    }
+
+    const imageBuffer = req.file.buffer;
+    const imageType = req.file.mimetype;
+    
+    // DEBUG: Save image to see what we're actually sending
+    const fs = require('fs');
+    const path = require('path');
+    const debugDir = path.join(__dirname, '../debug-images');
+    if (!fs.existsSync(debugDir)) {
+      fs.mkdirSync(debugDir, { recursive: true });
+    }
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const debugPath = path.join(debugDir, `debug-${timestamp}.jpg`);
+    fs.writeFileSync(debugPath, imageBuffer);
+    console.log('DEBUG: Saved image to:', debugPath);
+
+    // Get weather data
+    let weatherData = null;
+    try {
+      const WeatherService = require('../services/weatherService');
+      const weatherService = new WeatherService();
+      weatherData = await weatherService.getWeatherData();
+      console.log('Weather data retrieved for automatic analysis:', weatherData);
+    } catch (weatherError) {
+      console.error('Failed to get weather data for automatic analysis:', weatherError);
+      // Continue without weather data
+    }
+
+    // Use prompt service for automatic analysis (same as Magic Mirror TTS for now)
+    const PromptService = require('../services/promptService');
+    const automaticPrompt = PromptService.generateMagicMirrorPrompt(weatherData);
+    
+    console.log('=== AUTOMATIC ANALYSIS DEBUG ===');
+    console.log('Generated prompt:', automaticPrompt);
+    console.log('Weather data:', weatherData);
+
+    const analysis = await OpenAIService.analyzeImage(imageBuffer, imageType, automaticPrompt, 'automatic-analysis');
+    
+    // Generate TTS audio with fable voice for automatic responses
+    let audioBuffer = null;
+    
+    try {
+      const TTSService = require('../services/ttsService');
+      const ttsService = new TTSService();
+      const ttsResult = await ttsService.generateSpeech(analysis, 'fable', 'automatic');
+      audioBuffer = ttsResult.audioBuffer;
+    } catch (ttsError) {
+      console.error('TTS generation failed for automatic analysis:', ttsError);
+    }
+
+    // Return both text and audio
+    if (audioBuffer) {
+      res.json({ 
+        analysis,
+        audio: audioBuffer.toString('base64'),
+        voice: 'fable',
+        weather: weatherData,
+        timestamp: new Date().toISOString()
+      });
+    } else {
+      res.json({ 
+        analysis,
+        weather: weatherData,
+        timestamp: new Date().toISOString()
+      });
+    }
+
+  } catch (error) {
+    console.error('Automatic Analysis Error:', error);
+    res.status(500).json({ 
+      error: 'Failed to perform automatic analysis',
+      message: error.message 
+    });
+  }
+});
+
 // POST /api/ai/magic-mirror - Magic Mirror text-only analysis
 router.post('/magic-mirror', upload.single('image'), async (req, res) => {
   try {

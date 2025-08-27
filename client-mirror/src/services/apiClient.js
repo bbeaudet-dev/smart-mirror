@@ -297,6 +297,30 @@ class ApiClient {
     }
   }
 
+  /**
+   * Automatic analysis for motion detection
+   * @param {File} imageFile - Image file
+   * @returns {Promise<Object>} - Automatic analysis result with audio
+   */
+  static async automaticAnalysis(imageFile) {
+    const formData = new FormData();
+    formData.append('image', imageFile);
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/ai/automatic`, {
+        method: 'POST',
+        body: formData,
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Automatic Analysis Error:', error);
+      throw error;
+    }
+  }
+
 }
 
 export default ApiClient;
