@@ -40,10 +40,13 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
   const [analysisCompleteTime, setAnalysisCompleteTime] = useState(0);
   const isAnalysisRunningRef = useRef(false);
   const lastAnalysisTimeRef = useRef(0);
+  const currentInteractionVoiceRef = useRef<string>('coral'); // Track voice for current interaction
+  const isInteractionCompleteRef = useRef(false); // Track if interaction is complete
 
   // Pre-generated responses (will be loaded from server)
   const [motionResponses, setMotionResponses] = useState<string[]>([]);
   const [welcomeResponses, setWelcomeResponses] = useState<string[]>([]);
+  const [sendoffResponses, setSendoffResponses] = useState<string[]>([]);
 
   // Motion detection hook
   const {
@@ -55,9 +58,9 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
     stopMotionDetection,
     resetMotionDetection
   } = useMotionDetection(videoRef as React.RefObject<HTMLVideoElement>, {
-    threshold: 0.15, // 15% of pixels must change (increased from 10%)
-    interval: 100,
-    minMotionDuration: 1000 // Increased from 500ms to 1000ms
+    threshold: 0.075, // 7.5% of pixels must change (balanced sensitivity)
+    interval: 100, // 100ms interval
+    minMotionDuration: 500 // 0.5 second minimum motion duration
   });
 
   // Auto-start webcam when component mounts
@@ -79,6 +82,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
       if (response.success) {
         setMotionResponses(response.responses.motion);
         setWelcomeResponses(response.responses.welcome);
+        setSendoffResponses(response.responses.sendoff);
       }
     } catch (error) {
       console.error('Failed to load pre-generated responses:', error);
@@ -129,7 +133,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
     }
   }, [isInitialized, isMotionDetectionActive, startMotionDetection]);
 
-  // Handle motion detection with proper three-stage flow from spec
+  // Handle motion detection with proper four-stage flow
   useEffect(() => {
     const now = Date.now();
     const timeSinceLastAnalysis = now - analysisCompleteTime;
@@ -142,28 +146,36 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
       isAnalysisRunning: isAnalysisRunningRef.current,
       timeSinceLastAnalysis,
       minTimeBetweenAnalyses,
-      canTrigger: timeSinceLastAnalysis > minTimeBetweenAnalyses
+      canTrigger: timeSinceLastAnalysis > minTimeBetweenAnalyses,
+      isInteractionComplete: isInteractionCompleteRef.current
     });
     
-        if (isAutomaticMode && isMotionDetected && !isAnalyzing && !isAnalysisRunningRef.current && timeSinceLastAnalysis > minTimeBetweenAnalyses) {
-      console.log('Motion detected - starting three-stage flow');
+    if (isAutomaticMode && isMotionDetected && !isAnalyzing && !isAnalysisRunningRef.current && 
+        timeSinceLastAnalysis > minTimeBetweenAnalyses && !isInteractionCompleteRef.current) {
+      console.log('Motion detected - starting four-stage flow');
       
       // Stage 1: Immediate motion response (pre-generated audio only)
       playMotionResponse();
       
-      // Stage 2: Stabilization period (2 seconds to allow person to settle in frame)
+      // Set interaction as in progress AFTER motion response starts
+      isInteractionCompleteRef.current = true;
+      isAnalysisRunningRef.current = true;
+      
+      // Stage 2: Start AI analysis immediately (before welcome message)
       setTimeout(() => {
-        // Stage 3: Person detection check (simplified - if motion still detected, assume person)
-        if (isMotionDetected && !isAnalysisRunningRef.current) {
-          console.log('Person confirmed - playing welcome + starting AI analysis');
-          
-          // Play welcome response and start AI analysis simultaneously
-          // Note: lastAnalysisTimeRef.current will be set AFTER AI analysis audio finishes
-          playWelcomeResponse();
+        if (isMotionDetected) {
+          console.log('Starting AI analysis before welcome message');
           handleAutomaticAnalysis();
         }
-      }, 2000); // 2 seconds
-      // TODO: Add person-detection logic for welcome messages, or some other trigger
+      }, 500); // Start analysis 500ms after motion response
+      
+      // Stage 3: Welcome message with pause (3 seconds after motion response)
+      setTimeout(() => {
+        if (isMotionDetected) {
+          console.log('Playing welcome message');
+          playWelcomeResponse();
+        }
+      }, 3000); // 3 seconds after motion response (increased pause)
     }
   }, [isAutomaticMode, isMotionDetected, isAnalyzing, analysisCompleteTime]);
 
@@ -186,13 +198,20 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
   // Pre-generated response functions
   const playMotionResponse = async () => {
     try {
-      // Get random motion response audio only (no text display)
-      const audioResponse = await fetch(ApiClient.getMotionAudioUrl());
+      // Choose a random voice for this interaction cycle
+      const voices = ['coral']; // (removed ash for testing)
+      const selectedVoice = voices[Math.floor(Math.random() * voices.length)];
+      currentInteractionVoiceRef.current = selectedVoice;
+      
+      console.log(`Starting new interaction with voice: ${selectedVoice}`);
+      
+      // Get motion response audio with the selected voice
+      const audioResponse = await fetch(`${ApiClient.getMotionAudioUrl()}?voice=${selectedVoice}`);
       
       if (audioResponse.ok) {
         const audioBlob = await audioResponse.blob();
         
-        console.log('Playing motion response audio');
+        console.log(`Playing motion response audio with voice: ${selectedVoice}`);
         
         // Play the audio (no text display)
         const audioUrl = URL.createObjectURL(audioBlob);
@@ -211,13 +230,16 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
 
   const playWelcomeResponse = async () => {
     try {
-      // Get random welcome response audio only (no text display)
-      const audioResponse = await fetch(ApiClient.getWelcomeAudioUrl());
+      // Use the same voice as the motion response
+      const selectedVoice = currentInteractionVoiceRef.current;
+      
+      // Get welcome response audio with the same voice
+      const audioResponse = await fetch(`${ApiClient.getWelcomeAudioUrl()}?voice=${selectedVoice}`);
       
       if (audioResponse.ok) {
         const audioBlob = await audioResponse.blob();
         
-        console.log('Playing welcome response audio');
+        console.log(`Playing welcome response audio with voice: ${selectedVoice}`);
         
         // Play the audio (no text display)
         const audioUrl = URL.createObjectURL(audioBlob);
@@ -231,6 +253,49 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
       }
     } catch (error) {
       console.error('Error playing welcome response:', error);
+    }
+  };
+
+  const playSendoffResponse = async () => {
+    try {
+      // Use the same voice as the current interaction
+      const selectedVoice = currentInteractionVoiceRef.current;
+      
+      // Get sendoff response audio with the same voice
+      const audioResponse = await fetch(`${ApiClient.getSendoffAudioUrl()}?voice=${selectedVoice}`);
+      
+      if (audioResponse.ok) {
+        const audioBlob = await audioResponse.blob();
+        
+        console.log(`Playing sendoff response audio with voice: ${selectedVoice}`);
+        
+        // Reset interaction state IMMEDIATELY when sendoff starts (allows new interactions)
+        isInteractionCompleteRef.current = false;
+        isAnalysisRunningRef.current = false;
+        setIsAnalyzing(false);
+        
+        console.log('Interaction state reset immediately when sendoff starts');
+        
+        // Play the audio (no text display)
+        const audioUrl = URL.createObjectURL(audioBlob);
+        const audio = new Audio(audioUrl);
+        await audio.play();
+        
+        // Clean up URL when audio finishes and reset motion detection
+        audio.onended = () => {
+          URL.revokeObjectURL(audioUrl);
+          
+          // Reset motion detection after sendoff completes
+          const now = Date.now();
+          lastAnalysisTimeRef.current = now;
+          setAnalysisCompleteTime(now);
+          resetMotionDetection();
+          
+          console.log('Motion detection reset after sendoff completes');
+        };
+      }
+    } catch (error) {
+      console.error('Error playing sendoff response:', error);
     }
   };
 
@@ -276,12 +341,8 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
       return;
     }
 
-    if (isAnalysisRunningRef.current) {
-      console.log('Analysis already running, skipping');
-      return;
-    }
-
-    isAnalysisRunningRef.current = true;
+    // Note: isAnalysisRunningRef.current is already set in motion detection
+    console.log('Starting automatic analysis (state already set)');
     setIsAnalyzing(true);
     onAiLoading?.(true);
 
@@ -307,31 +368,30 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
           
           audio.onended = () => {
             URL.revokeObjectURL(audioUrl);
+            // Play sendoff after analysis audio completes with delay
+            setTimeout(() => {
+              playSendoffResponse();
+            }, 500); // 0.5 second delay between analysis and sendoff
           };
         } catch (audioError) {
           console.error('Failed to play automatic analysis TTS audio:', audioError);
+          // Still play sendoff even if analysis audio fails
+          playSendoffResponse();
         }
+      } else {
+        // Play sendoff if no analysis audio
+        playSendoffResponse();
       }
 
     } catch (error) {
       console.error('Automatic analysis failed:', error);
       onAiMessage?.(`Automatic analysis failed: ${error instanceof Error ? error.message : 'Unknown error'}`, 'ai-response');
+      // Play sendoff even if analysis fails
+      playSendoffResponse();
     } finally {
       isAnalysisRunningRef.current = false;
-      setIsAnalyzing(false);
       onAiLoading?.(false);
-      // Reset motion detection state and set timing for next analysis
-      const now = Date.now();
-      lastAnalysisTimeRef.current = now;
-      setAnalysisCompleteTime(now);
-      // Force reset motion detected state to allow new motion detection
-      resetMotionDetection();
-      // Also force motion level to 0 to ensure proper reset
-      setTimeout(() => {
-        resetMotionDetection();
-        console.log('Forced motion detection reset after analysis');
-      }, 100);
-      console.log('AI analysis completed - motion detection reset and re-enabled at:', new Date(now).toISOString());
+      // Note: isAnalyzing and motion detection reset are now handled in playSendoffResponse
     }
   };
 
@@ -454,7 +514,9 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
               // Reset analysis time when toggling auto mode to allow immediate motion detection
               if (newMode) {
                 setAnalysisCompleteTime(0);
-                console.log('Auto mode enabled - motion detection reset');
+                isInteractionCompleteRef.current = false;
+                isAnalysisRunningRef.current = false;
+                console.log('Auto mode enabled - motion detection and interaction state reset');
               }
             }}
           />
@@ -469,10 +531,13 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
             onTestMagicMirror={() => handleAiAnalysis('magic-mirror-tts')}
             onTestMotionAudio={playMotionResponse}
             onTestWelcomeAudio={playWelcomeResponse}
+            onTestSendoffAudio={playSendoffResponse}
             onResetMotionDetection={() => {
               setAnalysisCompleteTime(0);
+              isInteractionCompleteRef.current = false;
+              isAnalysisRunningRef.current = false;
               resetMotionDetection();
-              console.log('Motion detection manually reset');
+              console.log('Motion detection and interaction state manually reset');
             }}
           />
 

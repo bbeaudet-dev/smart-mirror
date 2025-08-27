@@ -263,3 +263,9 @@ interface DebugPanelProps {
 - Keep existing functionality working
 - Start with simplest approach
 - Avoid over-engineering
+
+
+
+NEW THINGS TO ADD:
+- Clean up unused / old prompts/routes/buttons/tests
+- Hone prompts we want to keep
