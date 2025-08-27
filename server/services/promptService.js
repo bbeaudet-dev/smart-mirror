@@ -156,9 +156,20 @@ Keep the recommendation concise (under 100 words) and encouraging. This is for a
   }
 
   /**
+   * Personality to voice mapping
+   */
+  static getPersonalityVoiceMapping() {
+    return {
+      'Magic Mirror': 'fable',
+      'Snoop Dogg': 'ash', 
+      'Apathetic': 'alloy'
+    };
+  }
+
+  /**
    * Generate random personality-based outfit analysis prompt
    * @param {Object} weatherData - Weather information
-   * @returns {string} - Formatted prompt for AI
+   * @returns {Object} - { prompt: string, personality: string, voice: string }
    */
   static generateRandomPersonalityPrompt(weatherData) {
     const personalities = [
@@ -169,10 +180,16 @@ Keep the recommendation concise (under 100 words) and encouraging. This is for a
     
     const randomIndex = Math.floor(Math.random() * personalities.length);
     const selectedPersonality = personalities[randomIndex];
+    const voiceMapping = this.getPersonalityVoiceMapping();
+    const selectedVoice = voiceMapping[selectedPersonality.name];
     
-    console.log(`🎭 Selected personality: ${selectedPersonality.name}`);
+    console.log(`🎭 Selected personality: ${selectedPersonality.name} (voice: ${selectedVoice})`);
     
-    return selectedPersonality.generator.call(this, weatherData);
+    return {
+      prompt: selectedPersonality.generator.call(this, weatherData),
+      personality: selectedPersonality.name,
+      voice: selectedVoice
+    };
   }
 
   /**

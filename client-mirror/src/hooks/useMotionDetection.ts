@@ -48,6 +48,13 @@ export const useMotionDetection = (
   const [motionResponses, setMotionResponses] = useState<string[]>([]);
   const [welcomeResponses, setWelcomeResponses] = useState<string[]>([]);
   const [sendoffResponses, setSendoffResponses] = useState<string[]>([]);
+  
+  // Personality to voice mapping (matches server-side)
+  const personalityVoiceMapping = {
+    'Magic Mirror': 'fable',
+    'Snoop Dogg': 'ash', 
+    'Apathetic': 'alloy'
+  };
 
   // Load pre-generated responses
   const loadPreGeneratedResponses = useCallback(async () => {
@@ -188,12 +195,13 @@ export const useMotionDetection = (
   // Pre-generated response functions
   const playMotionResponse = useCallback(async () => {
     try {
-      // Choose a random voice for this interaction cycle
-      const voices = ['ash'];
-      const selectedVoice = voices[Math.floor(Math.random() * voices.length)];
+      // Choose a random personality and get its assigned voice
+      const personalities = ['Magic Mirror', 'Snoop Dogg', 'Apathetic'];
+      const selectedPersonality = personalities[Math.floor(Math.random() * personalities.length)];
+      const selectedVoice = personalityVoiceMapping[selectedPersonality as keyof typeof personalityVoiceMapping];
       currentInteractionVoiceRef.current = selectedVoice;
       
-      console.log(`Starting new interaction with voice: ${selectedVoice}`);
+      console.log(`Starting new interaction with personality: ${selectedPersonality} (voice: ${selectedVoice})`);
       
       // Get motion response audio with the selected voice
       const audioResponse = await fetch(`${ApiClient.getMotionAudioUrl()}?voice=${selectedVoice}`);

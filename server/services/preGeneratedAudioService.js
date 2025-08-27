@@ -44,7 +44,7 @@ class PreGeneratedAudioService {
       "Thanks for coming to see me! Have a wonderful time!",
     ];
 
-    this.voices = ['ash']; // Voices for pre-generated audio
+    this.voices = ['ash', 'coral', 'alloy']; // Voices for pre-generated audio
     this.ttsService = new TTSService();
   }
 
