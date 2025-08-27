@@ -68,20 +68,6 @@ function MirrorInterface() {
           isLoading={isAiLoading}
           type="ai-response"
         />
-
-        {/* Temporary test button for loading spinner */}
-        <div className="fixed top-4 right-4 z-50">
-          <button 
-            onClick={() => {
-              console.log('Test button clicked');
-              setIsAiLoading(true);
-              setTimeout(() => setIsAiLoading(false), 3000);
-            }}
-            className="bg-blue-500 text-white px-4 py-2 rounded"
-          >
-            Test Loading
-          </button>
-        </div>
       </div>
     </div>
   );
