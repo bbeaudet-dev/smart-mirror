@@ -418,7 +418,7 @@ export const useMotionDetection = (
   useEffect(() => {
     const now = Date.now();
     const timeSinceLastAnalysis = now - analysisCompleteTime;
-    const minTimeBetweenAnalyses = 3000; // 3 seconds between interactions
+    const minTimeBetweenAnalyses = 1500; // 1.5 seconds between interactions
     
     console.log('Motion detection check:', {
       isAutomaticMode,
@@ -436,6 +436,9 @@ export const useMotionDetection = (
       
       // Set interaction as active immediately
       setIsInteractionActive(true);
+      
+      // Show AI loading spinner immediately
+      onAiLoading?.(true);
       
       // Stage 1: Immediate motion response (pre-generated audio only)
       playMotionResponse();

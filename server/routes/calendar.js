@@ -20,9 +20,10 @@ const requireAuth = (req, res, next) => {
 };
 
 // GET /api/calendar/today - Get today's events
-router.get('/today', requireAuth, async (req, res) => {
+router.get('/today', async (req, res) => {
   try {
-    const events = await CalendarService.getTodayEvents();
+    // Always return dummy data for demo
+    const events = CalendarService.getDummyTodayEvents();
     res.json({
       events,
       count: events.length,
@@ -38,9 +39,15 @@ router.get('/today', requireAuth, async (req, res) => {
 });
 
 // GET /api/calendar/tomorrow - Get tomorrow's events
-router.get('/tomorrow', requireAuth, async (req, res) => {
+router.get('/tomorrow', async (req, res) => {
   try {
-    const events = await CalendarService.getTomorrowEvents();
+    // Always return dummy data for demo
+    const events = CalendarService.getDummyUpcomingEvents(1).filter(event => {
+      const eventDate = new Date(event.start).toDateString();
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      return eventDate === tomorrow.toDateString();
+    });
     res.json({
       events,
       count: events.length,
@@ -56,9 +63,10 @@ router.get('/tomorrow', requireAuth, async (req, res) => {
 });
 
 // GET /api/calendar/next - Get next upcoming event
-router.get('/next', requireAuth, async (req, res) => {
+router.get('/next', async (req, res) => {
   try {
-    const event = await CalendarService.getNextEvent();
+    // Always return dummy data for demo
+    const event = CalendarService.getDummyNextEvent();
     res.json({
       event,
       hasNextEvent: !!event
@@ -92,17 +100,21 @@ router.get('/upcoming', requireAuth, async (req, res) => {
 });
 
 // GET /api/calendar/summary - Get calendar summary
-router.get('/summary', requireAuth, async (req, res) => {
+router.get('/summary', async (req, res) => {
   try {
-    const [todayEvents, tomorrowEvents, nextEvent] = await Promise.all([
-      CalendarService.getTodayEvents(),
-      CalendarService.getTomorrowEvents(),
-      CalendarService.getNextEvent()
-    ]);
+    // Always return dummy data for demo
+    const todayEvents = CalendarService.getDummyTodayEvents();
+    const tomorrowEvents = CalendarService.getDummyUpcomingEvents(1).filter(event => {
+      const eventDate = new Date(event.start).toDateString();
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      return eventDate === tomorrow.toDateString();
+    });
+    const nextEvent = CalendarService.getDummyNextEvent();
 
-    console.log('Today events:', todayEvents);
-    console.log('Tomorrow events:', tomorrowEvents);
-    console.log('Next event:', nextEvent);
+    console.log('Today events (dummy):', todayEvents);
+    console.log('Tomorrow events (dummy):', tomorrowEvents);
+    console.log('Next event (dummy):', nextEvent);
 
     const now = new Date();
     const nextEventTime = nextEvent ? new Date(nextEvent.start) : null;
@@ -126,7 +138,7 @@ router.get('/summary', requireAuth, async (req, res) => {
       }
     };
 
-    console.log('Calendar summary response:', response);
+    console.log('Calendar summary response (dummy):', response);
     res.json(response);
   } catch (error) {
     console.error('Error fetching calendar summary:', error);
