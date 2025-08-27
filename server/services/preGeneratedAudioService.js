@@ -6,28 +6,30 @@ class PreGeneratedAudioService {
   constructor() {
     this.audioDir = path.join(__dirname, '../data/audio-pre-generated');
     this.motionResponses = [
-        "Hey you, over here!",
-        "What do we have here?",
-        "Are you just going to ignore me?",
-        "Look who decided to show up!",
-        "What have we here?",
-        "Oh, this is going to be good!",
-        "Why hello there!",
-        "Welcome, step right up!",
-        "Let me take a look at you!",
-        "Ahhh, a visitor!",
-        "Step into the spotlight!",
-        "Hello there, beautiful!",
-        "Time for your close-up!",
+      "Hey you, over here!",
+      "What do we have HERE?",
+      "Are you just going to ignore me?",
+      "Look who decided to show up!",
+      "Oh, this is going to be GOOD!",
+      "Why hello there!",
+      "Welcome, step right up!",
+      "Let me take a look at you!",
+      "Ahhh, a visitor!",
+      "Step into the spotlight!",
+      "Hello there, beautiful!",
+      "Time for your close-up!",
+      "Look what the cat dragged in!",
+      "What's this? A new face?",
+      "I've been waiting for you!",
+      "You're finally here!",
+      "Hey, you can't sneak past me that easily!",
+      "Psst, hey. Yes, you. Over here!",
     ];
     
     this.welcomeResponses = [
-        "Welcome to Fractal Tech! Let me give you a Fit Check!",
-        // "Someone's looking fancy today!",
-        // "Someone's making an entrance!",
-        // "The mirror is ready for you!",
-        // "Let's see what you've got!",
-        // "The magic mirror awaits!",
+      "Welcome to Fractal Tech! Let me give you a Fit Check!",
+      "Are you here for game night? Let me see your outfit!",
+      "Pose for an outfit check!",
     ];
 
     this.voices = ['coral', 'ash']; // Voices for pre-generated audio

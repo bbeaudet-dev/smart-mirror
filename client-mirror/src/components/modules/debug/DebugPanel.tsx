@@ -31,7 +31,6 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
   } = useWebcam();
 
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [detections, setDetections] = useState<any[]>([]);
   const [selectedVoice, setSelectedVoice] = useState('nova');
   const [voices, setVoices] = useState<string[]>([]);
   const [isLoadingVoices, setIsLoadingVoices] = useState(true);
