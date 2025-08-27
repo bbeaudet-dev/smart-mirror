@@ -200,22 +200,15 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
 
   const playWelcomeResponse = async () => {
     try {
-      // Get random welcome response text and audio
-      const [textResponse, audioResponse] = await Promise.all([
-        ApiClient.getWelcomeText(),
-        fetch(ApiClient.getWelcomeAudioUrl())
-      ]);
+      // Get random welcome response audio only (no text display)
+      const audioResponse = await fetch(ApiClient.getWelcomeAudioUrl());
       
-      if ((textResponse as any).success && audioResponse.ok) {
-        const text = (textResponse as any).text;
+      if (audioResponse.ok) {
         const audioBlob = await audioResponse.blob();
         
-        console.log('Playing welcome response:', text);
+        console.log('Playing welcome response audio');
         
-        // Display the text
-        onAiMessage?.(text, 'general');
-        
-        // Play the audio
+        // Play the audio (no text display)
         const audioUrl = URL.createObjectURL(audioBlob);
         const audio = new Audio(audioUrl);
         await audio.play();
@@ -227,9 +220,6 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
       }
     } catch (error) {
       console.error('Error playing welcome response:', error);
-      // Fallback to text-only
-      const randomResponse = welcomeResponses[Math.floor(Math.random() * welcomeResponses.length)];
-      onAiMessage?.(randomResponse, 'general');
     }
   };
 

@@ -31,7 +31,7 @@ class PreGeneratedAudioService {
         // "The magic mirror awaits!",
     ];
 
-    this.voices = ['fable', 'coral', 'ash']; // Voices for pre-generated audio
+    this.voices = ['coral', 'ash']; // Voices for pre-generated audio
     this.ttsService = new TTSService();
   }
 
@@ -44,6 +44,16 @@ class PreGeneratedAudioService {
     try {
       // Ensure directory exists
       await fs.mkdir(this.audioDir, { recursive: true });
+
+      // Clear existing audio files for regeneration
+      console.log('🗑️  Clearing existing audio files...');
+      const existingFiles = await fs.readdir(this.audioDir);
+      for (const file of existingFiles) {
+        if (file.endsWith('.mp3')) {
+          await fs.unlink(path.join(this.audioDir, file));
+          console.log(`🗑️  Deleted: ${file}`);
+        }
+      }
 
       // Generate motion response audio in all voices
       console.log('📢 Generating motion response audio...');
@@ -77,15 +87,6 @@ class PreGeneratedAudioService {
    */
   async generateAudioFile(text, filename, voice) {
     const filepath = path.join(this.audioDir, filename);
-    
-    // Check if file already exists
-    try {
-      await fs.access(filepath);
-      console.log(`⏭️  Skipping ${filename} (already exists)`);
-      return filepath;
-    } catch {
-      // File doesn't exist, generate it
-    }
 
     try {
       console.log(`🎤 Generating: "${text}" -> ${filename} (voice: ${voice})`);
