@@ -6,6 +6,9 @@ export const useWebcam = () => {
   const [error, setError] = useState<string | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+  
+  // Check if we're running in Electron (safely)
+  const isElectron = typeof window !== 'undefined' && (window as any).electron !== undefined;
 
   const startWebcam = async () => {
     try {
@@ -13,6 +16,8 @@ export const useWebcam = () => {
       setIsCapturing(true);
       
       console.log("Starting USB webcam...");
+      console.log("Environment:", process.env.NODE_ENV);
+      console.log("Is Electron:", isElectron);
       console.log("Available media devices:", await navigator.mediaDevices.enumerateDevices());
       
       const mediaStream = await navigator.mediaDevices.getUserMedia({
@@ -39,7 +44,22 @@ export const useWebcam = () => {
       
     } catch (error: any) {
       console.error("Webcam access failed:", error);
-      setError(`Webcam error: ${error.message || 'Unknown error'}`);
+      
+      // In development mode, try to provide more helpful error messages
+      if (process.env.NODE_ENV !== 'production') {
+        if (error.name === 'NotAllowedError') {
+          setError('Webcam permission denied. Please allow camera access and refresh the page.');
+        } else if (error.name === 'NotFoundError') {
+          setError('No camera found. Please check your USB webcam connection.');
+        } else if (error.name === 'NotReadableError') {
+          setError('Camera is in use by another application. Please close other apps using the camera.');
+        } else {
+          setError(`Webcam error: ${error.message || 'Unknown error'}`);
+        }
+      } else {
+        setError(`Webcam error: ${error.message || 'Unknown error'}`);
+      }
+      
       setIsCapturing(false);
     }
   };

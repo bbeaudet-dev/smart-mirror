@@ -41,7 +41,7 @@ export const useMotionDetection = (
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
   const lastAnalysisTimeRef = useRef(0);
-  const currentInteractionVoiceRef = useRef<string>('coral');
+  const currentInteractionVoiceRef = useRef<string>('ash');
   const isMotionDetectedRef = useRef(false); // Prevents circular dependency in checkMotion
 
   // Pre-generated responses
@@ -189,7 +189,7 @@ export const useMotionDetection = (
   const playMotionResponse = useCallback(async () => {
     try {
       // Choose a random voice for this interaction cycle
-      const voices = ['coral'];
+      const voices = ['ash'];
       const selectedVoice = voices[Math.floor(Math.random() * voices.length)];
       currentInteractionVoiceRef.current = selectedVoice;
       
@@ -392,7 +392,7 @@ export const useMotionDetection = (
             // Play sendoff after analysis audio completes with delay
             setTimeout(() => {
               playSendoffResponse();
-            }, 500); // 0.5 second delay between analysis and sendoff
+            }, 100); // 0.1 second delay between analysis and sendoff
           };
         } catch (audioError) {
           console.error('Failed to play automatic analysis TTS audio:', audioError);
@@ -418,7 +418,7 @@ export const useMotionDetection = (
   useEffect(() => {
     const now = Date.now();
     const timeSinceLastAnalysis = now - analysisCompleteTime;
-    const minTimeBetweenAnalyses = 4000; // 4 seconds between interactions (reduced from 10)
+    const minTimeBetweenAnalyses = 3000; // 3 seconds between interactions
     
     console.log('Motion detection check:', {
       isAutomaticMode,
@@ -440,17 +440,17 @@ export const useMotionDetection = (
       // Stage 1: Immediate motion response (pre-generated audio only)
       playMotionResponse();
       
-      // Stage 2: Start AI analysis immediately (before welcome message)
+      // Stage 2: Start AI analysis 
       setTimeout(() => {
-        console.log('Starting AI analysis before welcome message');
+        console.log('Starting AI analysis');
         handleAutomaticAnalysis();
-      }, 500); // Start analysis 500ms after motion response
+      }, 1000); // Start analysis 1 second after motion response
       
-      // Stage 3: Welcome message with pause (3 seconds after motion response)
+      // Stage 3: Welcome message
       setTimeout(() => {
         console.log('Playing welcome message');
         playWelcomeResponse();
-      }, 3000); // 3 seconds after motion response (increased pause)
+      }, 2500); // 2.5 seconds after motion response
     }
   }, [isAutomaticMode, isMotionDetected, isAnalyzing, analysisCompleteTime, isInteractionActive]);
 

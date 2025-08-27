@@ -118,15 +118,12 @@ function createWindow() {
     event.preventDefault();
   });
 
-  // Open DevTools in development
+  // DevTools handling
   console.log('NODE_ENV:', process.env.NODE_ENV);
   console.log('Loading URL:', startUrl);
-  if (process.env.NODE_ENV !== 'production') {
-    console.log('Opening DevTools in development mode');
-    mainWindow.webContents.openDevTools({ mode: 'detach' });
-  } else {
-    console.log('Running in production mode - no DevTools');
-  }
+  
+  // Don't automatically open DevTools - user can use Ctrl+Shift+I if needed
+  console.log('DevTools available via Ctrl+Shift+I in development mode');
 }
 
 // This method will be called when Electron has finished initialization

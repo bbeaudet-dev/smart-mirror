@@ -195,7 +195,7 @@ router.post('/automatic', upload.single('image'), async (req, res) => {
 
     // Use prompt service for automatic analysis (same as Magic Mirror TTS for now)
     const PromptService = require('../services/promptService');
-    const automaticPrompt = PromptService.generateMagicMirrorPrompt(weatherData);
+    const automaticPrompt = PromptService.generateRandomPersonalityPrompt(weatherData);
     
     console.log('=== AUTOMATIC ANALYSIS DEBUG ===');
     console.log('Generated prompt:', automaticPrompt);
@@ -209,7 +209,7 @@ router.post('/automatic', upload.single('image'), async (req, res) => {
     try {
       const TTSService = require('../services/ttsService');
       const ttsService = new TTSService();
-      const ttsResult = await ttsService.generateSpeech(analysis, 'coral', 'automatic');
+      const ttsResult = await ttsService.generateSpeech(analysis, 'ash', 'automatic');
       audioBuffer = ttsResult.audioBuffer;
     } catch (ttsError) {
       console.error('TTS generation failed for automatic analysis:', ttsError);
@@ -220,7 +220,7 @@ router.post('/automatic', upload.single('image'), async (req, res) => {
       res.json({ 
         analysis,
         audio: audioBuffer.toString('base64'),
-        voice: 'coral',
+        voice: 'ash',
         weather: weatherData,
         timestamp: new Date().toISOString()
       });
