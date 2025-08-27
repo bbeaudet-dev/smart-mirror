@@ -14,6 +14,9 @@ function MirrorInterface() {
   const [isWebcamInitialized, setIsWebcamInitialized] = useState(false);
   const [isWebcamAnalyzing, setIsWebcamAnalyzing] = useState(false);
 
+  // Debug loading state
+  console.log('MirrorInterface: isAiLoading =', isAiLoading);
+
   return (
     <div className="w-full h-full bg-mirror-bg text-mirror-text font-mirror-primary pl-14 pr-2 pt-2 pb-2">
       <div className="w-full h-full flex flex-col">
@@ -65,6 +68,20 @@ function MirrorInterface() {
           isLoading={isAiLoading}
           type="ai-response"
         />
+
+        {/* Temporary test button for loading spinner */}
+        <div className="fixed top-4 right-4 z-50">
+          <button 
+            onClick={() => {
+              console.log('Test button clicked');
+              setIsAiLoading(true);
+              setTimeout(() => setIsAiLoading(false), 3000);
+            }}
+            className="bg-blue-500 text-white px-4 py-2 rounded"
+          >
+            Test Loading
+          </button>
+        </div>
       </div>
     </div>
   );

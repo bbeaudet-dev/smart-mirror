@@ -19,7 +19,10 @@ const MessagePanel: React.FC<MessagePanelProps> = ({
     console.log("MessagePanel: Received message:", message);
     console.log("MessagePanel: isLoading:", isLoading);
     
-    if (message) {
+    if (isLoading) {
+      setIsVisible(true);
+      console.log("MessagePanel: Setting loading visible");
+    } else if (message) {
       setDisplayMessage(message);
       setIsVisible(true);
       console.log("MessagePanel: Setting message visible:", message);
@@ -34,7 +37,7 @@ const MessagePanel: React.FC<MessagePanelProps> = ({
     } else {
       setIsVisible(false);
     }
-  }, [message]);
+  }, [message, isLoading]);
 
   if (!isVisible && !isLoading) {
     return null;
