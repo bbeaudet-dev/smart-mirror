@@ -8,7 +8,7 @@ interface DebugControlsProps {
   onTestMotionAudio: () => Promise<void>;
   onTestWelcomeAudio: () => Promise<void>;
   onTestSendoffAudio: () => Promise<void>;
-  onResetMotionDetection: () => void;
+  onResetInteractionState: () => void;
 }
 
 const DebugControls: React.FC<DebugControlsProps> = ({
@@ -19,7 +19,7 @@ const DebugControls: React.FC<DebugControlsProps> = ({
   onTestMotionAudio,
   onTestWelcomeAudio,
   onTestSendoffAudio,
-  onResetMotionDetection
+  onResetInteractionState
 }) => {
   return (
     <div className="flex items-center space-x-2">
@@ -84,7 +84,7 @@ const DebugControls: React.FC<DebugControlsProps> = ({
       </button>
       
       <button
-        onClick={onResetMotionDetection}
+        onClick={onResetInteractionState}
         disabled={isAnalyzing}
         className={`px-3 py-2 rounded text-xs font-medium transition-colors ${
           isAnalyzing
@@ -92,7 +92,7 @@ const DebugControls: React.FC<DebugControlsProps> = ({
             : 'bg-red-700 hover:bg-red-600 text-red-200 border border-red-600'
         }`}
       >
-        Reset Motion Detection
+        Reset Interaction State
       </button>
     </div>
   );
