@@ -77,7 +77,7 @@ router.post('/generate', async (req, res) => {
 router.get('/motion', async (req, res) => {
   try {
     // Randomly select from available voices
-    const availableVoices = ['coral']; // (removed ash for testing) 
+    const availableVoices = ['ash'];
     const voice = req.query.voice || availableVoices[Math.floor(Math.random() * availableVoices.length)];
     const audioInfo = await preGeneratedAudioService.getRandomMotionAudio(voice);
     
@@ -108,7 +108,7 @@ router.get('/motion', async (req, res) => {
 router.get('/welcome', async (req, res) => {
   try {
     // Randomly select from available voices
-    const availableVoices = ['coral']; // (removed ash for testing)
+    const availableVoices = ['ash'];
     const voice = req.query.voice || availableVoices[Math.floor(Math.random() * availableVoices.length)];
     const audioInfo = await preGeneratedAudioService.getRandomWelcomeAudio(voice);
     
@@ -183,7 +183,7 @@ router.get('/welcome-text', async (req, res) => {
 router.get('/sendoff', async (req, res) => {
   try {
     // Randomly select from available voices
-    const availableVoices = ['coral']; // (removed ash for testing)
+    const availableVoices = ['ash'];
     const voice = req.query.voice || availableVoices[Math.floor(Math.random() * availableVoices.length)];
     const audioInfo = await preGeneratedAudioService.getRandomSendoffAudio(voice);
     
