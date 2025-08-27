@@ -62,7 +62,7 @@ const MessagePanel: React.FC<MessagePanelProps> = ({
       `}>
         {isLoading ? (
           <div className="flex items-center justify-center">
-            <AiLoadingSpinner isVisible={true} />
+            <AiLoadingSpinner isVisible={isLoading} />
           </div>
         ) : (
           <div className="flex items-start space-x-4">

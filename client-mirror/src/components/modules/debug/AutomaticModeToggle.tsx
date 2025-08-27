@@ -23,9 +23,9 @@ const AutomaticModeToggle: React.FC<AutomaticModeToggleProps> = ({
       >
         {isAutomaticMode ? 'Auto Mode: ON' : 'Auto Mode: OFF'}
       </button>
-      {isAutomaticMode && (
+      {isAutomaticMode && !isAnalyzing && (
         <div className="text-xs text-gray-400 font-mono">
-          {isAnalyzing ? 'Analyzing...' : 'Waiting for motion...'}
+          Waiting for motion...
         </div>
       )}
     </div>

@@ -53,11 +53,12 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
     isActive: isMotionDetectionActive,
     error: motionError,
     startMotionDetection,
-    stopMotionDetection
+    stopMotionDetection,
+    resetMotionDetection
   } = useMotionDetection(videoRef as React.RefObject<HTMLVideoElement>, {
-    threshold: 0.03,
+    threshold: 0.15, // 15% of pixels must change (increased from 10%)
     interval: 100,
-    minMotionDuration: 200
+    minMotionDuration: 1000 // Increased from 500ms to 1000ms
   });
 
   // Auto-start webcam when component mounts
@@ -145,13 +146,13 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
       canTrigger: timeSinceLastAnalysis > minTimeBetweenAnalyses
     });
     
-    if (isAutomaticMode && isMotionDetected && !isAnalyzing && !isAnalysisRunningRef.current && timeSinceLastAnalysis > minTimeBetweenAnalyses) {
+        if (isAutomaticMode && isMotionDetected && !isAnalyzing && !isAnalysisRunningRef.current && timeSinceLastAnalysis > minTimeBetweenAnalyses) {
       console.log('Motion detected - starting three-stage flow');
       
       // Stage 1: Immediate motion response (pre-generated audio only)
       playMotionResponse();
       
-      // Stage 2: Stabilization period (2 seconds to avoid overlap)
+      // Stage 2: Stabilization period (2 seconds to allow person to settle in frame)
       setTimeout(() => {
         // Stage 3: Person detection check (simplified - if motion still detected, assume person)
         if (isMotionDetected && !isAnalysisRunningRef.current) {
@@ -162,7 +163,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
           playWelcomeResponse();
           handleAutomaticAnalysis();
         }
-      }, 2000); // Increased from 1 second to 2 seconds
+      }, 2000); // 2 seconds
       // TODO: Add person-detection logic for welcome messages, or some other trigger
     }
   }, [isAutomaticMode, isMotionDetected, isAnalyzing, analysisCompleteTime]);
@@ -286,8 +287,6 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
     onAiLoading?.(true);
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
       const blob = await captureFrameAsBlob();
       if (!blob) {
         throw new Error("Failed to capture frame");
@@ -322,11 +321,18 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
       isAnalysisRunningRef.current = false;
       setIsAnalyzing(false);
       onAiLoading?.(false);
-      // Set the analysis complete time to trigger motion detection re-evaluation
+      // Reset motion detection state and set timing for next analysis
       const now = Date.now();
       lastAnalysisTimeRef.current = now;
       setAnalysisCompleteTime(now);
-      console.log('AI analysis completed - motion detection re-enabled at:', new Date(now).toISOString());
+      // Force reset motion detected state to allow new motion detection
+      resetMotionDetection();
+      // Also force motion level to 0 to ensure proper reset
+      setTimeout(() => {
+        resetMotionDetection();
+        console.log('Forced motion detection reset after analysis');
+      }, 100);
+      console.log('AI analysis completed - motion detection reset and re-enabled at:', new Date(now).toISOString());
     }
   };
 
@@ -466,6 +472,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
             onTestWelcomeAudio={playWelcomeResponse}
             onResetMotionDetection={() => {
               setAnalysisCompleteTime(0);
+              resetMotionDetection();
               console.log('Motion detection manually reset');
             }}
           />

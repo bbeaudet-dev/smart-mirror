@@ -20,7 +20,7 @@ const MotionStatus: React.FC<MotionStatusProps> = ({
       } animate-pulse`}></div>
       <div className="text-xs text-gray-400 font-mono">
         {isMotionDetectionActive 
-          ? (isMotionDetected ? 'Motion Detected' : 'Motion Active') 
+          ? (isMotionDetected ? 'Motion Detected' : 'Waiting for motion...') 
           : 'Motion Off'
         }
         {isMotionDetectionActive && ` (${(motionLevel * 100).toFixed(1)}%)`}

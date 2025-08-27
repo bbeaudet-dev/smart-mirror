@@ -22,7 +22,7 @@ class PreGeneratedAudioService {
     ];
     
     this.welcomeResponses = [
-        "Welcome to Fractal Tech!",
+        "Welcome to Fractal Tech! Let me give you a Fit Check!",
         // "Someone's looking fancy today!",
         // "Someone's making an entrance!",
         // "The mirror is ready for you!",

@@ -73,8 +73,8 @@ export const useMotionDetection = (
         Math.pow(b1 - b2, 2)
       );
 
-      // Consider pixel different if color difference > 30
-      if (diff > 30) {
+      // Consider pixel different if color difference > 50
+      if (diff > 50) {
         differentPixels++;
       }
     }
@@ -183,6 +183,13 @@ export const useMotionDetection = (
     };
   }, [stopMotionDetection]);
 
+  // Reset motion detection state
+  const resetMotionDetection = useCallback(() => {
+    setIsMotionDetected(false);
+    motionStartTimeRef.current = null;
+    console.log('Motion detection state reset');
+  }, []);
+
   return {
     // State
     isMotionDetected,
@@ -193,6 +200,7 @@ export const useMotionDetection = (
     // Methods
     startMotionDetection,
     stopMotionDetection,
+    resetMotionDetection,
     
     // Utility
     clearError: () => setError(null)
