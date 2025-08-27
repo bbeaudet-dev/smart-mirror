@@ -203,13 +203,13 @@ router.post('/automatic', upload.single('image'), async (req, res) => {
 
     const analysis = await OpenAIService.analyzeImage(imageBuffer, imageType, automaticPrompt, 'automatic-analysis');
     
-    // Generate TTS audio with fable voice for automatic responses
+    // Generate TTS audio for automatic responses
     let audioBuffer = null;
     
     try {
       const TTSService = require('../services/ttsService');
       const ttsService = new TTSService();
-      const ttsResult = await ttsService.generateSpeech(analysis, 'fable', 'automatic');
+      const ttsResult = await ttsService.generateSpeech(analysis, 'coral', 'automatic');
       audioBuffer = ttsResult.audioBuffer;
     } catch (ttsError) {
       console.error('TTS generation failed for automatic analysis:', ttsError);
@@ -220,7 +220,7 @@ router.post('/automatic', upload.single('image'), async (req, res) => {
       res.json({ 
         analysis,
         audio: audioBuffer.toString('base64'),
-        voice: 'fable',
+        voice: 'coral',
         weather: weatherData,
         timestamp: new Date().toISOString()
       });

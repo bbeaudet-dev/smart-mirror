@@ -77,7 +77,7 @@ router.post('/generate', async (req, res) => {
 router.get('/motion', async (req, res) => {
   try {
     // Randomly select from available voices
-    const availableVoices = ['coral', 'ash'];
+    const availableVoices = ['coral']; // (removed ash for testing) 
     const voice = req.query.voice || availableVoices[Math.floor(Math.random() * availableVoices.length)];
     const audioInfo = await preGeneratedAudioService.getRandomMotionAudio(voice);
     
@@ -108,7 +108,7 @@ router.get('/motion', async (req, res) => {
 router.get('/welcome', async (req, res) => {
   try {
     // Randomly select from available voices
-    const availableVoices = ['coral', 'ash'];
+    const availableVoices = ['coral']; // (removed ash for testing)
     const voice = req.query.voice || availableVoices[Math.floor(Math.random() * availableVoices.length)];
     const audioInfo = await preGeneratedAudioService.getRandomWelcomeAudio(voice);
     
@@ -171,6 +171,59 @@ router.get('/welcome-text', async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Failed to get welcome text',
+      details: error.message
+    });
+  }
+});
+
+/**
+ * GET /api/pre-generated-audio/sendoff
+ * Get a random sendoff response audio file
+ */
+router.get('/sendoff', async (req, res) => {
+  try {
+    // Randomly select from available voices
+    const availableVoices = ['coral']; // (removed ash for testing)
+    const voice = req.query.voice || availableVoices[Math.floor(Math.random() * availableVoices.length)];
+    const audioInfo = await preGeneratedAudioService.getRandomSendoffAudio(voice);
+    
+    // Send the audio file
+    res.sendFile(audioInfo.filepath, (err) => {
+      if (err) {
+        console.error('Error sending sendoff audio file:', err);
+        res.status(500).json({
+          success: false,
+          error: 'Failed to send audio file'
+        });
+      }
+    });
+  } catch (error) {
+    console.error('Error getting sendoff audio:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to get sendoff audio',
+      details: error.message
+    });
+  }
+});
+
+/**
+ * GET /api/pre-generated-audio/sendoff-text
+ * Get a random sendoff response text (for display)
+ */
+router.get('/sendoff-text', async (req, res) => {
+  try {
+    const audioInfo = await preGeneratedAudioService.getRandomSendoffAudio();
+    res.json({
+      success: true,
+      text: audioInfo.text,
+      type: audioInfo.type
+    });
+  } catch (error) {
+    console.error('Error getting sendoff text:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to get sendoff text',
       details: error.message
     });
   }

@@ -124,7 +124,7 @@ Keep the recommendation concise (under 100 words) and encouraging. This is for a
     }
     
     const { temperature, condition } = weatherData.current;
-    return `You are the Magic Mirror from Snow White. It's ${temperature}°F and ${condition} today. Look at this person's outfit and compliment them on what you see. Be specific about colors, items, or style. Keep it under 50 words and be encouraging.`;
+    return `You are the Magic Mirror from Snow White. It's ${temperature}°F and ${condition} today. Look at this person's outfit and compliment them on what you see. Be specific about colors, items, or style. Keep it under 40 words and be encouraging. Maintain consistent, warm enthusiasm throughout.`;
   }
 
   /**

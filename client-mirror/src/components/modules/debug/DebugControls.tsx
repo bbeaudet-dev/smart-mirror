@@ -7,6 +7,7 @@ interface DebugControlsProps {
   onTestMagicMirror: () => void;
   onTestMotionAudio: () => Promise<void>;
   onTestWelcomeAudio: () => Promise<void>;
+  onTestSendoffAudio: () => Promise<void>;
   onResetMotionDetection: () => void;
 }
 
@@ -17,6 +18,7 @@ const DebugControls: React.FC<DebugControlsProps> = ({
   onTestMagicMirror,
   onTestMotionAudio,
   onTestWelcomeAudio,
+  onTestSendoffAudio,
   onResetMotionDetection
 }) => {
   return (
@@ -67,6 +69,18 @@ const DebugControls: React.FC<DebugControlsProps> = ({
         }`}
       >
         Test Welcome Audio
+      </button>
+      
+      <button
+        onClick={onTestSendoffAudio}
+        disabled={isAnalyzing}
+        className={`px-3 py-2 rounded text-xs font-medium transition-colors ${
+          isAnalyzing
+            ? 'bg-gray-500 cursor-not-allowed text-gray-400 border border-gray-500'
+            : 'bg-purple-700 hover:bg-purple-600 text-purple-200 border border-purple-600'
+        }`}
+      >
+        Test Sendoff Audio
       </button>
       
       <button

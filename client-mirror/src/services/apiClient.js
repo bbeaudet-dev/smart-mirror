@@ -376,6 +376,22 @@ class ApiClient {
   }
 
   /**
+   * Get a random sendoff response audio URL
+   * @returns {string} - URL to sendoff audio file
+   */
+  static getSendoffAudioUrl() {
+    return `${API_BASE_URL}/api/pre-generated-audio/sendoff`;
+  }
+
+  /**
+   * Get a random sendoff response text
+   * @returns {Promise<Object>} - Sendoff response text
+   */
+  static async getSendoffText() {
+    return this.get('/api/pre-generated-audio/sendoff-text');
+  }
+
+  /**
    * Get all available response messages
    * @returns {Promise<Object>} - All response messages
    */
