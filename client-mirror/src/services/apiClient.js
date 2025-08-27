@@ -1,6 +1,6 @@
 // Use environment variable or try to detect the correct server URL
 const API_BASE_URL = import.meta.env.VITE_API_URL || 
-  (window.location.hostname === 'localhost' ? 'http://localhost:5005' : `http://${window.location.hostname}:5005`);
+  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:5005' : `http://${window.location.hostname}:5005`);
   
 
 class ApiClient {

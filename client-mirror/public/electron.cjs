@@ -41,7 +41,7 @@ function createWindow() {
   // Load the app
   const startUrl = isDev 
     ? 'http://localhost:3000' 
-    : `file://${path.join(__dirname, '../build/index.html')}`;
+    : `file://${path.join(__dirname, '../dist/index.html')}`;
   
   mainWindow.loadURL(startUrl);
 
@@ -107,6 +107,7 @@ function createWindow() {
 
   // Open DevTools in development
   console.log('isDev:', isDev, 'NODE_ENV:', process.env.NODE_ENV);
+  console.log('Loading URL:', startUrl);
   if (isDev) {
     console.log('Opening DevTools in development mode');
     mainWindow.webContents.openDevTools({ mode: 'detach' });

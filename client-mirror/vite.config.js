@@ -7,6 +7,16 @@ export default defineConfig({
   define: {
     'process.env': {}
   },
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks: undefined
+      }
+    }
+  },
   server: {
     port: 3000,
     host: '0.0.0.0', // Allow external connections
