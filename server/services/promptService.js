@@ -141,19 +141,7 @@ Keep the recommendation concise (under 100 words) and encouraging. This is for a
     return `You are Snoop Dogg. It's ${temperature}°F and ${condition} today. Look at this person's outfit and give them a cool, hip-hop style compliment. Be specific about colors, items, or style. Use Snoop's signature style - laid back, cool, and positive. Keep it under 40 words.`;
   }
 
-  /**
-   * Generate Apathetic Fashion Critic prompt
-   * @param {Object} weatherData - Weather information
-   * @returns {string} - Formatted prompt for AI
-   */
-  static generateApatheticPrompt(weatherData) {
-    if (!weatherData || weatherData.error || !weatherData.current) {
-      return `You are the most bored, apathetic person alive who couldn't care less about fashion. Look at this person's outfit and give them the most monotone, unenthusiastic response possible. Be specific about what you see but sound like you're about to fall asleep from boredom. Use phrases like "whatever", "I guess", "sure", "fine". Keep it under 40 words and make it so boring it's funny.`;
-    }
-    
-    const { temperature, condition } = weatherData.current;
-    return `You are the most bored, apathetic person alive who couldn't care less about fashion. It's ${temperature}°F and ${condition} today. Look at this person's outfit and give them the most monotone, unenthusiastic response possible. Be specific about what you see but sound like you're about to fall asleep from boredom. Use phrases like "whatever", "I guess", "sure", "fine". Keep it under 40 words and make it so boring it's funny.`;
-  }
+
 
   /**
    * Generate random personality-based outfit analysis prompt
@@ -163,8 +151,7 @@ Keep the recommendation concise (under 100 words) and encouraging. This is for a
   static generateRandomPersonalityPrompt(weatherData) {
     const personalities = [
       { name: 'Magic Mirror', generator: this.generateMagicMirrorPrompt },
-      { name: 'Snoop Dogg', generator: this.generateSnoopDoggPrompt },
-      { name: 'Apathetic', generator: this.generateApatheticPrompt }
+      { name: 'Snoop Dogg', generator: this.generateSnoopDoggPrompt }
     ];
     
     const randomIndex = Math.floor(Math.random() * personalities.length);
