@@ -8,6 +8,7 @@ interface DebugControlsProps {
   onTestMotionAudio: () => Promise<void>;
   onTestWelcomeAudio: () => Promise<void>;
   onTestSendoffAudio: () => Promise<void>;
+  onTestAudioSystem: () => void;
   onResetMotionDetection: () => void;
 }
 
@@ -19,6 +20,7 @@ const DebugControls: React.FC<DebugControlsProps> = ({
   onTestMotionAudio,
   onTestWelcomeAudio,
   onTestSendoffAudio,
+  onTestAudioSystem,
   onResetMotionDetection
 }) => {
   return (
@@ -81,6 +83,18 @@ const DebugControls: React.FC<DebugControlsProps> = ({
         }`}
       >
         Test Sendoff Audio
+      </button>
+      
+      <button
+        onClick={onTestAudioSystem}
+        disabled={isAnalyzing}
+        className={`px-3 py-2 rounded text-xs font-medium transition-colors ${
+          isAnalyzing
+            ? 'bg-gray-500 cursor-not-allowed text-gray-400 border border-gray-500'
+            : 'bg-orange-700 hover:bg-orange-600 text-orange-200 border border-orange-600'
+        }`}
+      >
+        Test Audio System
       </button>
       
       <button

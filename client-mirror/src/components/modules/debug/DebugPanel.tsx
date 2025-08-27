@@ -212,11 +212,28 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
         const audioBlob = await audioResponse.blob();
         
         console.log(`Playing motion response audio with voice: ${selectedVoice}`);
+        console.log('Audio blob size:', audioBlob.size, 'bytes');
         
         // Play the audio (no text display)
         const audioUrl = URL.createObjectURL(audioBlob);
         const audio = new Audio(audioUrl);
-        await audio.play();
+        
+        // Add error handling for audio playback
+        audio.onerror = (e) => {
+          console.error('Audio playback error:', e);
+          console.error('Audio error details:', audio.error);
+        };
+        
+        audio.onloadstart = () => console.log('Audio loading started');
+        audio.oncanplay = () => console.log('Audio can play');
+        audio.onplay = () => console.log('Audio playback started');
+        
+        try {
+          await audio.play();
+          console.log('Audio play() resolved successfully');
+        } catch (playError) {
+          console.error('Audio play() failed:', playError);
+        }
         
         // Clean up URL when audio finishes
         audio.onended = () => {
@@ -240,11 +257,28 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
         const audioBlob = await audioResponse.blob();
         
         console.log(`Playing welcome response audio with voice: ${selectedVoice}`);
+        console.log('Welcome audio blob size:', audioBlob.size, 'bytes');
         
         // Play the audio (no text display)
         const audioUrl = URL.createObjectURL(audioBlob);
         const audio = new Audio(audioUrl);
-        await audio.play();
+        
+        // Add error handling for audio playback
+        audio.onerror = (e) => {
+          console.error('Welcome audio playback error:', e);
+          console.error('Welcome audio error details:', audio.error);
+        };
+        
+        audio.onloadstart = () => console.log('Welcome audio loading started');
+        audio.oncanplay = () => console.log('Welcome audio can play');
+        audio.onplay = () => console.log('Welcome audio playback started');
+        
+        try {
+          await audio.play();
+          console.log('Welcome audio play() resolved successfully');
+        } catch (playError) {
+          console.error('Welcome audio play() failed:', playError);
+        }
         
         // Clean up URL when audio finishes
         audio.onended = () => {
@@ -268,6 +302,7 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
         const audioBlob = await audioResponse.blob();
         
         console.log(`Playing sendoff response audio with voice: ${selectedVoice}`);
+        console.log('Sendoff audio blob size:', audioBlob.size, 'bytes');
         
         // Reset interaction state IMMEDIATELY when sendoff starts (allows new interactions)
         isInteractionCompleteRef.current = false;
@@ -279,7 +314,23 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
         // Play the audio (no text display)
         const audioUrl = URL.createObjectURL(audioBlob);
         const audio = new Audio(audioUrl);
-        await audio.play();
+        
+        // Add error handling for audio playback
+        audio.onerror = (e) => {
+          console.error('Sendoff audio playback error:', e);
+          console.error('Sendoff audio error details:', audio.error);
+        };
+        
+        audio.onloadstart = () => console.log('Sendoff audio loading started');
+        audio.oncanplay = () => console.log('Sendoff audio can play');
+        audio.onplay = () => console.log('Sendoff audio playback started');
+        
+        try {
+          await audio.play();
+          console.log('Sendoff audio play() resolved successfully');
+        } catch (playError) {
+          console.error('Sendoff audio play() failed:', playError);
+        }
         
         // Clean up URL when audio finishes and reset motion detection
         audio.onended = () => {
@@ -532,6 +583,15 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
             onTestMotionAudio={playMotionResponse}
             onTestWelcomeAudio={playWelcomeResponse}
             onTestSendoffAudio={playSendoffResponse}
+            onTestAudioSystem={() => {
+              console.log('Testing audio system...');
+              const testAudio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT');
+              testAudio.onerror = (e) => console.error('Test audio error:', e);
+              testAudio.onloadstart = () => console.log('Test audio loading');
+              testAudio.oncanplay = () => console.log('Test audio can play');
+              testAudio.onplay = () => console.log('Test audio playing');
+              testAudio.play().then(() => console.log('Test audio started')).catch(e => console.error('Test audio failed:', e));
+            }}
             onResetMotionDetection={() => {
               setAnalysisCompleteTime(0);
               isInteractionCompleteRef.current = false;
