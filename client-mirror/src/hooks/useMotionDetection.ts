@@ -15,9 +15,9 @@ export const useMotionDetection = (
   options: MotionDetectionOptions = {}
 ) => {
   const {
-    threshold = 0.01, // 1% of pixels must change (very sensitive)
+    threshold = 0.025, // % of pixels must change to trigger motion
     interval = 100, // Check every 100ms
-    minMotionDuration = 200, // Motion must last at least 150ms (very fast trigger)
+    minMotionDuration = 250, // duration of motion to trigger
     isAutomaticMode = true,
     onAiMessage,
     onAiLoading

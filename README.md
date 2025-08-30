@@ -1,218 +1,208 @@
 # AI Smart Mirror
 
-An enhanced smart mirror platform built on MagicMirror² with advanced AI integration for outfit recommendations, motivational messages, and intelligent insights.
+A Raspberry Pi-powered smart mirror with AI outfit analysis, motion detection, and contextual responses. Built in 10 days for Fractal Tech demo day.
 
 ## Features
 
 ### 🤖 AI-Powered Features
 
-- **AI Outfit Recommendations**: Contextual outfit suggestions based on weather, calendar events, and personal style
-- **AI Motivation**: Personalized motivational messages based on time of day and mood
-- **AI Vision**: Real-time outfit analysis using webcam and OpenAI Vision
-- **Smart Weather Insights**: AI-enhanced weather analysis with personalized recommendations
+- **Motion Detection**: Automatic triggering of AI interactions when someone approaches
+- **AI Outfit Analysis**: Weather-aware outfit feedback using OpenAI Vision API
+- **Multiple AI Personalities**: Snow White mirror, Snoop Dogg, nihilist with custom voices
+- **Text-to-Speech**: OpenAI TTS with personality-appropriate voices
+- **Pre-generated Audio**: Configurable motion, welcome, and sendoff messages
 
-### 🕐 Core Smart Mirror Features
+### 🕐 Smart Mirror Display
 
-- **Time & Date Display**: Real-time clock with customizable formats
-- **Weather Integration**: Current conditions and forecasts with multiple providers
-- **Calendar Integration**: Google Calendar, iCal, and other calendar services
-- **News Feed**: RSS feeds and news API integration
-- **Music Controls**: Spotify integration with playback controls
+- **Real-time Weather**: Current conditions and forecasts via WeatherAPI
+- **News Headlines**: Latest news via NewsAPI
+- **Time & Date**: Real-time clock display
+- **Calendar Integration**: Temporarily disabled (Google Calendar)
 
-### 🎨 Enhanced UI/UX
+### 🎨 User Experience
 
-- **Modern Design**: Clean, high-contrast interface optimized for mirror viewing
-- **Responsive Layout**: Adapts to different screen sizes and orientations
-- **Customizable Themes**: Multiple visual themes and styling options
-- **Smooth Animations**: Subtle transitions and visual effects
+- **Smooth Interactions**: 20-30 second interaction cycles with minimal waiting
+- **Event Integration**: Configurable messages for specific events
+- **Responsive Design**: Optimized for mirror viewing with high contrast
 
 ## Architecture
 
-This project combines the robust MagicMirror² framework with custom AI modules and a Node.js backend:
+```
+smart-mirror/
+├── client-mirror/              # React/Electron frontend
+│   ├── src/
+│   │   ├── components/         # Mirror interface components
+│   │   ├── hooks/             # Motion detection, webcam, AI
+│   │   └── services/          # API clients
+│   └── public/
+├── server/                     # Node.js/Express backend
+│   ├── routes/                # API endpoints
+│   ├── services/              # AI, weather, calendar services
+│   └── data/                  # Audio cache and pre-generated files
+└── docs/                      # Project documentation
+```
 
-```
-ai-smart-mirror/
-├── [MagicMirror² Core]        # Base framework and built-in modules
-├── modules/                    # Custom AI modules
-│   ├── ai-outfit-recommendation/
-│   ├── ai-motivation/
-│   ├── ai-vision/
-│   └── enhanced-weather/
-├── server/                     # Node.js backend with AI services
-│   ├── services/
-│   │   ├── openai.js
-│   │   ├── weatherService.js
-│   │   └── calendarService.js
-│   └── routes/
-│       ├── ai.js
-│       └── api.js
-└── shared/                     # Shared utilities and types
-    ├── types/
-    └── utils/
-```
+## Hardware
+
+- **Raspberry Pi 5** (8GB) - Main computing unit
+- **ARZOPA 16" Monitor** - Display unit
+- **Two-way Acrylic Panel** - Mirror overlay
+- **Logitech C920 Webcam** - Motion detection and image capture
+- **Custom Frame** - Hardware mounting and assembly
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js (v16 or higher)
-- npm or yarn
+- Raspberry Pi 5 (or Pi 4)
+- Node.js v16+
 - OpenAI API key
-- Weather API key (optional)
+- WeatherAPI key (optional)
 - Google Calendar credentials (optional)
+- NewsAPI key (optional)
 
 ### Installation
 
-1. Clone the repository:
+1. **Clone and install:**
 
-```bash
-git clone https://github.com/yourusername/ai-smart-mirror.git
-cd ai-smart-mirror
-```
+   ```bash
+   git clone https://github.com/bbeaudet-dev/ai-smart-mirror.git
+   cd smart-mirror
+   npm install
+   cd server && npm install
+   ```
 
-2. Install dependencies:
+2. **Set up environment:**
 
-```bash
-npm install
-cd server && npm install
-```
+   ```bash
+   cp env.example .env
+   cp server/env.example server/.env
+   # Edit with your API keys
+   ```
 
-3. Set up environment variables:
+3. **Start the application:**
 
-```bash
-cp .env.example .env
-# Edit .env with your API keys
-```
+   ```bash
+   npm run dev
+   ```
 
-4. Start the backend server:
+4. **Access the mirror:**
+   - Local: `http://localhost:3000`
+   - Network: `http://raspberrypi:3000` (using hostname)
 
-```bash
-cd server
-npm start
-```
+## API Endpoints
 
-5. Start MagicMirror²:
+### AI Analysis
 
-```bash
-npm start
-```
+- `POST /api/ai/automatic` - Motion-triggered outfit analysis
+- `POST /api/ai/analyze-outfit` - Basic outfit analysis
+- `POST /api/ai/analyze-outfit-with-weather` - Weather-aware analysis
+- `POST /api/ai/magic-mirror-tts` - Magic Mirror personality analysis
 
-6. Open [http://localhost:8080](http://localhost:8080) to view the smart mirror.
+### Pre-generated Audio
+
+- `GET /api/pre-generated-audio/motion` - Motion response audio
+- `GET /api/pre-generated-audio/welcome` - Welcome message audio
+- `GET /api/pre-generated-audio/sendoff` - Sendoff message audio
+
+### Data Services
+
+- `GET /api/weather` - Current weather data
+- `GET /api/news/headlines` - News headlines
+- `GET /api/tts/voices` - Available TTS voices
+
+### TTS Generation
+
+- `POST /api/tts/generate` - Generate speech from text
+
+## User Interaction Flow
+
+1. **Motion Detection** - User approaches mirror
+2. **Motion Response** - Pre-generated audio plays immediately
+3. **Welcome Message** - Event-specific welcome (if configured)
+4. **AI Analysis** - Image capture and outfit analysis with weather context
+5. **Response Display** - AI feedback with text-to-speech
+6. **Sendoff Message** - Pre-generated goodbye message
 
 ## Configuration
 
-### AI Module Configuration
-
-```javascript
-// config/config-ai.js
-{
-  modules: [
-    {
-      module: "ai-outfit-recommendation",
-      position: "middle_center",
-      config: {
-        updateInterval: 300000,
-        apiEndpoint: "http://localhost:5000/api/ai/outfit-recommendation",
-      },
-    },
-    {
-      module: "ai-motivation",
-      position: "bottom_center",
-      config: {
-        updateInterval: 600000,
-        apiEndpoint: "http://localhost:5000/api/ai/motivation",
-      },
-    },
-  ];
-}
-```
-
 ### Environment Variables
 
-```bash
-# .env
-OPENAI_API_KEY=your_openai_api_key
-WEATHER_API_KEY=your_weather_api_key
-GOOGLE_CALENDAR_CLIENT_ID=your_google_client_id
-GOOGLE_CALENDAR_CLIENT_SECRET=your_google_client_secret
+```env
+# Root .env
+VITE_API_URL=http://raspberrypi:5005
+
+# Server .env
+OPENAI_API_KEY=your_openai_key
+WEATHER_API_KEY=your_weather_key
+NEWS_API_KEY=your_news_key
+# GOOGLE_CLIENT_ID=your_google_client_id (temporarily disabled)
+# GOOGLE_CLIENT_SECRET=your_google_client_secret (temporarily disabled)
+```
+
+### Motion Detection Settings
+
+```typescript
+// client-mirror/src/hooks/useMotionDetection.ts
+const options = {
+  threshold: 0.025, // Motion sensitivity
+  interval: 100, // Check frequency (ms)
+  minMotionDuration: 250, // Minimum motion duration (ms)
+  isAutomaticMode: true,
+};
 ```
 
 ## Development
 
-### Adding New AI Modules
+### Project Structure
 
-1. Create a new module directory:
+- **Frontend**: React with Electron for desktop app
+- **Backend**: Node.js/Express with OpenAI integration
+- **Motion Detection**: Server-side frame analysis
+- **Audio**: Pre-generated files + OpenAI TTS
+- **APIs**: Weather, Calendar, News, OpenAI Vision
 
-```bash
-mkdir modules/ai-new-feature
-```
+### Key Technologies
 
-2. Create the module file:
+- **React/Electron** - Frontend interface
+- **Node.js/Express** - Backend API server
+- **OpenAI Vision API** - Image analysis
+- **OpenAI TTS** - Text-to-speech
+- **WebRTC** - Phone interface (built but not used)
+- **Roboflow** - Computer vision (in development)
 
-```typescript
-// modules/ai-new-feature/index.ts
-Module.register("ai-new-feature", {
-  defaults: {
-    apiEndpoint: "http://localhost:5000/api/ai/new-feature",
-    updateInterval: 300000,
-  },
+## Troubleshooting
 
-  start() {
-    this.fetchData();
-    this.scheduleUpdate();
-  },
+### Common Issues
 
-  async fetchData() {
-    // Your AI integration logic
-  },
-});
-```
+1. **IP Address Changes**: Use hostname `raspberrypi` instead of IP in `.env`
+2. **Motion Detection**: Adjust threshold and duration in motion detection hook
+3. **Audio Issues**: Check pre-generated audio files exist in `server/data/audio-pre-generated/`
+4. **API Failures**: Verify API keys and network connectivity
 
-3. Add to configuration:
+### Debug Mode
 
-```javascript
-// config/config-ai.js
-{
-  module: "ai-new-feature",
-  position: "top_right",
-  config: {
-    updateInterval: 300000
-  }
-}
-```
+Access debug panel with `Ctrl+Shift+D` to:
 
-### Backend API Development
+- Test motion detection
+- Manually trigger AI analysis
+- Adjust voice settings
+- View system status
 
-The backend provides RESTful APIs for AI features:
+## Future Development
 
-```javascript
-// server/routes/ai.js
-router.post("/outfit-recommendation", async (req, res) => {
-  const { temperature, condition, timeOfDay } = req.body;
-  const recommendation = await OpenAIService.generateOutfitRecommendation({
-    temperature,
-    condition,
-    timeOfDay,
-  });
-  res.json({ recommendation });
-});
-```
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+- **Roboflow Integration** - Enhanced computer vision
+- **Local LLMs** - Offline AI processing
+- **Better Glass** - Replace acrylic with proper mirror glass
+- **Commercial Applications** - Event fit-check systems
+- **Multi-user Experience** - Phone interface for group interactions
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT License - see LICENSE file for details.
 
 ## Acknowledgments
 
-- Built on [MagicMirror²](https://github.com/MagicMirrorOrg/MagicMirror) by Michael Teeuw
-- AI integration powered by OpenAI
-- Weather data from various providers
-- Calendar integration with Google Calendar
+- Built for Fractal Tech demo day
+- OpenAI for AI and TTS capabilities
+- WeatherAPI, Google Calendar, NewsAPI for data services

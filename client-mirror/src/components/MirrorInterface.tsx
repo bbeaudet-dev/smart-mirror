@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 // Components
 import TimeDisplay from './modules/TimeDisplay';
 import WeatherPanel from './modules/weather/WeatherPanel';
-import CalendarPanel from './modules/CalendarPanel';
+// import CalendarPanel from './modules/CalendarPanel'; // Temporarily disabled
 import RotatingNewsPanel from './modules/RotatingNewsPanel';
 import DebugPanel from './modules/debug/DebugPanel';
 import MessagePanel from './modules/messages/MessagePanel';
@@ -28,25 +28,17 @@ function MirrorInterface() {
         {/* Spacing between time and weather */}
         <div className="h-8"></div>
         
-        {/* Weather and Calendar - Under time */}
-        <div className="flex justify-between px-1">
-          {/* Weather Panel - Left 30% */}
-          <div className="w-[30%]">
+        {/* Weather Panel - Centered (Calendar temporarily disabled) */}
+        <div className="flex justify-center px-1">
+          {/* Weather Panel - Centered 60% */}
+          <div className="w-[60%]">
             <WeatherPanel />
-          </div>
-          
-          {/* Blank Space - Middle 40% */}
-          <div className="w-[40%]"></div>
-          
-          {/* Calendar Panel - Right 30% */}
-          <div className="w-[30%]">
-            <CalendarPanel />
           </div>
         </div>
         
-        {/* News Panel - Underneath calendar */}
-        <div className="flex justify-end px-1 mt-4">
-          <div className="w-[30%]">
+        {/* News Panel - Underneath weather */}
+        <div className="flex justify-center px-1 mt-4">
+          <div className="w-[60%]">
             <RotatingNewsPanel />
           </div>
         </div>
