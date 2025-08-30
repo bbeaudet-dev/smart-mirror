@@ -51,6 +51,8 @@ const MessagePanel: React.FC<MessagePanelProps> = ({
         return 'MOTIVATION';
       case 'outfit-analysis':
         return 'OUTFIT';
+      case 'general':
+        return 'MESSAGE';
       default:
         return 'MESSAGE';
     }

@@ -42,8 +42,8 @@ stateDiagram-v2
 
     note right of PlayingWelcome
         Event-specific welcome:
-        "Welcome to Fractal game night!"
-        "Let me give you a Fit Check!"
+        "Welcome! Let me give you a Fit Check!"
+        "Are you here for the event?"
         etc.
     end note
 
@@ -64,7 +64,7 @@ stateDiagram-v2
 
     note right of PlayingSendoff
         Pre-generated goodbye:
-        "Have fun at game night!"
+        "Have fun at the event!"
         "Enjoy the event!"
         etc.
     end note
