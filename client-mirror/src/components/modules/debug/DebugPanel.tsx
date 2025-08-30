@@ -6,7 +6,7 @@ import { speechService } from '../../../services/speechService';
 
 // Import the smaller components
 import WebcamStatus from './WebcamStatus';
-import MotionStatus from './MotionStatus';
+// import MotionStatus from './MotionStatus';
 
 import DebugImageDisplay from './DebugImageDisplay';
 
@@ -26,7 +26,6 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
     stopWebcam,
     captureFrameAsBlob
   } = useWebcam();
-
 
   // Auto mode is always on for production
   const isAutomaticMode = true;
@@ -74,18 +73,18 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
     }
   }, [isInitialized, isMotionDetectionRunning, startMotionDetection]);
 
-  // Keyboard shortcut to toggle debug panel
-  useEffect(() => {
-    const handleKeyPress = (event: KeyboardEvent) => {
-      if (event.ctrlKey && event.shiftKey && event.key === 'D') {
-        setIsDebugPanelVisible(!isDebugPanelVisible);
-        console.log('Debug panel visibility toggled:', !isDebugPanelVisible);
-      }
-    };
+  // Keyboard shortcut removed - not working properly
+  // useEffect(() => {
+  //   const handleKeyPress = (event: KeyboardEvent) => {
+  //     if (event.ctrlKey && event.shiftKey && event.key === 'D') {
+  //       setIsDebugPanelVisible(!isDebugPanelVisible);
+  //       console.log('Debug panel visibility toggled:', !isDebugPanelVisible);
+  //     }
+  //   };
 
-    document.addEventListener('keydown', handleKeyPress);
-    return () => document.removeEventListener('keydown', handleKeyPress);
-  }, [isDebugPanelVisible]);
+  //   document.addEventListener('keydown', handleKeyPress);
+  //   return () => document.removeEventListener('keydown', handleKeyPress);
+  // }, [isDebugPanelVisible]);
 
   // Set up video element when stream is available
   useEffect(() => {
@@ -111,8 +110,6 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
     }
   }, [stream]);
 
-  
-
   return (
     <div className="fixed bottom-4 right-6 z-50">
       {/* Video element for frame capture (hidden for production) */}
@@ -128,10 +125,10 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
         }}
       />
       
-      {/* Debug Panel */}
+      {/* Debug Panel - Status elements removed for cleaner interface */}
       {isDebugPanelVisible && (
         <div className="flex flex-col items-end space-y-2 mt-2">
-          {/* Webcam Status */}
+          {/* Webcam Status - Button and light only */}
           <WebcamStatus
             isCapturing={isCapturing}
             isInitialized={isInitialized}
@@ -140,14 +137,10 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
             onStartWebcam={startWebcam}
             onStopWebcam={stopWebcam}
           />
-
-          {/* Motion Detection Status */}
-          <MotionStatus
-            isMotionDetectionActive={isMotionDetectionRunning}
-            isMotionDetected={isMotionDetected}
-            motionLevel={motionLevel}
-          />
-
+          
+          {/* Status elements removed - will be added back in future */}
+          {/* MotionStatus component commented out */}
+          
           {/* Debug Image Display */}
           <DebugImageDisplay lastCapturedImage={lastCapturedImage} />
         </div>

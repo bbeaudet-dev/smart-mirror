@@ -4,7 +4,11 @@ This guide will help you get the Smart Mirror React/Electron app running on your
 
 ## Prerequisites
 
-- Raspberry Pi 5 (or Pi 4)
+- Raspberry Pi 5 (8GB recommended) or Pi 4
+- ARZOPA 16" portable monitor (or similar)
+- Two-way acrylic panel (12"x18", 1/8" thick)
+- Logitech C920 webcam (or similar USB webcam)
+- Custom frame with mounting hardware
 - Internet connection
 - SSH access (recommended) or direct access to Pi
 - Basic Linux command line knowledge
@@ -14,7 +18,7 @@ This guide will help you get the Smart Mirror React/Electron app running on your
 ### 1. Clone the Repository
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/bbeaudet-dev/smart-mirror.git
 cd smart-mirror
 ```
 
@@ -28,10 +32,12 @@ npm install
 cd server && npm install
 
 # Install client dependencies
-cd ../client && npm install
+cd ../client-mirror && npm install
 ```
 
 ### 3. Set Up Environment Variables
+
+// TODO add a step here to show how to check if .env already exists
 
 ```bash
 # Copy environment examples
@@ -43,6 +49,20 @@ nano .env
 nano server/.env
 ```
 
+**Important**: Use hostname instead of IP address in your `.env` files:
+
+```env
+# .env (root)
+VITE_API_URL=http://raspberrypi:5005
+
+# server/.env
+OPENAI_API_KEY=your_openai_api_key
+WEATHER_API_KEY=your_weather_api_key
+NEWS_API_KEY=your_news_api_key
+# GOOGLE_CLIENT_ID=your_google_client_id (temporarily disabled)
+# GOOGLE_CLIENT_SECRET=your_google_client_secret (temporarily disabled)
+```
+
 ### 4. Start the Application
 
 ```bash
@@ -52,13 +72,11 @@ npm run dev
 
 ### 5. Access Your Mirror
 
-Open a web browser and go to: `http://your-pi-ip:3000`
+Open a web browser and go to: `http://raspberrypi:3000`
 
-**To find your Pi's IP address:**
+**Note**: Using the hostname `raspberrypi` instead of IP address prevents issues when the Pi's IP changes on reboot.
 
-```bash
-hostname -I
-```
+**If you get blocked or can't access from other devices**: You may need to update CORS settings in the server configuration. Check the server logs for CORS errors and ensure the server is configured to accept requests from your network.
 
 ## Manual Setup (if script doesn't work)
 
@@ -85,7 +103,9 @@ npm --version
 ### 4. Install Dependencies
 
 ```bash
-npm run install:all
+npm install
+cd server && npm install
+cd ../client-mirror && npm install
 ```
 
 ### 5. Create Environment Files
@@ -101,22 +121,21 @@ Edit the `.env` files to add your API keys:
 
 ```env
 # .env (root)
-REACT_APP_WEATHER_API_KEY=your_weather_api_key
-REACT_APP_GOOGLE_CLIENT_ID=your_google_client_id
-REACT_APP_OPENAI_API_KEY=your_openai_api_key
+VITE_API_URL=http://raspberrypi:5005
 
 # server/.env
 OPENAI_API_KEY=your_openai_api_key
+WEATHER_API_KEY=your_weather_api_key
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
-WEATHER_API_KEY=your_weather_api_key
+NEWS_API_KEY=your_news_api_key
 ```
 
 ### 7. Test the Application
 
 ```bash
 # Start server
-npm run server:start
+npm run server:dev
 
 # In another terminal, start client
 npm run client:dev
@@ -131,6 +150,41 @@ npm run client:build
 # Start production server
 npm start
 ```
+
+## Hardware Setup
+
+### Monitor Connection
+
+1. Connect ARZOPA monitor to Pi via USB-C (power and video)
+2. Ensure monitor is detected: `xrandr --listmonitors`
+3. Set appropriate resolution if needed
+4. Configure monitor orientation for portrait mode:
+   ```bash
+   # Open Pi Screen Configuration
+   sudo raspi-config
+   # Navigate to: Display Options > Screen Configuration
+   # Set orientation to: Portrait (90° or 270°)
+   # Or use command line:
+   xrandr --output HDMI-1 --rotate left  # or right for 270°
+   ```
+
+### Webcam Setup
+
+1. Connect Logitech C920 webcam via USB
+2. Test webcam: `lsusb | grep Logitech`
+3. Verify video device: `ls /dev/video*`
+
+### Mirror Assembly
+
+1. Mount monitor in custom frame
+2. Position two-way acrylic panel in front of monitor
+3. Ensure proper lighting for webcam performance
+4. Test motion detection and AI analysis
+
+### Electron Interface Tips
+
+- **Press Esc** while in Electron to make the taskbar appear
+- Use Alt+F4 or Ctrl+Q to exit the application
 
 ## Verification Steps
 
@@ -150,11 +204,17 @@ curl http://localhost:3000
 # Test locally
 curl http://localhost:3000
 
-# Test from another device
-curl http://your-pi-ip:3000
+# Test from another device using hostname
+curl http://raspberrypi:3000
 ```
 
-### 3. Check Logs
+### 3. Test Motion Detection
+
+1. Open the mirror interface
+2. Test motion detection by walking in front of the mirror
+3. Verify AI analysis triggers correctly
+
+### 4. Check Logs
 
 ```bash
 # View server logs
@@ -168,7 +228,12 @@ journalctl -u smart-mirror -f
 
 ### Common Issues:
 
-1. **Port already in use**
+1. **IP Address Changes**
+
+   **Problem**: Pi's IP address changes on reboot
+   **Solution**: Use hostname `raspberrypi` instead of IP in `.env` files
+
+2. **Port already in use**
 
    ```bash
    sudo lsof -i :5005  # Check server port
@@ -176,29 +241,41 @@ journalctl -u smart-mirror -f
    sudo kill -9 <PID>
    ```
 
-2. **Permission denied**
+3. **Permission denied**
 
    ```bash
    sudo chown -R $USER:$USER .
    ```
 
-3. **Node.js version too old**
+4. **Node.js version too old**
 
    ```bash
    node --version  # Should be 22.x or higher
    # If too old, reinstall Node.js
    ```
 
-4. **Can't access from other devices**
+5. **Can't access from other devices**
 
    - Check your firewall settings
    - Make sure server is binding to `0.0.0.0`
-   - Check Pi's IP address: `hostname -I`
+   - Use hostname `raspberrypi` instead of IP
 
-5. **API errors**
+6. **API errors**
+
    - Check environment variables are set correctly
    - Verify API keys are valid
    - Check server logs for specific errors
+
+7. **Motion detection not working**
+
+   - Check webcam is connected and working
+   - Adjust motion detection threshold and duration in `useMotionDetection.ts`
+   - Verify lighting conditions
+
+8. **Audio not playing**
+   - Check HDMI audio is enabled
+   - Verify pre-generated audio files exist
+   - Test TTS generation manually
 
 ### Development and Debugging:
 
@@ -267,24 +344,26 @@ sudo systemctl enable smart-mirror
 sudo systemctl start smart-mirror
 ```
 
-## Next Steps
+## Features to Test
 
 Once the basic mirror is working:
 
-1. **Test all features** - Make sure weather, calendar, AI features are working
-2. **Customize appearance** - Edit CSS files in `client/src/`
-3. **Set up auto-start** - Configure PM2 or systemd
-4. **Hardware setup** - Connect display, mirror, etc.
-5. **Remove mock data** - Replace all placeholder data with real APIs
+1. **Motion Detection** - Walk in front of mirror to trigger AI
+2. **AI Analysis** - Verify outfit analysis with weather context
+3. **Weather Display** - Check current weather data
+4. **News Headlines** - Check latest news display
+5. **Voice Responses** - Test text-to-speech functionality
+6. **Debug Panel** - Access with `Ctrl+Shift+D` for testing
 
-## AI Features
+## API Endpoints
 
-The app includes:
+The mirror provides these endpoints:
 
-1. **OpenAI Integration** - Outfit recommendations and motivational messages
-2. **Weather Integration** - Real-time weather data
-3. **Calendar Integration** - Google Calendar events
-4. **News Integration** - Latest news headlines
+- `POST /api/ai/automatic` - Motion-triggered outfit analysis
+- `GET /api/weather` - Current weather data
+- `GET /api/news/headlines` - News headlines
+- `GET /api/pre-generated-audio/*` - Audio responses
+- `POST /api/tts/generate` - TTS generation
 
 ## Support
 

@@ -25,8 +25,8 @@ class PreGeneratedAudioService {
     ];
     
     this.welcomeResponses = [
-      "Welcome to Fractal! Let me give you a Fit Check!",
-      "Are you here for game night? Let me see your outfit!",
+      "Welcome to the event! Let me give you a Fit Check!",
+      "Are you here for the event? Let me see your outfit!",
       "Why don't you pose for an outfit check?",
       "Time for a Fit Check.",
       "Are you down for a Fit Check?",
@@ -38,7 +38,7 @@ class PreGeneratedAudioService {
       "Enjoy the event! Have an amazing time!",
       "Have a fantastic time tonight!",
       "See you later! Hope you have a wonderful time!",
-      "Have fun at Game Night, You're going to love it!",
+      "Have fun at the event, You're going to love it!",
       "Enjoy yourself tonight! You're going to have a blast!",
       "Thanks for stopping by! Enjoy the event!",
       "Thanks for coming to see me! Have a wonderful time!",

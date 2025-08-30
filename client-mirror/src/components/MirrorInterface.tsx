@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 // Components
 import TimeDisplay from './modules/TimeDisplay';
 import WeatherPanel from './modules/weather/WeatherPanel';
-import CalendarPanel from './modules/CalendarPanel';
+// import CalendarPanel from './modules/CalendarPanel'; // Temporarily disabled
 import RotatingNewsPanel from './modules/RotatingNewsPanel';
 import DebugPanel from './modules/debug/DebugPanel';
 import MessagePanel from './modules/messages/MessagePanel';
@@ -13,6 +13,9 @@ function MirrorInterface() {
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [isWebcamInitialized, setIsWebcamInitialized] = useState(false);
   const [isWebcamAnalyzing, setIsWebcamAnalyzing] = useState(false);
+
+  // Debug loading state
+  console.log('MirrorInterface: isAiLoading =', isAiLoading);
 
   return (
     <div className="w-full h-full bg-mirror-bg text-mirror-text font-mirror-primary pl-14 pr-2 pt-2 pb-2">
@@ -25,25 +28,17 @@ function MirrorInterface() {
         {/* Spacing between time and weather */}
         <div className="h-8"></div>
         
-        {/* Weather and Calendar - Under time */}
-        <div className="flex justify-between px-1">
-          {/* Weather Panel - Left 30% */}
-          <div className="w-[30%]">
+        {/* Weather Panel - Left justified (Calendar temporarily disabled) */}
+        <div className="flex justify-start px-1">
+          {/* Weather Panel - Left 60% */}
+          <div className="w-[60%]">
             <WeatherPanel />
-          </div>
-          
-          {/* Blank Space - Middle 40% */}
-          <div className="w-[40%]"></div>
-          
-          {/* Calendar Panel - Right 30% */}
-          <div className="w-[30%]">
-            <CalendarPanel />
           </div>
         </div>
         
-        {/* News Panel - Underneath calendar */}
-        <div className="flex justify-end px-1 mt-4">
-          <div className="w-[30%]">
+        {/* News Panel - Underneath weather, left justified */}
+        <div className="flex justify-start px-1 mt-4">
+          <div className="w-[60%]">
             <RotatingNewsPanel />
           </div>
         </div>
