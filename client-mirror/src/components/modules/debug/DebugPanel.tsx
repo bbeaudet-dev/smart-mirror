@@ -5,7 +5,7 @@ import ApiClient from '../../../services/apiClient';
 import { speechService } from '../../../services/speechService';
 
 // Import the smaller components
-// import WebcamStatus from './WebcamStatus';
+import WebcamStatus from './WebcamStatus';
 // import MotionStatus from './MotionStatus';
 
 import DebugImageDisplay from './DebugImageDisplay';
@@ -128,8 +128,18 @@ const DebugPanel: React.FC<DebugPanelProps> = ({ onAiMessage, onAiLoading }) => 
       {/* Debug Panel - Status elements removed for cleaner interface */}
       {isDebugPanelVisible && (
         <div className="flex flex-col items-end space-y-2 mt-2">
+          {/* Webcam Status - Button and light only */}
+          <WebcamStatus
+            isCapturing={isCapturing}
+            isInitialized={isInitialized}
+            error={error}
+            stream={stream}
+            onStartWebcam={startWebcam}
+            onStopWebcam={stopWebcam}
+          />
+          
           {/* Status elements removed - will be added back in future */}
-          {/* WebcamStatus and MotionStatus components commented out */}
+          {/* MotionStatus component commented out */}
           
           {/* Debug Image Display */}
           <DebugImageDisplay lastCapturedImage={lastCapturedImage} />

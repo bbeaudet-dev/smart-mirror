@@ -28,16 +28,16 @@ function MirrorInterface() {
         {/* Spacing between time and weather */}
         <div className="h-8"></div>
         
-        {/* Weather Panel - Centered (Calendar temporarily disabled) */}
-        <div className="flex justify-center px-1">
-          {/* Weather Panel - Centered 60% */}
+        {/* Weather Panel - Left justified (Calendar temporarily disabled) */}
+        <div className="flex justify-start px-1">
+          {/* Weather Panel - Left 60% */}
           <div className="w-[60%]">
             <WeatherPanel />
           </div>
         </div>
         
-        {/* News Panel - Underneath weather */}
-        <div className="flex justify-center px-1 mt-4">
+        {/* News Panel - Underneath weather, left justified */}
+        <div className="flex justify-start px-1 mt-4">
           <div className="w-[60%]">
             <RotatingNewsPanel />
           </div>
